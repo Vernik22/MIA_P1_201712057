@@ -35,6 +35,8 @@
 		</Compiler>
 		<Unit filename="estructuras.cpp" />
 		<Unit filename="estructuras.h" />
+		<Unit filename="fdisk.cpp" />
+		<Unit filename="fdisk.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="mkdisk.cpp" />
 		<Unit filename="mkdisk.h" />

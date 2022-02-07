@@ -35,10 +35,21 @@ void rmdisk::ejecutarComandoRmdisk(rmdisk *disco)
         struct stat st;
         if (stat(disco->getPath().c_str(), &st) == 0)
         {
+            string confirmar;
             printf("Existe el archivo en: %s\n", disco->getPath().c_str());
-            string comando = "rm " + pathconc;
-            system(comando.c_str());
-            printf("Se borro el archivo en: %s \n", disco->getPath().c_str());
+            cout<<"**Se borrara el disco, ¿esta de acuerdo? [s/n]:"<<endl;
+            cin>>confirmar;
+            if(confirmar=="S"|| confirmar=="s")
+            {
+                string comando = "rm " + pathconc;
+                system(comando.c_str());
+                printf("Se borro el archivo en: %s \n", disco->getPath().c_str());
+            }
+            else
+            {
+                cout<<"**NO se borro el disco**"<<endl;
+            }
+
         }
         else
         {
@@ -48,28 +59,28 @@ void rmdisk::ejecutarComandoRmdisk(rmdisk *disco)
 
 
 
-catch(...)
-{
-    cout<<"Error al eliminar el disco "<<endl;
-}
+    catch(...)
+    {
+        cout<<"Error al eliminar el disco "<<endl;
+    }
 
 }
 
 vector<string> rmdisk::split(string str, char pattern)
+{
+
+    int posInit = 0;
+    int posFound = 0;
+    string splitted;
+    vector<string> results;
+
+    while (posFound >= 0)
     {
-
-        int posInit = 0;
-        int posFound = 0;
-        string splitted;
-        vector<string> results;
-
-        while (posFound >= 0)
-        {
-            posFound = str.find(pattern, posInit);
-            splitted = str.substr(posInit, posFound - posInit);
-            posInit = posFound + 1;
-            results.push_back(splitted);
-        }
-
-        return results;
+        posFound = str.find(pattern, posInit);
+        splitted = str.substr(posInit, posFound - posInit);
+        posInit = posFound + 1;
+        results.push_back(splitted);
     }
+
+    return results;
+}

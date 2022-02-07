@@ -21,3 +21,13 @@
 	<string.h>
 	<cstdlib>
 
+1644251572 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/rmdisk.cpp
+	"rmdisk.h"
+	<sys/stat.h>
+	<algorithm>
+	<iostream>
+
+1644250302 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/rmdisk.h
+	<vector>
+	"string"
+

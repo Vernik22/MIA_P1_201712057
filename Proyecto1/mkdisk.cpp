@@ -19,12 +19,6 @@ void mkdisk::ejecutarComandoMkdisk(mkdisk *disco)
 {
     cout<<"************Ejecutar MKDISK************\n"<<endl;
     MBR mbrDisco;
-    /*
-    int sizeM=disco->getSize();
-    string unitM=disco->getUnit();
-    string pathM=disco->getPath();
-    string fitM=disco->getFit();
-    */
     FILE *arch;
     arch=fopen(disco->getPath().c_str(),"wb");
     char buffer[1024];
