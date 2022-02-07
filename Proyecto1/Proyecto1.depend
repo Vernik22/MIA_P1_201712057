@@ -1,0 +1,20 @@
+# depslib dependency file v1.0
+1644171259 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.cpp
+	"estructuras.h"
+
+1644183642 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
+	<string>
+
+1644185085 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
+	"mkdisk.h"
+	<iostream>
+
+1644191566 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.h
+	<vector>
+	<string>
+	"estructuras.h"
+
+1644191395 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+	<iostream>
+	"mkdisk.h"
+
