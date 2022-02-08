@@ -66,6 +66,7 @@ void mkdisk::ejecutarComandoMkdisk(mkdisk *disco)
     _mTime fcreacion;
     strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
     mbrDisco.mbr_fecha_creacion = fcreacion;
+    srand (time(NULL)); // para crear numeros aleatorios de verdad
     mbrDisco.mbr_dsk_signature = (rand()%200); //numero random para darle etiqueta al disco
     //si el fit viene vacio se pone el primer ajuste
     if(disco->getFit().empty()==true){

@@ -45,7 +45,7 @@ typedef struct{
     int mbr_tamano;
     _mTime mbr_fecha_creacion;
     int mbr_dsk_signature; //numero random, identifica de forma unica a cada disco
-    char dsk_fit; //Tipo de ajuste de la particion, B,F,W ::Best, First, Worst
+    char dsk_fit; //Tipo de ajuste del disco para colocar las particiones, B,F,W ::Best, First, Worst
     Particion mbr_partition_1;
     Particion mbr_partition_2;
     Particion mbr_partition_3;

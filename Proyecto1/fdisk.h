@@ -11,20 +11,25 @@ class fdisk
         virtual ~fdisk();
         void ejecutarComandoFdisk(fdisk *disco);
         bool hayEspacio(int tamaParticion, int tamanoDisco);
+        int espacioLibre(int inicio, int fin);
         void eliminarParticion(string path,string nombre, string tipoDelete);
+        void agregarEspacioParticion();
         void imprimirDatosDisco(string path);
+        int mejorAjuste();
+        int peorAjuste();
+        int primerAjuste();
 
-        void setSize(int s){
-            size=s;
+        void setSize(int si){
+            tamano=si;
         }
         int getSize(){
-            return size;
+            return tamano;
         }
         void setUnit(string s){
             unit=s;
         }
         string getUnit(){
-            return fit;
+            return unit;
         }
         void setPath(string s){
             path=s;
@@ -64,7 +69,7 @@ class fdisk
         }
 
     private:
-        int size;
+        int tamano;
         string unit;
         string path;
         string type;
