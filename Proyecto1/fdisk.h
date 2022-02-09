@@ -15,9 +15,9 @@ class fdisk
         void eliminarParticion(string path,string nombre, string tipoDelete);
         void agregarEspacioParticion();
         void imprimirDatosDisco(string path);
-        int mejorAjuste();
-        int peorAjuste();
-        int primerAjuste();
+        int masGrande(int uno, int dos, int tres, int cuatro);
+        int mejorAsign(int uno, int dos, int tres, int cuatro, int tamParti);
+        int masPequeño(int uno, int dos, int tres, int cuatro);
 
         void setSize(int si){
             tamano=si;
