@@ -3,6 +3,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <algorithm>
+#include <stdio.h>
 
 fdisk::fdisk()
 {
@@ -53,7 +54,10 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
     {
         particionTemp.part_fit = 'W';
     }
+//Verificar que no exista el nombre en las particiones principales
+
     Particion parts[4] ;
+
     //Ver el tipo de particion a crear si es Primaria, Extendida o Logica
     if(disco->getType()=="p"||disco->getType()=="P")
     {
@@ -65,150 +69,13 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
             fread(&mbrTemp, sizeof(MBR),1,arch); //mbrTemp guarda el MBR del disco a formatear
             char Dfit = mbrTemp.dsk_fit;
 
-            if(hayEspacio(tamanoParticion,mbrTemp.mbr_tamano))
+            if(mbrTemp.mbr_partition_1.part_name != disco->getName()&& mbrTemp.mbr_partition_2.part_name != disco->getName()&& mbrTemp.mbr_partition_3.part_name != disco->getName()&& mbrTemp.mbr_partition_4.part_name != disco->getName())
             {
-                //hay particiones disponibles
-                if(mbrTemp.mbr_partition_1.part_status == '0'|| mbrTemp.mbr_partition_2.part_status == '0'|| mbrTemp.mbr_partition_3.part_status == '0'|| mbrTemp.mbr_partition_4.part_status == '0')
+                if(hayEspacio(tamanoParticion,mbrTemp.mbr_tamano))
                 {
-                    //si hay espacio suficiente en el disco entra
-                    //verificar si hay particiones disponibles
-                    //caso base si no hay ninguna particion ocupada
-                    if(mbrTemp.mbr_partition_1.part_status == '0'&& mbrTemp.mbr_partition_2.part_status == '0'&& mbrTemp.mbr_partition_3.part_status == '0'&& mbrTemp.mbr_partition_4.part_status == '0')
+                    //hay particiones disponibles
+                    if(mbrTemp.mbr_partition_1.part_status == '0'|| mbrTemp.mbr_partition_2.part_status == '0'|| mbrTemp.mbr_partition_3.part_status == '0'|| mbrTemp.mbr_partition_4.part_status == '0')
                     {
-                        //seteando los valores que llevara la nueva particion
-                        particionTemp.part_status = '1';//particion ocupada
-                        particionTemp.part_type = 'P';
-                        strcpy(particionTemp.part_name,disco->getName().c_str());
-                        particionTemp.part_size= tamanoParticion;
-                        particionTemp.part_start=startPart;
-                        //copiando particion creada
-                        mbrTemp.mbr_partition_1 =particionTemp;
-                        //toca modificar el mbr original en el archivo por el nuevo mbr con los datos de la particion creada
-                        fseek(arch,0,SEEK_SET);
-                        fwrite(&mbrTemp,sizeof(MBR),1,arch); //se sobreescribe el mbr
-                        fclose(arch);
-                        cout<<"Se Creo la particion Correctamente"<<endl;
-
-                    }
-                    else
-                    {
-                        parts[0]= mbrTemp.mbr_partition_1;
-                        parts[1]= mbrTemp.mbr_partition_2;
-                        parts[2]= mbrTemp.mbr_partition_3;
-                        parts[3]= mbrTemp.mbr_partition_4;
-                        int partEnd = 0;
-
-                        for(int i= 0; i<4; i++)
-                        {
-                            if(parts[i].part_status == '1')
-                            {
-
-                                partEnd = parts[i].part_start;
-                                int espL = espacioLibre(startPart,partEnd);
-                                if(hayEspacio(tamanoParticion,espL))
-                                {
-                                    //seteando los valores que llevara la nueva particion
-                                    particionTemp.part_status = '1';//particion ocupada
-                                    particionTemp.part_type = 'P';
-                                    strcpy(particionTemp.part_name,disco->getName().c_str());
-                                    particionTemp.part_size= tamanoParticion;
-                                    particionTemp.part_start=startPart;
-                                    break;
-                                }
-                                else
-                                {
-                                    startPart = parts[i].part_start + parts[i].part_size;
-                                }
-                            }
-                            else
-                            {
-                                int espL = espacioLibre(startPart,mbrTemp.mbr_tamano);
-                                if(hayEspacio(tamanoParticion,espL))
-
-                                {
-                                    //seteando los valores que llevara la nueva particion
-                                    particionTemp.part_status = '1';//particion ocupada
-                                    particionTemp.part_type = 'P';
-                                    strcpy(particionTemp.part_name,disco->getName().c_str());
-                                    particionTemp.part_size= tamanoParticion;
-                                    particionTemp.part_start=startPart;
-                                    break;
-
-                                }
-                                else
-                                {
-                                    cout<<"ERROR: No hay espacio suficiente en el disco para crear la particion"<<endl;
-                                }
-
-                            }
-
-                        }
-
-                        for(int i =0; i<4; i++)
-                        {
-
-                            if(parts[i].part_status == '0')
-                            {
-                                parts[i] =particionTemp;
-
-
-                                break;
-                            }
-                        }
-                        mbrTemp.mbr_partition_1= parts[0];
-                        mbrTemp.mbr_partition_2= parts[1];
-                        mbrTemp.mbr_partition_3= parts[2];
-                        mbrTemp.mbr_partition_4= parts[3];
-                        //toca modificar el mbr original en el archivo por el nuevo mbr con los datos de la particion creada
-                        fseek(arch,0,SEEK_SET);
-                        fwrite(&mbrTemp,sizeof(MBR),1,arch); //se sobreescribe el mbr
-                        fclose(arch);
-                        cout<<"Se Creo la particion Correctamente"<<endl;
-
-                    }
-                }
-                else
-                {
-                    cout<<"ERROR: Ya no se pueden crear mas particiones primarias; hay 4 particiones creadas"<<endl;
-                }
-
-            }
-            else
-            {
-                cout<<"ERROR: No hay espacio suficiente en el disco para crear la particion"<<endl;
-            }
-
-        }
-        else
-        {
-            cout<<"ERROR: Disco no encontrado en la ruta: "<<disco->getPath()<<endl;
-        }
-    }
-    else if(disco->getType()=="e"||disco->getType()=="E")
-    {
-        FILE *arch;
-        arch = fopen(disco->getPath().c_str(), "rb+"); // se abre el archivo del disco en modo lectura
-        if (arch != NULL)
-        {
-            fseek(arch,0,SEEK_SET);
-            fread(&mbrTemp, sizeof(MBR),1,arch); //mbrTemp guarda el MBR del disco a formatear
-            char Dfit = mbrTemp.dsk_fit;
-
-            if(hayEspacio(tamanoParticion,mbrTemp.mbr_tamano))
-            {
-                //hay particiones disponibles
-                if(mbrTemp.mbr_partition_1.part_status == '0'|| mbrTemp.mbr_partition_2.part_status == '0'|| mbrTemp.mbr_partition_3.part_status == '0'|| mbrTemp.mbr_partition_4.part_status == '0')
-                {
-                    if(mbrTemp.mbr_partition_1.part_type != 'E'&& mbrTemp.mbr_partition_2.part_type != 'E'&& mbrTemp.mbr_partition_3.part_type != 'E'&& mbrTemp.mbr_partition_4.part_type != 'E')
-                    {
-                        //Creo un EBR vacio para colocarlo en la particion
-                        EBR vacia;
-                        vacia.part_fit= '-';
-                        vacia.part_name[0] = '\0';
-                        vacia.part_next = -1;
-                        vacia.part_size = -1;
-                        vacia.part_start = -1;
-                        vacia.part_status = '0';
                         //si hay espacio suficiente en el disco entra
                         //verificar si hay particiones disponibles
                         //caso base si no hay ninguna particion ocupada
@@ -216,7 +83,7 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
                         {
                             //seteando los valores que llevara la nueva particion
                             particionTemp.part_status = '1';//particion ocupada
-                            particionTemp.part_type = 'E';
+                            particionTemp.part_type = 'P';
                             strcpy(particionTemp.part_name,disco->getName().c_str());
                             particionTemp.part_size= tamanoParticion;
                             particionTemp.part_start=startPart;
@@ -225,9 +92,6 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
                             //toca modificar el mbr original en el archivo por el nuevo mbr con los datos de la particion creada
                             fseek(arch,0,SEEK_SET);
                             fwrite(&mbrTemp,sizeof(MBR),1,arch); //se sobreescribe el mbr
-                            //escribir el EBR dentro de la particion Extendida creada
-                            fseek(arch,startPart,SEEK_SET);
-                            fwrite(&vacia,sizeof(EBR),1,arch); //se sobreescribe el mbr
                             fclose(arch);
                             cout<<"Se Creo la particion Correctamente"<<endl;
 
@@ -251,7 +115,7 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
                                     {
                                         //seteando los valores que llevara la nueva particion
                                         particionTemp.part_status = '1';//particion ocupada
-                                        particionTemp.part_type = 'E';
+                                        particionTemp.part_type = 'P';
                                         strcpy(particionTemp.part_name,disco->getName().c_str());
                                         particionTemp.part_size= tamanoParticion;
                                         particionTemp.part_start=startPart;
@@ -270,7 +134,7 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
                                     {
                                         //seteando los valores que llevara la nueva particion
                                         particionTemp.part_status = '1';//particion ocupada
-                                        particionTemp.part_type = 'E';
+                                        particionTemp.part_type = 'P';
                                         strcpy(particionTemp.part_name,disco->getName().c_str());
                                         particionTemp.part_size= tamanoParticion;
                                         particionTemp.part_start=startPart;
@@ -291,9 +155,8 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
 
                                 if(parts[i].part_status == '0')
                                 {
-                                    //Busca una particion vacia entre las 4 disponibles
                                     parts[i] =particionTemp;
-                                    startPart=particionTemp.part_start;
+
 
                                     break;
                                 }
@@ -305,9 +168,6 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
                             //toca modificar el mbr original en el archivo por el nuevo mbr con los datos de la particion creada
                             fseek(arch,0,SEEK_SET);
                             fwrite(&mbrTemp,sizeof(MBR),1,arch); //se sobreescribe el mbr
-                            //Escribir el EBR vacio dentro de la particion Extendida
-                            fseek(arch,startPart,SEEK_SET);
-                            fwrite(&vacia,sizeof(EBR),1,arch);
                             fclose(arch);
                             cout<<"Se Creo la particion Correctamente"<<endl;
 
@@ -315,18 +175,175 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
                     }
                     else
                     {
-                        cout<<"ERROR: Ya existe una particion Extendida"<<endl;
+                        cout<<"ERROR: Ya no se pueden crear mas particiones primarias; hay 4 particiones creadas"<<endl;
                     }
+
                 }
                 else
                 {
-                    cout<<"ERROR: Ya no se pueden crear mas particiones; hay 4 particiones creadas"<<endl;
+                    cout<<"ERROR: No hay espacio suficiente en el disco para crear la particion"<<endl;
                 }
-
             }
             else
             {
-                cout<<"ERROR: No hay espacio suficiente en el disco para crear la particion"<<endl;
+                cout<<"ERROR: El nombre de la particion ya existe, intente de nuevo"<<endl;
+            }
+
+        }
+        else
+        {
+            cout<<"ERROR: Disco no encontrado en la ruta: "<<disco->getPath()<<endl;
+        }
+    }
+    else if(disco->getType()=="e"||disco->getType()=="E")
+    {
+        FILE *arch;
+        arch = fopen(disco->getPath().c_str(), "rb+"); // se abre el archivo del disco en modo lectura
+        if (arch != NULL)
+        {
+            fseek(arch,0,SEEK_SET);
+            fread(&mbrTemp, sizeof(MBR),1,arch); //mbrTemp guarda el MBR del disco a formatear
+            char Dfit = mbrTemp.dsk_fit;
+            if(mbrTemp.mbr_partition_1.part_name != disco->getName()&& mbrTemp.mbr_partition_2.part_name != disco->getName()&& mbrTemp.mbr_partition_3.part_name != disco->getName()&& mbrTemp.mbr_partition_4.part_name != disco->getName())
+            {
+                if(hayEspacio(tamanoParticion,mbrTemp.mbr_tamano))
+                {
+                    //hay particiones disponibles
+                    if(mbrTemp.mbr_partition_1.part_status == '0'|| mbrTemp.mbr_partition_2.part_status == '0'|| mbrTemp.mbr_partition_3.part_status == '0'|| mbrTemp.mbr_partition_4.part_status == '0')
+                    {
+                        if(mbrTemp.mbr_partition_1.part_type != 'E'&& mbrTemp.mbr_partition_2.part_type != 'E'&& mbrTemp.mbr_partition_3.part_type != 'E'&& mbrTemp.mbr_partition_4.part_type != 'E')
+                        {
+                            //Creo un EBR vacio para colocarlo en la particion
+                            EBR vacia;
+                            vacia.part_fit= '-';
+                            vacia.part_name[0] = '\0';
+                            vacia.part_next = -1;
+                            vacia.part_size = -1;
+                            vacia.part_start = -1;
+                            vacia.part_status = '0';
+                            //si hay espacio suficiente en el disco entra
+                            //verificar si hay particiones disponibles
+                            //caso base si no hay ninguna particion ocupada
+                            if(mbrTemp.mbr_partition_1.part_status == '0'&& mbrTemp.mbr_partition_2.part_status == '0'&& mbrTemp.mbr_partition_3.part_status == '0'&& mbrTemp.mbr_partition_4.part_status == '0')
+                            {
+                                //seteando los valores que llevara la nueva particion
+                                particionTemp.part_status = '1';//particion ocupada
+                                particionTemp.part_type = 'E';
+                                strcpy(particionTemp.part_name,disco->getName().c_str());
+                                particionTemp.part_size= tamanoParticion;
+                                particionTemp.part_start=startPart;
+                                //copiando particion creada
+                                mbrTemp.mbr_partition_1 =particionTemp;
+                                //toca modificar el mbr original en el archivo por el nuevo mbr con los datos de la particion creada
+                                fseek(arch,0,SEEK_SET);
+                                fwrite(&mbrTemp,sizeof(MBR),1,arch); //se sobreescribe el mbr
+                                //escribir el EBR dentro de la particion Extendida creada
+                                fseek(arch,startPart,SEEK_SET);
+                                fwrite(&vacia,sizeof(EBR),1,arch); //se sobreescribe el mbr
+                                fclose(arch);
+                                cout<<"Se Creo la particion Correctamente"<<endl;
+
+                            }
+                            else
+                            {
+                                parts[0]= mbrTemp.mbr_partition_1;
+                                parts[1]= mbrTemp.mbr_partition_2;
+                                parts[2]= mbrTemp.mbr_partition_3;
+                                parts[3]= mbrTemp.mbr_partition_4;
+                                int partEnd = 0;
+
+                                for(int i= 0; i<4; i++)
+                                {
+                                    if(parts[i].part_status == '1')
+                                    {
+
+                                        partEnd = parts[i].part_start;
+                                        int espL = espacioLibre(startPart,partEnd);
+                                        if(hayEspacio(tamanoParticion,espL))
+                                        {
+                                            //seteando los valores que llevara la nueva particion
+                                            particionTemp.part_status = '1';//particion ocupada
+                                            particionTemp.part_type = 'E';
+                                            strcpy(particionTemp.part_name,disco->getName().c_str());
+                                            particionTemp.part_size= tamanoParticion;
+                                            particionTemp.part_start=startPart;
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            startPart = parts[i].part_start + parts[i].part_size;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        int espL = espacioLibre(startPart,mbrTemp.mbr_tamano);
+                                        if(hayEspacio(tamanoParticion,espL))
+
+                                        {
+                                            //seteando los valores que llevara la nueva particion
+                                            particionTemp.part_status = '1';//particion ocupada
+                                            particionTemp.part_type = 'E';
+                                            strcpy(particionTemp.part_name,disco->getName().c_str());
+                                            particionTemp.part_size= tamanoParticion;
+                                            particionTemp.part_start=startPart;
+                                            break;
+
+                                        }
+                                        else
+                                        {
+                                            cout<<"ERROR: No hay espacio suficiente en el disco para crear la particion"<<endl;
+                                        }
+
+                                    }
+
+                                }
+
+                                for(int i =0; i<4; i++)
+                                {
+
+                                    if(parts[i].part_status == '0')
+                                    {
+                                        //Busca una particion vacia entre las 4 disponibles
+                                        parts[i] =particionTemp;
+                                        startPart=particionTemp.part_start;
+
+                                        break;
+                                    }
+                                }
+                                mbrTemp.mbr_partition_1= parts[0];
+                                mbrTemp.mbr_partition_2= parts[1];
+                                mbrTemp.mbr_partition_3= parts[2];
+                                mbrTemp.mbr_partition_4= parts[3];
+                                //toca modificar el mbr original en el archivo por el nuevo mbr con los datos de la particion creada
+                                fseek(arch,0,SEEK_SET);
+                                fwrite(&mbrTemp,sizeof(MBR),1,arch); //se sobreescribe el mbr
+                                //Escribir el EBR vacio dentro de la particion Extendida
+                                fseek(arch,startPart,SEEK_SET);
+                                fwrite(&vacia,sizeof(EBR),1,arch);
+                                fclose(arch);
+                                cout<<"Se Creo la particion Correctamente"<<endl;
+
+                            }
+                        }
+                        else
+                        {
+                            cout<<"ERROR: Ya existe una particion Extendida"<<endl;
+                        }
+                    }
+                    else
+                    {
+                        cout<<"ERROR: Ya no se pueden crear mas particiones; hay 4 particiones creadas"<<endl;
+                    }
+
+                }
+                else
+                {
+                    cout<<"ERROR: No hay espacio suficiente en el disco para crear la particion"<<endl;
+                }
+            }
+            else
+            {
+                cout<<"ERROR: El nombre de la particion ya existe, intente de nuevo"<<endl;
             }
 
         }
@@ -345,131 +362,161 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
             fseek(arch,0,SEEK_SET);
             fread(&mbrTemp, sizeof(MBR),1,arch); //mbrTemp guarda el MBR del disco a formatear
             char Dfit = mbrTemp.dsk_fit;
-
-
-            if(mbrTemp.mbr_partition_1.part_type == 'E'|| mbrTemp.mbr_partition_2.part_type == 'E'|| mbrTemp.mbr_partition_3.part_type == 'E'|| mbrTemp.mbr_partition_4.part_type == 'E')
+            if(mbrTemp.mbr_partition_1.part_name != disco->getName()&& mbrTemp.mbr_partition_2.part_name != disco->getName()&& mbrTemp.mbr_partition_3.part_name != disco->getName()&& mbrTemp.mbr_partition_4.part_name != disco->getName())
             {
-                parts[0]= mbrTemp.mbr_partition_1;
-                parts[1]= mbrTemp.mbr_partition_2;
-                parts[2]= mbrTemp.mbr_partition_3;
-                parts[3]= mbrTemp.mbr_partition_4;
-                EBR ebrExTemp;
-                EBR ebrExTemp2;
-                int logPartStart = sizeof(EBR);
-                int exPartStart = 0;
-                int tamParticionEx = 0;
-                for(int i=0; i<4; i++)
-                {
-                    if(parts[i].part_type == 'E')
-                    {
-                        tamParticionEx = parts[i].part_size;
-                        logPartStart += parts[i].part_start;
-                        exPartStart = parts[i].part_start;
-                        fseek(arch,parts[i].part_start,SEEK_SET);
-                        fread(&ebrExTemp, sizeof(EBR),1,arch); //partExTemp guarda el EBR de la particion E
-                        break;
-                    }
-                }
-                ebrExTemp2 = ebrExTemp;
-                if(hayEspacio(tamanoParticion,tamParticionEx))
-                {
 
-                    //si hay espacio suficiente en el disco entra
-                    //verificar si hay particiones disponibles
-                    //caso base si no hay ninguna particion ocupada
-                    int tamTemp = sizeof(EBR);
-                    EBR vacia;
-                    vacia.part_fit= '-';
-                    vacia.part_name[0] = '\0';
-                    vacia.part_next = -1;
-                    vacia.part_size = -1;
-                    vacia.part_start = -1;
-                    vacia.part_status = '0';
-                    while(tamTemp<tamParticionEx)
+                if(mbrTemp.mbr_partition_1.part_type == 'E'|| mbrTemp.mbr_partition_2.part_type == 'E'|| mbrTemp.mbr_partition_3.part_type == 'E'|| mbrTemp.mbr_partition_4.part_type == 'E')
+                {
+                    parts[0]= mbrTemp.mbr_partition_1;
+                    parts[1]= mbrTemp.mbr_partition_2;
+                    parts[2]= mbrTemp.mbr_partition_3;
+                    parts[3]= mbrTemp.mbr_partition_4;
+                    EBR ebrExTemp;
+                    EBR ebrExTemp2;
+                    int logPartStart = sizeof(EBR);
+                    int exPartStart = 0;
+                    int tamParticionEx = 0;
+                    for(int i=0; i<4; i++)
                     {
-
-                        if(ebrExTemp.part_status == '0'&& ebrExTemp.part_next == -1)
+                        if(parts[i].part_type == 'E')
                         {
-                            ebrExTemp.part_fit= particionTemp.part_fit;
-                            strcpy(ebrExTemp.part_name,disco->getName().c_str());
-                            ebrExTemp.part_next = logPartStart + tamanoParticion;
-                            ebrExTemp.part_size = tamanoParticion;
-                            ebrExTemp.part_start = logPartStart;
-                            ebrExTemp.part_status = '1';
-
-                            fseek(arch,exPartStart,SEEK_SET);
-                            fwrite(&ebrExTemp,sizeof(EBR),1,arch);
-                            //Creo un ebr vacio en el next de la que acabo de crear
-                            fseek(arch,ebrExTemp.part_next,SEEK_SET);
-                            fwrite(&vacia,sizeof(EBR),1,arch);
-                            fclose(arch);
-                            cout<<"Se Creo la particion Correctamente"<<endl;
+                            tamParticionEx = parts[i].part_size;
+                            logPartStart += parts[i].part_start;
+                            exPartStart = parts[i].part_start;
+                            fseek(arch,parts[i].part_start,SEEK_SET);
+                            fread(&ebrExTemp, sizeof(EBR),1,arch); //partExTemp guarda el EBR de la particion E
                             break;
-
                         }
-                        else if(ebrExTemp.part_status == '0'&& ebrExTemp.part_next != -1)
+                    }
+                    ebrExTemp2 = ebrExTemp;
+                    //verificar que no existe el nombre de la particion a crear
+                    EBR ebr;
+                    ebr=ebrExTemp;
+                    bool hayNombre= false;
+                    while(ebr.part_next != -1)
+                    {
+                        if(ebr.part_name == disco->getName())
                         {
-                            int spac = espacioLibre(ebrExTemp2.part_start,ebrExTemp.part_next);
-                            if(hayEspacio(tamanoParticion,spac))
+                            hayNombre=true;
+                        }
+                        fseek(arch, ebr.part_next, SEEK_SET);
+                        fread(&ebr, sizeof(EBR), 1, arch);
+                    }
+
+
+                    if(!hayNombre)
+                    {
+                        if(hayEspacio(tamanoParticion,tamParticionEx))
+                        {
+
+                            //si hay espacio suficiente en el disco entra
+                            //verificar si hay particiones disponibles
+                            //caso base si no hay ninguna particion ocupada
+                            int tamTemp = sizeof(EBR);
+                            EBR vacia;
+                            vacia.part_fit= '-';
+                            vacia.part_name[0] = '\0';
+                            vacia.part_next = -1;
+                            vacia.part_size = -1;
+                            vacia.part_start = -1;
+                            vacia.part_status = '0';
+                            while(tamTemp<tamParticionEx)
                             {
-                                ebrExTemp.part_fit= particionTemp.part_fit;
-                                strcpy(ebrExTemp.part_name,disco->getName().c_str());
-                                ebrExTemp.part_next = logPartStart + tamanoParticion;
-                                ebrExTemp.part_size = tamanoParticion;
-                                ebrExTemp.part_start = logPartStart;
-                                ebrExTemp.part_status = '1';
 
-                                fseek(arch,exPartStart,SEEK_SET);
-                                fwrite(&ebrExTemp,sizeof(EBR),1,arch);
-                                //Creo un ebr vacio en el next de la que acabo de crear
-                                fseek(arch,ebrExTemp.part_next,SEEK_SET);
-                                fwrite(&vacia,sizeof(EBR),1,arch);
-                                fclose(arch);
-                                cout<<"Se Creo la particion Correctamente"<<endl;
-                                break;
+                                if(ebrExTemp.part_status == '0'&& ebrExTemp.part_next == -1)
+                                {
+                                    ebrExTemp.part_fit= particionTemp.part_fit;
+                                    strcpy(ebrExTemp.part_name,disco->getName().c_str());
+                                    ebrExTemp.part_next = logPartStart + tamanoParticion;
+                                    ebrExTemp.part_size = tamanoParticion;
+                                    ebrExTemp.part_start = logPartStart;
+                                    ebrExTemp.part_status = '1';
 
-                            }
-                            else
-                            {
-                                ebrExTemp2=ebrExTemp;
-                                fseek(arch,ebrExTemp.part_next,SEEK_SET);
-                                fread(&ebrExTemp, sizeof(EBR),1,arch);
-                                tamTemp+= ebrExTemp2.part_next;
-                                logPartStart= ebrExTemp2.part_next+sizeof(EBR);
-                                exPartStart = ebrExTemp2.part_next;
-                            }
+                                    fseek(arch,exPartStart,SEEK_SET);
+                                    fwrite(&ebrExTemp,sizeof(EBR),1,arch);
+                                    //Creo un ebr vacio en el next de la que acabo de crear
+                                    fseek(arch,ebrExTemp.part_next,SEEK_SET);
+                                    fwrite(&vacia,sizeof(EBR),1,arch);
+                                    fclose(arch);
+                                    cout<<"Se Creo la particion Correctamente"<<endl;
+                                    break;
 
-                        }/*
+                                }
+                                else if(ebrExTemp.part_status == '0'&& ebrExTemp.part_next != -1)
+                                {
+                                    int spac = espacioLibre(ebrExTemp2.part_start,ebrExTemp.part_next);
+                                    if(hayEspacio(tamanoParticion,spac))
+                                    {
+                                        ebrExTemp.part_fit= particionTemp.part_fit;
+                                        strcpy(ebrExTemp.part_name,disco->getName().c_str());
+                                        ebrExTemp.part_next = logPartStart + tamanoParticion;
+                                        ebrExTemp.part_size = tamanoParticion;
+                                        ebrExTemp.part_start = logPartStart;
+                                        ebrExTemp.part_status = '1';
+
+                                        fseek(arch,exPartStart,SEEK_SET);
+                                        fwrite(&ebrExTemp,sizeof(EBR),1,arch);
+                                        //Creo un ebr vacio en el next de la que acabo de crear
+                                        fseek(arch,ebrExTemp.part_next,SEEK_SET);
+                                        fwrite(&vacia,sizeof(EBR),1,arch);
+                                        fclose(arch);
+                                        cout<<"Se Creo la particion Correctamente"<<endl;
+                                        break;
+
+                                    }
+                                    else
+                                    {
+                                        ebrExTemp2=ebrExTemp;
+                                        fseek(arch,ebrExTemp.part_next,SEEK_SET);
+                                        fread(&ebrExTemp, sizeof(EBR),1,arch);
+                                        tamTemp+= ebrExTemp2.part_next;
+                                        logPartStart= ebrExTemp2.part_next+sizeof(EBR);
+                                        exPartStart = ebrExTemp2.part_next;
+                                    }
+
+                                }/*
                         else if (ebrExTemp.part_status == '1'&& ebrExTemp.part_next == -1)
                         {
 
 
                         }*/
-                        else if(ebrExTemp.part_status == '1'&& ebrExTemp.part_next != -1)
-                        {
-                            ebrExTemp2=ebrExTemp;
-                            fseek(arch,ebrExTemp.part_next,SEEK_SET);
-                            fread(&ebrExTemp, sizeof(EBR),1,arch);
-                            tamTemp+= ebrExTemp2.part_next;
-                            logPartStart= ebrExTemp2.part_next+sizeof(EBR);
-                            exPartStart = ebrExTemp2.part_next;
-                        }
+                                else if(ebrExTemp.part_status == '1'&& ebrExTemp.part_next != -1)
+                                {
+                                    ebrExTemp2=ebrExTemp;
+                                    fseek(arch,ebrExTemp.part_next,SEEK_SET);
+                                    fread(&ebrExTemp, sizeof(EBR),1,arch);
+                                    tamTemp+= ebrExTemp2.part_next;
+                                    logPartStart= ebrExTemp2.part_next+sizeof(EBR);
+                                    exPartStart = ebrExTemp2.part_next;
+                                }
 
+
+                            }
+                        }
+                        else
+                        {
+                            cout<<"ERROR: No hay espacio suficiente en la particion E para crear la particion L"<<endl;
+                        }
+                    }
+                    else
+                    {
+                        cout<<"ERROR: El nombre de la particion ya existe, intente de nuevo"<<endl;
 
                     }
+
+
+
                 }
                 else
                 {
-                    cout<<"ERROR: No hay espacio suficiente en la particion E para crear la particion L"<<endl;
-
+                    cout<<"ERROR: NO hay particion Extendida"<<endl;
                 }
-
-
             }
             else
             {
-                cout<<"ERROR: NO hay particion Extendida"<<endl;
+                cout<<"ERROR: El nombre de la particion ya existe, intente de nuevo"<<endl;
             }
+
 
         }
         else
@@ -479,12 +526,223 @@ void fdisk::ejecutarComandoFdisk(fdisk *disco)
 
     }
 
+//}
     imprimirDatosDisco(disco->getPath());
 }
 
 
-void fdisk::eliminarParticion(string path,string nombre, string tipoDelete)
+void fdisk::eliminarParticion(fdisk *disco)
 {
+    cout<<"\n************Eliminar Particion************\n"<<endl;
+    MBR mbrTemp;
+    EBR ebrExTemp;
+    EBR ebrExTemp2;
+    Particion parts[4];
+    FILE *arch;
+    arch = fopen(disco->getPath().c_str(), "rb+"); // se abre el archivo del disco en modo lectura
+    if (arch != NULL)
+    {
+        fseek(arch,0,SEEK_SET);
+        fread(&mbrTemp, sizeof(MBR),1,arch); //mbrTemp guarda el MBR del disco
+        if(mbrTemp.mbr_partition_1.part_name == disco->getName()|| mbrTemp.mbr_partition_2.part_name == disco->getName()|| mbrTemp.mbr_partition_3.part_name == disco->getName()|| mbrTemp.mbr_partition_4.part_name == disco->getName())
+        {
+
+
+            string tipoDel = disco->getDel();
+            for_each(tipoDel.begin(), tipoDel.end(), [](char &c) //convierte el texto a minisculas
+            {
+                c = ::tolower(c);
+            });
+
+
+            if(tipoDel== "fast")
+            {
+                parts[0]= mbrTemp.mbr_partition_1;
+                parts[1]= mbrTemp.mbr_partition_2;
+                parts[2]= mbrTemp.mbr_partition_3;
+                parts[3]= mbrTemp.mbr_partition_4;
+                Particion vacia; //creo una particion vacia para asignarala al mbr
+                vacia.part_fit='-';
+                vacia.part_name[0]='\0';
+                vacia.part_size=-1;
+                vacia.part_start=-1;
+                vacia.part_status ='0';//status inactivo
+                vacia.part_type='-';
+
+                for(int i=0; i<4; i++) //recorro las particiones para verificar cual es la Extendida
+                {
+                    if(parts[i].part_name == disco->getName())
+                    {
+                        parts[i]=vacia;
+
+                        break;
+                    }
+                }
+                mbrTemp.mbr_partition_1 = parts[0];
+                mbrTemp.mbr_partition_2 = parts[1];
+                mbrTemp.mbr_partition_3 = parts[2];
+                mbrTemp.mbr_partition_4 = parts[3];
+                fseek(arch,0,SEEK_SET);
+                fwrite(&mbrTemp, sizeof(MBR),1,arch); //partExTemp guarda el EBR de la particion E
+                fclose(arch);
+                cout<<"Se elimino la particion en formato fast con exito: "<<disco->getName()<<endl;
+
+            }
+            else if(tipoDel =="full")
+            {
+                parts[0]= mbrTemp.mbr_partition_1;
+                parts[1]= mbrTemp.mbr_partition_2;
+                parts[2]= mbrTemp.mbr_partition_3;
+                parts[3]= mbrTemp.mbr_partition_4;
+                Particion parDel;
+                Particion vacia; //creo una particion vacia para asignarala al mbr
+                vacia.part_fit='-';
+                vacia.part_name[0]='\0';
+                vacia.part_size=-1;
+                vacia.part_start=-1;
+                vacia.part_status ='0';//status inactivo
+                vacia.part_type='-';
+
+                for(int i=0; i<4; i++) //recorro las particiones para verificar cual es la Extendida
+                {
+                    if(parts[i].part_name == disco->getName())
+                    {
+                        parDel = parts[i];
+
+                        break;
+                    }
+                }
+                char buffer[1024];
+
+
+                //se llena la variable buffer de ceros para que no este en null
+                for(int i = 0; i<1024; i++)
+                {
+                    buffer[i]='\0';
+                }
+                //creo el disco y lo lleno con el buffer para que quede lleno de 0
+                fseek(arch,parDel.part_start,SEEK_SET);
+                for(int i=parDel.part_start; i<(parDel.part_start+parDel.part_size); i+=1024)
+                {
+                    fwrite(&buffer,1024,1,arch);
+                }
+
+
+                for(int i=0; i<4; i++) //recorro las particiones para verificar cual es la Extendida
+                {
+                    if(parts[i].part_name == disco->getName())
+                    {
+                        parts[i]=vacia;
+
+                        break;
+                    }
+                }
+
+
+                mbrTemp.mbr_partition_1 = parts[0];
+                mbrTemp.mbr_partition_2 = parts[1];
+                mbrTemp.mbr_partition_3 = parts[2];
+                mbrTemp.mbr_partition_4 = parts[3];
+                fseek(arch,0,SEEK_SET);
+                fwrite(&mbrTemp, sizeof(MBR),1,arch); //partExTemp guarda el EBR de la particion E
+                fclose(arch);
+                cout<<"Se elimino la particion en formato full con exito: "<<disco->getName()<<endl;
+
+            }
+
+
+        }
+        else if(mbrTemp.mbr_partition_1.part_type == 'E'|| mbrTemp.mbr_partition_2.part_type == 'E'|| mbrTemp.mbr_partition_3.part_type == 'E'|| mbrTemp.mbr_partition_4.part_type == 'E')
+        {
+            parts[0]= mbrTemp.mbr_partition_1;
+            parts[1]= mbrTemp.mbr_partition_2;
+            parts[2]= mbrTemp.mbr_partition_3;
+            parts[3]= mbrTemp.mbr_partition_4;
+
+            for(int i=0; i<4; i++) //recorro las particiones para verificar cual es la Extendida
+            {
+                if(parts[i].part_type == 'E')
+                {
+
+                    fseek(arch,parts[i].part_start,SEEK_SET);
+                    fread(&ebrExTemp, sizeof(EBR),1,arch); //partExTemp guarda el EBR de la particion E
+                    break;
+                }
+            }
+
+            bool hayNombre= false;
+            while(ebrExTemp.part_next != -1)
+            {
+                if(ebrExTemp.part_name == disco->getName())
+                {
+                    hayNombre=true;
+                    break;
+                }
+                ebrExTemp2 = ebrExTemp;
+                fseek(arch, ebrExTemp.part_next, SEEK_SET);
+                fread(&ebrExTemp, sizeof(EBR), 1, arch);
+            }
+
+
+            if(hayNombre)
+            {
+                string tipoDel = disco->getDel();
+                for_each(tipoDel.begin(), tipoDel.end(), [](char &c) //convierte el texto a minisculas
+                {
+                    c = ::tolower(c);
+                });
+
+                if(tipoDel == "fast")
+                {
+                    ebrExTemp2.part_next =ebrExTemp.part_next;
+
+
+                    fseek(arch,(ebrExTemp2.part_start - sizeof(EBR)),SEEK_SET);
+                    fwrite(&ebrExTemp2,sizeof(EBR),1,arch);
+                    fclose(arch);
+                    cout<<"Se elimino la particion en formato fast con exito: "<<disco->getName()<<endl;
+
+                }
+                else if(tipoDel == "full")
+                {
+                    ebrExTemp2.part_next =ebrExTemp.part_next;
+                    char buffer = '\0';
+
+                    for(int i=ebrExTemp2.part_next; i<ebrExTemp.part_next; i++)
+                    {
+                        fwrite(&buffer,1,1,arch);
+                    }
+
+                    ebrExTemp2.part_next =ebrExTemp.part_next;
+                    fseek(arch,(ebrExTemp2.part_start - sizeof(EBR)),SEEK_SET);
+                    fwrite(&ebrExTemp2,sizeof(EBR),1,arch);
+                    fclose(arch);
+
+                    cout<<"Se elimino la particion en formato full con exito: "<<disco->getName()<<endl;
+                }
+
+            }
+            else
+            {
+                cout<<"ERROR: Nombre de la particion no encotrada: "<<disco->getName()<<endl;
+                fclose(arch);
+            }
+        }
+        else
+        {
+            cout<<"ERROR: Nombre de la particion no encotrada: "<<disco->getName()<<endl;
+            fclose(arch);
+        }
+
+
+    }
+    else
+    {
+        cout<<"ERROR: Disco no encontrado en la ruta: "<<disco->getPath()<<endl;
+        fclose(arch);
+    }
+
+ imprimirDatosDisco(disco->getPath());
 }
 void fdisk::agregarEspacioParticion()
 {

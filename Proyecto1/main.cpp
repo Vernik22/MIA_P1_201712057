@@ -37,7 +37,7 @@ int main(){
 
         fd->ejecutarComandoFdisk(fd);
 
-        fd->setName("Segunda");
+        fd->setName("Prueba");
         fd->setPath("/home/vernik/Escritorio/Disco1.dk");
         fd->setSize(2);
         fd->setType("P");
@@ -62,6 +62,17 @@ int main(){
         fd->setUnit("B");
         fd->setFit("BF");
 
+
+        fd->ejecutarComandoFdisk(fd);
+
+        fd->setName("Cuarta");
+        fd->setPath("/home/vernik/Escritorio/Disco1.dk");
+        fd->setSize(20);
+        fd->setType("L");
+        fd->setUnit("B");
+        fd->setFit("BF");
+
+
         fd->ejecutarComandoFdisk(fd);
 
         fd->setName("Quinta");
@@ -72,6 +83,11 @@ int main(){
         fd->setFit("BF");
 
         fd->ejecutarComandoFdisk(fd);
+
+        fd->setName("Tercera");
+        fd->setPath("/home/vernik/Escritorio/Disco1.dk");
+        fd->setDel("FAST");
+        fd->eliminarParticion(fd);
 
         }
 

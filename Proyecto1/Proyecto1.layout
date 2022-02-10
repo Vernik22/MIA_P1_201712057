@@ -2,19 +2,19 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="fdisk.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="24910" topLine="601" />
-		</Cursor>
-	</File>
-	<File name="rmdisk.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="69" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="mkdisk.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="835" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="estructuras.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1255" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="mkdisk.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2385" topLine="70" />
 		</Cursor>
 	</File>
 	<File name="estructuras.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -24,12 +24,7 @@
 	</File>
 	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1651" topLine="48" />
-		</Cursor>
-	</File>
-	<File name="mkdisk.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3191" topLine="82" />
+			<Cursor1 position="2115" topLine="73" />
 		</Cursor>
 	</File>
 	<File name="rmdisk.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -37,14 +32,19 @@
 			<Cursor1 position="1408" topLine="27" />
 		</Cursor>
 	</File>
-	<File name="fdisk.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="fdisk.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="71" topLine="0" />
+			<Cursor1 position="33193" topLine="727" />
 		</Cursor>
 	</File>
-	<File name="estructuras.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="rmdisk.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1255" topLine="37" />
+			<Cursor1 position="69" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="fdisk.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="368" topLine="0" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

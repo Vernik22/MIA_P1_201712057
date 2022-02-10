@@ -12,7 +12,7 @@ class fdisk
         void ejecutarComandoFdisk(fdisk *disco);
         bool hayEspacio(int tamaParticion, int tamanoDisco);
         int espacioLibre(int inicio, int fin);
-        void eliminarParticion(string path,string nombre, string tipoDelete);
+        void eliminarParticion(fdisk *disco);
         void agregarEspacioParticion();
         void imprimirDatosDisco(string path);
         int masGrande(int uno, int dos, int tres, int cuatro);
