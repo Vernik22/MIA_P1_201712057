@@ -45,6 +45,34 @@ int main(){
         fd->setFit("BF");
 
         fd->ejecutarComandoFdisk(fd);
+
+        fd->setName("Tercera");
+        fd->setPath("/home/vernik/Escritorio/Disco1.dk");
+        fd->setSize(2);
+        fd->setType("E");
+        fd->setUnit("k");
+        fd->setFit("BF");
+
+        fd->ejecutarComandoFdisk(fd);
+
+        fd->setName("Cuarta");
+        fd->setPath("/home/vernik/Escritorio/Disco1.dk");
+        fd->setSize(20);
+        fd->setType("L");
+        fd->setUnit("B");
+        fd->setFit("BF");
+
+        fd->ejecutarComandoFdisk(fd);
+
+        fd->setName("Quinta");
+        fd->setPath("/home/vernik/Escritorio/Disco1.dk");
+        fd->setSize(2);
+        fd->setType("P");
+        fd->setUnit("k");
+        fd->setFit("BF");
+
+        fd->ejecutarComandoFdisk(fd);
+
         }
 
     }

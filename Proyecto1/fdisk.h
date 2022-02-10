@@ -17,7 +17,8 @@ class fdisk
         void imprimirDatosDisco(string path);
         int masGrande(int uno, int dos, int tres, int cuatro);
         int mejorAsign(int uno, int dos, int tres, int cuatro, int tamParti);
-        int masPequeño(int uno, int dos, int tres, int cuatro);
+        int msPeq(int uno, int d, int t, int c);
+
 
         void setSize(int si){
             tamano=si;

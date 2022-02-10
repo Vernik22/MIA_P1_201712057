@@ -5,7 +5,7 @@
 1644291775 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1644369275 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1644442638 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	"mkdisk.h"
 	"rmdisk.h"
@@ -16,7 +16,7 @@
 	<string>
 	"estructuras.h"
 
-1644369274 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
+1644369352 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
 	"mkdisk.h"
 	<iostream>
 	<time.h>
@@ -33,11 +33,11 @@
 	<vector>
 	"string"
 
-1644293406 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/fdisk.h
+1644422695 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/fdisk.h
 	<string>
 	"estructuras.h"
 
-1644288905 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/fdisk.cpp
+1644466525 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/fdisk.cpp
 	"fdisk.h"
 	<iostream>
 	<string.h>
