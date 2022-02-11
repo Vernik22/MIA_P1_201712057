@@ -40,6 +40,8 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="mkdisk.cpp" />
 		<Unit filename="mkdisk.h" />
+		<Unit filename="mount.cpp" />
+		<Unit filename="mount.h" />
 		<Unit filename="rmdisk.cpp" />
 		<Unit filename="rmdisk.h" />
 		<Extensions />

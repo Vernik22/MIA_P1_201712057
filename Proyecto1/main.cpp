@@ -14,6 +14,7 @@ int main(){
     fdisk *fd = new fdisk();
     while(comando != "salir"){
         cout<<"\n------------------------------Ingrese un comando------------------------------\n\n";
+
         //getline(cin, comando);
         cin>>comando;
         if(comando != ""&&comando!= "salir"){
