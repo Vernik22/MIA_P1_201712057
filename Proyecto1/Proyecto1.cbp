@@ -44,6 +44,8 @@
 		<Unit filename="mount.h" />
 		<Unit filename="rmdisk.cpp" />
 		<Unit filename="rmdisk.h" />
+		<Unit filename="unmount.cpp" />
+		<Unit filename="unmount.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

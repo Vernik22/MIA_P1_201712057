@@ -2,6 +2,9 @@
 #include "mkdisk.h"
 #include "rmdisk.h"
 #include "fdisk.h"
+#include <vector>
+#include "mount.h"
+#include "unmount.h"
 
 
 using namespace std;
@@ -12,6 +15,9 @@ int main(){
     mkdisk *disco1 = new mkdisk();
     rmdisk *rm = new rmdisk();
     fdisk *fd = new fdisk();
+    mount *pm = new mount();
+    unmount *pu = new unmount();
+    vector<mount> ParticionesMontadas;
     while(comando != "salir"){
         cout<<"\n------------------------------Ingrese un comando------------------------------\n\n";
 
@@ -89,6 +95,19 @@ int main(){
         fd->setPath("/home/vernik/Escritorio/Disco1.dk");
         fd->setDel("FAST");
         fd->eliminarParticion(fd);
+
+        pm->setName("Prueba");
+        pm->setPath("/home/vernik/Escritorio/Disco1.dk");
+
+        pm->ejecutarComandoMount(pm,ParticionesMontadas);
+
+        pu->setId("571A");
+        pu->ejecutarComandoUnmount(pu,ParticionesMontadas);
+
+        //ParticionesMontadas.erase(ParticionesMontadas.begin()+0);
+
+        cout<< ParticionesMontadas[0].getName()<<endl;
+        cout<< ParticionesMontadas[0].getId()<<endl;
 
         }
 

@@ -18,8 +18,9 @@ void mount::ejecutarComandoMount(mount *part, vector<mount> &paMoun)
 {
     cout<<"\n************Ejecutar Mount************\n"<<endl;
     bool vError= true;
+    int siV = paMoun.size();
 
-    for(int i =0; i< paMoun.size(); i++)
+    for(int i =0; i< siV; i++)
     {
         if(paMoun[i].getName()==part->getName()&&paMoun[i].getPath() == part->getPath())
         {
@@ -38,7 +39,8 @@ void mount::ejecutarComandoMount(mount *part, vector<mount> &paMoun)
         nueva.setName(part->getName());
         nueva.setPath(part->getPath());
         nueva.setId(part->getId());
-        paMoun.push_back(nueva); //comando para agregar al vector
+        paMoun.push_back(nueva); //comando para agregar al vector.
+        cout<<"Particion montada con exito!"<<endl;
     }
 
 
@@ -73,13 +75,15 @@ string mount::generarId(mount *part,vector<mount> &paMoun)
         idTemp = idTemp + std::to_string(n);
         cout<<idTemp<<endl;
     */
-
-    for(int i =0; i< paMoun.size(); i++)
+    int siVe = paMoun.size();
+    for(int i =0; i< siVe; i++)
     {
         if(paMoun[i].getPath()==part->getPath())
         {
             l++;
-        }else{
+        }
+        else
+        {
             n++;
         }
 
