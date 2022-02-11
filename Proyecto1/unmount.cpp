@@ -13,18 +13,20 @@ unmount::~unmount()
     //dtor
 }
 
-void unmount::ejecutarComandoUnmount(unmount *part, vector<mount>& v)
+void unmount::ejecutarComandoUnmount(unmount *part, mount paMoun[])
 {
     cout<<"\n************Ejecutar Unmount************\n"<<endl;
     bool vError = false;
-    int siVe = v.size();
-    int indexP=0;
-    for(int i =0; i<siVe; i++)
+    for(int i =0; i<100; i++)
     {
-        if(part->getId() == v[i].getId()){
+        if(part->getId() == paMoun[i].getId()){
             vError = false;
-            cout<<v[i].getId()<<endl;
-            indexP = i;
+            cout<<"ID de la particion desmontada: "<<paMoun[i].getId()<<endl;
+            mount nueva;// creo una calase mount para inicializar las posiciones del array en vacias
+            nueva.setName(" ");
+            nueva.setPath(" ");
+            nueva.setId(" ");
+            paMoun[i] = nueva; //intercambio la posicion en la que estaba el id por una vacia
             cout<<"Particion desmontada con exito!"<<endl;
             break;
         }
@@ -35,9 +37,6 @@ void unmount::ejecutarComandoUnmount(unmount *part, vector<mount>& v)
     if(vError)
     {
         cout<<"ERROR: El ID de la particion no existe, intente de nuevo"<<endl;
-    }else{
-        v.erase(v.begin()+indexP);
-            cout<<v[indexP].getId()<<endl;
     }
 
 }

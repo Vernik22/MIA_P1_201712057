@@ -10,7 +10,7 @@ class unmount
     public:
         unmount();
         virtual ~unmount();
-        void ejecutarComandoUnmount(unmount *part , vector<mount>& v);
+        void ejecutarComandoUnmount(unmount *part , mount []);
 
         void setId(string s){
             idMount = s;

@@ -14,13 +14,12 @@ mount::~mount()
 //estructura del id: *57+ Numero + Letra :: ejemplo  ids= 571A ; 571B ; 571C, 572A
 // Numero sera el mismo para particiones en el mismo disco y letra diferente para particiones en el mismo disco
 
-void mount::ejecutarComandoMount(mount *part, vector<mount> &paMoun)
+void mount::ejecutarComandoMount(mount *part, mount paMoun[])
 {
     cout<<"\n************Ejecutar Mount************\n"<<endl;
     bool vError= true;
-    int siV = paMoun.size();
 
-    for(int i =0; i< siV; i++)
+    for(int i =0; i< 100; i++)
     {
         if(paMoun[i].getName()==part->getName()&&paMoun[i].getPath() == part->getPath())
         {
@@ -39,14 +38,22 @@ void mount::ejecutarComandoMount(mount *part, vector<mount> &paMoun)
         nueva.setName(part->getName());
         nueva.setPath(part->getPath());
         nueva.setId(part->getId());
-        paMoun.push_back(nueva); //comando para agregar al vector.
+        for(int i = 0 ; i < 100; i++){
+            if(paMoun[i].getId() == " "){
+                //paMoun.push_back(nueva); //comando para agregar al vector.
+                paMoun[i] = nueva;
+                break;
+            }
+
+        }
+
         cout<<"Particion montada con exito!"<<endl;
     }
 
 
 }
 
-string mount::generarId(mount *part,vector<mount> &paMoun)
+string mount::generarId(mount *part,mount paMoun[])
 {
     //en ascii A = 65 -- Z = 90 ;; 1 = 49 -- 9 = 57
     //Mismo path cambia la letra, diferente path cambia el numero
@@ -75,10 +82,10 @@ string mount::generarId(mount *part,vector<mount> &paMoun)
         idTemp = idTemp + std::to_string(n);
         cout<<idTemp<<endl;
     */
-    int siVe = paMoun.size();
-    for(int i =0; i< siVe; i++)
+    for(int i =0; i< 100; i++)
     {
-        if(paMoun[i].getPath()==part->getPath())
+        if(paMoun[i].getName() != " "){
+            if(paMoun[i].getPath()==part->getPath())
         {
             l++;
         }
@@ -87,6 +94,7 @@ string mount::generarId(mount *part,vector<mount> &paMoun)
             n++;
         }
 
+        }
 
     }
     idTemp = idTemp + std::to_string(n);
@@ -94,3 +102,5 @@ string mount::generarId(mount *part,vector<mount> &paMoun)
     return idTemp;
 
 }
+
+

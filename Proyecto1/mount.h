@@ -10,8 +10,8 @@ class mount
     public:
         mount();
         virtual ~mount();
-        void ejecutarComandoMount(mount *part, vector<mount> &paMoun);
-        string generarId(mount *part,vector<mount> &paMoun);
+        void ejecutarComandoMount(mount *part, mount []);
+        string generarId(mount *part,mount []);
 
         void setPath(string s){
             path=s;
