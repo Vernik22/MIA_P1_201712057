@@ -125,6 +125,12 @@ int main()
 
     }
 
+        /*
+        para el comando pausa usar lo siguiente
+
+        printf("Pause Presione una tecla para continuar... \n");
+        cin.get();
+        */
 
     return 0;
 }
