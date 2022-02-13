@@ -82,7 +82,7 @@ typedef struct{
     int s_bm_block_start; //guarda el inicio del bitmap de bloques
     int s_inode_start;
     int s_block_start;
-}Sb;
+}SupB;
 
 //struct para el inodo
 typedef struct{
@@ -116,5 +116,14 @@ typedef struct{
 typedef struct{
     int b_pointers[16]; //array con los apuntadores a bloques(archivo o carpeta)
 }BApun;
+
+typedef struct{
+    char Log_tipo_operacion[19];
+    char Log_tipo;
+    char Log_nombre[35];
+    char Log_Contenido[25];
+    char Log_fecha[19];
+    int Size;
+}Bitacora;
 
 #endif // ESTRUCTURAS_H

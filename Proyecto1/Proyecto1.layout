@@ -2,22 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="unmount.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="estructuras.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="454" topLine="8" />
+			<Cursor1 position="3067" topLine="102" />
 		</Cursor>
 	</File>
-	<File name="fdisk.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+	<File name="mkfs.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7899" topLine="162" />
-		</Cursor>
-		<Folding>
-			<Collapse line="835" />
-		</Folding>
-	</File>
-	<File name="rmdisk.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="69" topLine="0" />
+			<Cursor1 position="285" topLine="3" />
 		</Cursor>
 	</File>
 	<File name="rmdisk.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -25,14 +17,14 @@
 			<Cursor1 position="1838" topLine="61" />
 		</Cursor>
 	</File>
-	<File name="estructuras.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="fdisk.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="63" topLine="39" />
+			<Cursor1 position="840" topLine="3" />
 		</Cursor>
 	</File>
-	<File name="unmount.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="unmount.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="231" topLine="1" />
+			<Cursor1 position="988" topLine="17" />
 		</Cursor>
 	</File>
 	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -40,14 +32,32 @@
 			<Cursor1 position="3560" topLine="111" />
 		</Cursor>
 	</File>
-	<File name="mount.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mkfs.cpp" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="359" topLine="3" />
+			<Cursor1 position="1531" topLine="48" />
 		</Cursor>
 	</File>
-	<File name="fdisk.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="rmdisk.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="840" topLine="3" />
+			<Cursor1 position="69" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="unmount.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="231" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="fdisk.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17271" topLine="351" />
+		</Cursor>
+		<Folding>
+			<Collapse line="835" />
+		</Folding>
+	</File>
+	<File name="mkdisk.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3213" topLine="82" />
 		</Cursor>
 	</File>
 	<File name="estructuras.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -55,14 +65,14 @@
 			<Cursor1 position="112" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="mount.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mount.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="239" topLine="3" />
+			<Cursor1 position="742" topLine="16" />
 		</Cursor>
 	</File>
-	<File name="mkdisk.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+	<File name="mount.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2385" topLine="0" />
+			<Cursor1 position="362" topLine="81" />
 		</Cursor>
 	</File>
 	<File name="mkdisk.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">

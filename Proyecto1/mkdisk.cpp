@@ -44,7 +44,7 @@ void mkdisk::ejecutarComandoMkdisk(mkdisk *disco)
     {
         //se asigna el tamaño al mbr en bytes
         mbrDisco.mbr_tamano = disco->getSize()*1024*1024;
-        //se llena la variable buffer de eros para que no este en null
+        //se llena la variable buffer de ceros para que no este en null
         for(int i = 0; i<1024; i++)
         {
             buffer[i]='\0';

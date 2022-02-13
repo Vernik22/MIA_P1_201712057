@@ -36,6 +36,7 @@ class mount
         string path;
         string name;
         string idMount;
+
 };
 
 #endif // MOUNT_H
