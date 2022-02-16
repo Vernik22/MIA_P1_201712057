@@ -38,6 +38,8 @@
 		<Unit filename="fdisk.cpp" />
 		<Unit filename="fdisk.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="manejador.cpp" />
+		<Unit filename="manejador.h" />
 		<Unit filename="mkdisk.cpp" />
 		<Unit filename="mkdisk.h" />
 		<Unit filename="mkfs.cpp" />

@@ -13,12 +13,8 @@ protected:
 
 private:
 };
-//estructura de tiempo
-typedef struct{
-    char mbr_fecha_creacion[16];
-}_mTime;
 //Estructuras para los discos y comandos
-
+//structs para comandos entrantes
 typedef struct
 {
     string Nombre;
@@ -27,8 +23,14 @@ typedef struct
 
 typedef struct{
     string Nombre;
-    Propiedad propiedades[10];
+    Propiedad propiedades[15];
 }Comando; //las propiedades que traen los comandos
+
+//estructura de tiempo
+typedef struct{
+    char mbr_fecha_creacion[16];
+}_mTime;
+
 
 //Estructuras para particiones y discos
 typedef struct{
@@ -76,7 +78,7 @@ typedef struct{
     int s_magic;
     int s_inode_size;
     int s_block_size;
-    int s_firts_ino; //Primer inodo libre
+    int s_first_ino; //Primer inodo libre
     int s_first_blo; //Primer bloque libre
     int s_bm_inode_start; //guardara el inicio del bitmap de inodos
     int s_bm_block_start; //guarda el inicio del bitmap de bloques
@@ -92,22 +94,32 @@ typedef struct{
     _mTime i_atime;
     _mTime i_ctime;
     _mTime i_mtime;
-    int i_block;
+    int i_block; //cantidad de bloques que hay
     int i_type; //indica si es carpeta o archivo :: 1=Archivo  0=Carpeta
     int i_perm;
 }Inodo;
 
+//Arbol Virtual de Directorio
 typedef struct{
+    char Avd_fecha_creacion[19];
+    char Avd_nombre_directorio[15];
+    int Avd_ap_array_subdirectorios[6];
+    int Avd_ap_detalle_directorio;
+    int Avd_ap_arbol_virtual_directorio;
+    char Avd_proper[10];
+}AVD;
+
+typedef struct{ //arregloDD
     char b_name[12];
     int b_inodo; //apuntador hacie un inodo asociado al archivo/carpeta
 }Content;
 
-//struct para el bloque de carpeta
+//struct para el bloque de carpeta [DD]
 typedef struct{
     Content b_content[4]; //array con el contenido de la carpeta
 }BCarpeta;
 
-//struct para el bloque de archivos
+//struct para el bloque de archivos [Bloque]
 typedef struct{
     char b_content[64];
 }BArchivo;

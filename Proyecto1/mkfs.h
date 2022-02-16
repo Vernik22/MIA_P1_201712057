@@ -11,6 +11,7 @@ class mkfs
         void ejecutarComandoMkfs(mkfs *fs, mount []);
         bool existeIdMount(string idB,mount []);
         void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart, int &tamPart, int &iniPart);
+        void crearRaiz();
 
         void setId(string s){
             idMount = s;
