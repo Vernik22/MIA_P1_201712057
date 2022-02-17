@@ -2,10 +2,10 @@
 1644193800 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.cpp
 	"estructuras.h"
 
-1644943748 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
+1645041660 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1644963492 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1645047845 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	<vector>
 	"manejador.h"
@@ -19,7 +19,7 @@
 	<string>
 	"estructuras.h"
 
-1644964715 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
+1645022660 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
 	"mkdisk.h"
 	<iostream>
 	<time.h>
@@ -67,10 +67,10 @@
 	<iostream>
 	"mount.h"
 
-1644701308 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.h
+1645048691 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.h
 	"mount.h"
 
-1644946955 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.cpp
+1645059249 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.cpp
 	"mkfs.h"
 	<iostream>
 	<string.h>

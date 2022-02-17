@@ -37,6 +37,8 @@
 		<Unit filename="estructuras.h" />
 		<Unit filename="fdisk.cpp" />
 		<Unit filename="fdisk.h" />
+		<Unit filename="login.cpp" />
+		<Unit filename="login.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="manejador.cpp" />
 		<Unit filename="manejador.h" />

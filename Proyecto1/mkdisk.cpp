@@ -121,11 +121,15 @@ void mkdisk::dirExist(mkdisk *disco)
     string pathconc = "";
     for (int i = 1; i < resultados.size() - 1; i++)
     {                                             //llenar el string con el path sin el disk.dk
-        pathconc += "/\"" + resultados[i] + "\""; //le agrego comillas a los nombres por si vienen con espacios por ejemplo "mis discos"
+        //pathconc += "/\"" + resultados[i] + "\""; //le agrego comillas a los nombres por si vienen con espacios por ejemplo "mis discos"
+        if(strstr(resultados[i].c_str(), " ")!=NULL){
+           vector<string> conc = split(resultados[i], ' ');
+           resultados[i]="\""+conc[0] + " "+conc[1]+"\"";
+        }
         newpath += "/" + resultados[i];           //este es sin comillas para buscar el directorio no importa si vienen con espacios
     }
     //verificar 3 veces si el archivo existe, si el path existe, y enviar el path con comillas
-
+    cout<<newpath<<endl;
     struct stat st;
     if (stat(disco->path.c_str(), &st) == 0)
     {

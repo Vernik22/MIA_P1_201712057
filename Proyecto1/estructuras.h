@@ -81,9 +81,13 @@ typedef struct{
     int s_first_ino; //Primer inodo libre
     int s_first_blo; //Primer bloque libre
     int s_bm_inode_start; //guardara el inicio del bitmap de inodos
-    int s_bm_block_start; //guarda el inicio del bitmap de bloques
+    int s_bm_blockAp_start; //guarda el inicio del bitmap de bloques
+    int s_bm_blockAr_start;
+    int s_bm_blockC_start;
     int s_inode_start;
-    int s_block_start;
+    int s_blockAp_start;
+    int s_blockAr_start;
+    int s_blockC_start;
 }SupB;
 
 //struct para el inodo
@@ -94,8 +98,9 @@ typedef struct{
     _mTime i_atime;
     _mTime i_ctime;
     _mTime i_mtime;
-    int i_block; //cantidad de bloques que hay
-    int i_type; //indica si es carpeta o archivo :: 1=Archivo  0=Carpeta
+    int i_block; //cantidad de bloques que hay; apunta hacia el bloque apuntador que tiene los 16 apuntadores
+    char i_type; //indica si es carpeta o archivo :: 1=Archivo  0=Carpeta
+    //int i_array_bloques[4];
     int i_perm;
 }Inodo;
 

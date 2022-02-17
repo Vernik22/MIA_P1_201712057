@@ -43,7 +43,7 @@ int main()
         {
             cout<<endl;
             //leer->leerTexto(comando,ParticionesMontadas);
-            disco1->setSPath("/home/vernik/Escritorio/Discos/Disco1.dk");
+            disco1->setSPath("/home/vernik/Escritorio/misDiscos/Disco1.dk");
             disco1->setSize(5);
             disco1->setFit("F");
             disco1->setUnit("m");
@@ -51,7 +51,7 @@ int main()
             disco1->ejecutarComandoMkdisk(disco1);
 
             fd->setName("Prueba");
-            fd->setPath("/home/vernik/Escritorio/Discos/Disco1.dk");
+            fd->setPath("/home/vernik/Escritorio/misDiscos/Disco1.dk");
             fd->setSize(2);
             fd->setType("P");
             fd->setUnit("k");
@@ -59,7 +59,7 @@ int main()
 
             fd->ejecutarComandoFdisk(fd);
             pm->setName("Prueba");
-            pm->setPath("/home/vernik/Escritorio/Discos/Disco1.dk");
+            pm->setPath("/home/vernik/Escritorio/misDiscos/Disco1.dk");
 
             pm->ejecutarComandoMount(pm,ParticionesMontadas);
 
