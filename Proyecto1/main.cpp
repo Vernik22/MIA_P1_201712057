@@ -6,6 +6,7 @@
 #include "mkdisk.h"
 #include "mkfs.h"
 #include "fdisk.h"
+#include "login.h"
 
 
 
@@ -22,6 +23,7 @@ int main()
     mount *pm = new mount();
     //unmount *pu = new unmount();
     mkfs *fs = new mkfs();
+    login *log = new login();
     //vector<mount> ParticionesMontadas;
     mount ParticionesMontadas[100];//creo el array para las particiones que estan montadas
     mount nueva;// creo una calase mount para inicializar las posiciones del array en vacias
@@ -68,6 +70,10 @@ int main()
             fs->setType("full");
             fs->ejecutarComandoMkfs(fs,ParticionesMontadas);
 
+            log->setIdMount("571A");
+            log->setUsuario("root");
+            log->setPassword("123");
+            log->ejecutarComandoLogin(log,ParticionesMontadas);
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);

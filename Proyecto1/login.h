@@ -1,13 +1,18 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 #include "mount.h"
+#include <vector>
 
 class login
 {
     public:
         login();
         virtual ~login();
-        void ejecutarComandoLogin(login *usuario,mount []);
+        bool ejecutarComandoLogin(login *usuario,mount []);
+        bool existeIdMount (string idP,mount []);
+        vector<string> split(string str, char pattern);
+        void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart);
+        bool logout();
 
         void setUsuario(string s){
             usuario = s;

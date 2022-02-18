@@ -48,6 +48,8 @@
 		<Unit filename="mkfs.h" />
 		<Unit filename="mount.cpp" />
 		<Unit filename="mount.h" />
+		<Unit filename="reporte.cpp" />
+		<Unit filename="reporte.h" />
 		<Unit filename="rmdisk.cpp" />
 		<Unit filename="rmdisk.h" />
 		<Unit filename="unmount.cpp" />

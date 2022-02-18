@@ -54,6 +54,7 @@ void manejador::leerTexto(string data, mount DisksMount[]){
 }
 
 void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount DisksMount[]){
+    //verificar si ya hay un asesion iniciada en el comando LOGIN
 
 }
 

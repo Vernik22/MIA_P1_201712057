@@ -202,8 +202,9 @@ void mkfs::crearRaiz(string path,int inicioPart)
         fwrite(&bit,sizeof(bit),1,arch);
         BApun bloqueRaiz;
         bloqueRaiz.b_pointers[0] = 0;
-        bloqueRaiz.b_pointers[1] = 1;
         fseek(arch, superB.s_blockAp_start,SEEK_SET);
+        fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
+        bloqueRaiz.b_pointers[0] = 1;
         fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
         //escribir 1 en el bitmap de inodo y escribir el inodo carpeta raiz
         fseek(arch, superB.s_bm_inode_start,SEEK_SET);
@@ -221,7 +222,7 @@ void mkfs::crearRaiz(string path,int inicioPart)
 
         fseek(arch, superB.s_bm_inode_start+sizeof(bit),SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch);
-        inodoTemp.i_block= superB.s_blockAr_start;
+        inodoTemp.i_block= superB.s_blockAr_start + sizeof(BApun);
         inodoTemp.i_gid = 1;
         inodoTemp.i_uid = 1;
         inodoTemp.i_size = 27;
