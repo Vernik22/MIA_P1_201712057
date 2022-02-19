@@ -245,7 +245,7 @@ void mkfs::crearRaiz(string path,int inicioPart)
         fseek(arch, superB.s_bm_blockAr_start,SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch);
         BArchivo contenidoUsers;
-        string contenido = "1,G,root\n1,U,root,root,123\n";
+        string contenido = "1,G,root\n1,U,root,root,123\n?";
         strcpy(contenidoUsers.b_content,contenido.c_str());
         fseek(arch, superB.s_blockAr_start,SEEK_SET);
         fwrite(&contenidoUsers,sizeof(BArchivo),1,arch);

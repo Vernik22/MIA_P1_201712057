@@ -7,6 +7,8 @@
 #include "mkfs.h"
 #include "fdisk.h"
 #include "login.h"
+#include "mkgrp.h"
+#include "estructuras.h"
 
 
 
@@ -24,6 +26,7 @@ int main()
     //unmount *pu = new unmount();
     mkfs *fs = new mkfs();
     login *log = new login();
+    mkgrp *gr = new mkgrp();
     //vector<mount> ParticionesMontadas;
     mount ParticionesMontadas[100];//creo el array para las particiones que estan montadas
     mount nueva;// creo una calase mount para inicializar las posiciones del array en vacias
@@ -74,6 +77,21 @@ int main()
             log->setUsuario("root");
             log->setPassword("123");
             log->ejecutarComandoLogin(log,ParticionesMontadas);
+
+            User usuario;
+            usuario.idPartMontada = "571A";
+            usuario.nombreUsuario = "root";
+            gr->setDatosUsu(usuario);
+            gr->setName("prueba");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba1");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba2");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba3");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba4");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);

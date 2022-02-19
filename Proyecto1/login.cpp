@@ -73,9 +73,9 @@ bool login::ejecutarComandoLogin(login *usuario, mount paMoun[])
             //cout<< userstxt<<endl;
             vector<string> listaUsuarios = split(userstxt,'\n');
             int cont = listaUsuarios.size();
-            for(int i=0; i<cont; i++){
+            for(int i=0; i<cont-1; i++){
                 vector<string> linea = split(listaUsuarios[i],',');
-                if(linea[1]=="U"){
+                if(linea[1]=="U"&&linea[0]!="0"){
                     if(linea[3]==usuario->getUsuario()&&linea[4]==usuario->getPassword()){
                         cout<<"Bienvenido al sistema: "<<usuario->getUsuario()<<endl;
                         return true;
@@ -134,14 +134,16 @@ vector<string> login::split(string str, char pattern)
     return results;
 }
 
-void login::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart)
-{
-
 bool login::logout(){
     cout<<"\n************Ejecutar LOGOUT************\n"<<endl;
     cout<<"Se cerro la sesion"<<endl;
     return false;
 }
+
+void login::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart)
+{
+
+
     Particion parts[4];
     parts[0] = mbrTemp.mbr_partition_1;
     parts[1] = mbrTemp.mbr_partition_2;

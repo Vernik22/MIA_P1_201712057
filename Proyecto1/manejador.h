@@ -20,15 +20,16 @@ class manejador
         bool getHayInicioSesion(){
             return hayInicioSesion;
         }
-        void setUsuarioAct(string s){
-            usuarioActivo = s;
+        void setUsuarioAct(User s){
+            usuarioIniciado = s;
         }
-        string getUsuarioAct(){
-            return usuarioActivo;
+        User getUsuarioAct(){
+            return usuarioIniciado;
         }
+
     private:
         bool hayInicioSesion;
-        string usuarioActivo;
+        User usuarioIniciado;
 };
 
 #endif // MANEJADOR_H

@@ -104,16 +104,6 @@ typedef struct{
     int i_perm;
 }Inodo;
 
-//Arbol Virtual de Directorio
-typedef struct{
-    char Avd_fecha_creacion[19];
-    char Avd_nombre_directorio[15];
-    int Avd_ap_array_subdirectorios[6];
-    int Avd_ap_detalle_directorio;
-    int Avd_ap_arbol_virtual_directorio;
-    char Avd_proper[10];
-}AVD;
-
 typedef struct{ //arregloDD
     char b_name[12];
     int b_inodo; //apuntador hacie un inodo asociado al archivo/carpeta
@@ -142,5 +132,10 @@ typedef struct{
     char Log_fecha[19];
     int Size;
 }Bitacora;
+
+typedef struct{
+    string nombreUsuario;
+    string idPartMontada;
+}User;
 
 #endif // ESTRUCTURAS_H
