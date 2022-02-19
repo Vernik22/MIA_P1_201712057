@@ -91,8 +91,10 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                 if(apuntadoresArch.b_pointers[i]!=-1)
                 {
                     //cont++;
+                    char str[64];
                     fseek(arch,(superBlock.s_blockAr_start+(apuntadoresArch.b_pointers[i]-1)*sizeof(BArchivo)),SEEK_SET);
                     fread(&texto,sizeof(BArchivo),1,arch);
+                    //str = texto.b_content;
                     userstxt+=texto.b_content;
 
                 }
@@ -111,7 +113,7 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
             for(int i=0; i<cont-1; i++)
             {
                 vector<string> linea = split(listaUsuarios[i],',');
-                if(linea[1]=="G"&&linea[0]!="0")
+                if(linea[1]=="G"&&linea[0]!="0"&&linea[0]!="")
                 {
 
                     if(linea[2]==nombreG)
@@ -170,26 +172,22 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                 nuevaC[0] += nuevoCont;
                 if(noBloques==1)
                 {
-                    cout<<"Pause Presione una tecla para continuar... "<<nuevaC[0].size()<<endl;
-                    if(nuevaC[0].size()<=64)
+                    if(nuevaC[0].size()<64)
                     {
                         strcpy(texto.b_content,nuevaC[0].c_str());
                         fseek(arch, superBlock.s_blockAr_start,SEEK_SET);
                         fwrite(&texto,sizeof(BArchivo),1,arch);
                         cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
-                        cout<<"Pause Presione una tecla para continuar... \n";
-                                cout<<texto.b_content<<endl;
-                                cin.get();
 
                     }
                     else
-                    { //esta parte esta mala
+                    {
                         string nuevaCadena = nuevaC[0];
                         string textEnBlock = "";
                         int bitCont = 0;
-                        for(int i = 0; i< nuevaC[0].size()-1; i++)
+                        for(int i = 0; i< nuevaC[0].size(); i++)
                         {
-                            if(bitCont<64)
+                            if(bitCont<63)
                             {
                                 textEnBlock += nuevaCadena[i];
                             }
@@ -199,6 +197,8 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                                 strcpy(texto.b_content,textEnBlock.c_str());
                                 fseek(arch, superBlock.s_blockAr_start,SEEK_SET);
                                 fwrite(&texto,sizeof(BArchivo),1,arch);
+                                textEnBlock = "";
+                                i--;
 
                             }
                             bitCont ++;
@@ -222,24 +222,32 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                                 break;
 
                             }
-                            else
-                            {
-                                bitCont++;
-                            }
+
+                            bitCont++;
+
                         }
+                        int llenar = 1;
+                        fseek(arch, superBlock.s_bm_blockAr_start+sizeof(llenar),SEEK_SET);
+
+                        fwrite(&llenar, sizeof(llenar),1,arch);
+
 
 
                     }
                 }
                 else
-                { //Revisar que esta malo
-
+                {
                     //cuando hay mas de 1 bloque
+                    fseek(arch,(superBlock.s_blockAp_start+sizeof(BApun)),SEEK_SET);
+                    fread(&apuntadoresArch,sizeof(BApun),1,arch);
+
                     string nuevaCadena = "";
                     for(int i =0; i<16; i++)
                     {
+                        //cout<<"wl apuntador es: "<<apuntadoresArch.b_pointers[i]<<endl;
                         if(apuntadoresArch.b_pointers[i]==-1)
                         {
+
                             //cont++;
                             fseek(arch,(superBlock.s_blockAr_start+(apuntadoresArch.b_pointers[i-1]-1)*sizeof(BArchivo)),SEEK_SET);
                             fread(&texto,sizeof(BArchivo),1,arch);
@@ -249,7 +257,7 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
 
                             nuevaC[0]+=nuevoCont;
 
-                            if(nuevaC[0].size()<=64)
+                            if(nuevaC[0].size()<64)
                             {
                                 strcpy(texto.b_content,nuevaC[0].c_str());
                                 fseek(arch,(superBlock.s_blockAr_start+(apuntadoresArch.b_pointers[i-1]-1)*sizeof(BArchivo)),SEEK_SET);
@@ -258,14 +266,15 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                             }
                             else
                             {
+                                //REvisar esta algo mal
                                 nuevaCadena = nuevaC[0];
                                 string textEnBlock = "";
                                 int bitCont = 0;
-                                for(int i = 0; i< nuevaC[0].size()-1; i++)
+                                for(int j = 0; j< nuevaC[0].size(); j++)
                                 {
-                                    if(bitCont<64)
+                                    if(bitCont<63)
                                     {
-                                        textEnBlock += nuevaCadena[i];
+                                        textEnBlock += nuevaCadena[j];
                                     }
                                     else
                                     {
@@ -273,12 +282,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                                         strcpy(texto.b_content,textEnBlock.c_str());
                                         fseek(arch,(superBlock.s_blockAr_start+(apuntadoresArch.b_pointers[i-1]-1)*sizeof(BArchivo)),SEEK_SET);
                                         fwrite(&texto,sizeof(BArchivo),1,arch);
+                                        textEnBlock = "";
+                                        j--;
                                     }
                                     bitCont ++;
                                 }
 
                                 bitCont = 1;
-                                for(int i = 0; i< superBlock.s_inodes_count; i++)
+                                for(int j = 0; j< superBlock.s_inodes_count; j++)
                                 {
                                     fseek(arch,(superBlock.s_blockAr_start+(bitCont-1)*sizeof(BArchivo)), SEEK_SET);
                                     fread(&texto,sizeof(BArchivo),1,arch);
@@ -294,9 +305,23 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                                         break;
 
                                     }
-                                    else
+                                    bitCont++;
+
+                                }
+
+                                int llenar = 1;
+                                int comp = 1;
+                                for(int j = 0; j< superBlock.s_inodes_count; j++)
+                                {
+                                    fseek(arch,(superBlock.s_bm_blockAr_start+(j)*sizeof(llenar)),SEEK_SET);
+
+                                    fread(&comp, sizeof(llenar),1,arch);
+
+                                    if(comp==0)
                                     {
-                                        bitCont++;
+
+                                        fseek(arch,(superBlock.s_bm_blockAr_start+(j)*sizeof(llenar)),SEEK_SET);
+                                        fwrite(&llenar, sizeof(llenar),1,arch);
                                     }
                                 }
 
@@ -304,7 +329,6 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreAr
                             break;
 
                         }
-
                     }
 
                 }

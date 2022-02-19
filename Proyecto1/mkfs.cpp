@@ -201,10 +201,20 @@ void mkfs::crearRaiz(string path,int inicioPart)
         fseek(arch, superB.s_bm_blockC_start,SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch);
         BApun bloqueRaiz;
+        for(int i = 0; i<16; i++) //inicializar los 16 apuntadores
+        {
+            bloqueRaiz.b_pointers[i] = -1;
+        }
+        fseek(arch,superB.s_blockAp_start, SEEK_SET);
+        for(int i=0; i<superB.s_inodes_count; i++)
+        {
+            fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
+        }
         bloqueRaiz.b_pointers[0] = 0;
         fseek(arch, superB.s_blockAp_start,SEEK_SET);
         fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
         bloqueRaiz.b_pointers[0] = 1;
+        fseek(arch, (superB.s_blockAp_start+sizeof(BApun)),SEEK_SET);
         fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
         //escribir 1 en el bitmap de inodo y escribir el inodo carpeta raiz
         fseek(arch, superB.s_bm_inode_start,SEEK_SET);
@@ -336,37 +346,37 @@ void mkfs::inicializarBitmaps(string path,int partStart,SupB superBlock)
     fseek(arch,superBlock.s_blockAp_start, SEEK_SET);
     for(int i=0; i<superBlock.s_inodes_count; i++)
     {
-    fwrite(&blockApuntador,sizeof(BApun),1,arch);
+        fwrite(&blockApuntador,sizeof(BApun),1,arch);
     }
 
 
 
-    fseek(arch,superBlock.s_blockC_start , SEEK_SET);
+    fseek(arch,superBlock.s_blockC_start, SEEK_SET);
     blockCarpeta.b_content[0].b_inodo=-1;
     blockCarpeta.b_content[1].b_inodo=-1;
     blockCarpeta.b_content[2].b_inodo=-1;
     blockCarpeta.b_content[3].b_inodo=-1;
-    for(int j = 0; j<superBlock.s_inodes_count;j++)
+    for(int j = 0; j<superBlock.s_inodes_count; j++)
     {
-       fwrite(&blockCarpeta,sizeof(BCarpeta),1,arch);
-     }
+        fwrite(&blockCarpeta,sizeof(BCarpeta),1,arch);
+    }
 
     fseek(arch,superBlock.s_blockAr_start, SEEK_SET);
-     blockArch.b_content[0]='-';
+    blockArch.b_content[0]='-';
     for(int i=0; i<superBlock.s_inodes_count; i++)
-     {
-       fwrite(&blockArch,sizeof(BArchivo),1,arch);
-    // fwrite(&blockArch,64,1,arch);
+    {
+        fwrite(&blockArch,sizeof(BArchivo),1,arch);
+        // fwrite(&blockArch,64,1,arch);
     }
 
 
-/*
-    int prueba = 1;
-    fseek(arch, superBlock.s_bm_blockC_start, SEEK_SET);
-    fread(&prueba,sizeof(prueba),1,arch);
+    /*
+        int prueba = 1;
+        fseek(arch, superBlock.s_bm_blockC_start, SEEK_SET);
+        fread(&prueba,sizeof(prueba),1,arch);
 
-    cout<<prueba<<endl;
-*/
+        cout<<prueba<<endl;
+    */
 
     fclose(arch);
 }

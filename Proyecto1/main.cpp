@@ -92,6 +92,16 @@ int main()
             gr->ejecutarMkgrp(gr,ParticionesMontadas);
             gr->setName("prueba4");
             gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba5");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba6");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba7");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba8");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
+            gr->setName("prueba9");
+            gr->ejecutarMkgrp(gr,ParticionesMontadas);
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);
