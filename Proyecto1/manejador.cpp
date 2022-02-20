@@ -54,7 +54,7 @@ void manejador::leerTexto(string data, mount DisksMount[]){
 }
 
 void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount DisksMount[]){
-    //verificar si ya hay un asesion iniciada en el comando LOGIN
+    //verificar si ya hay un asesion iniciada en el comando LOGIN y guardar el nombre del usuario y el id de la particion
 
 }
 

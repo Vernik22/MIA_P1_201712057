@@ -62,7 +62,7 @@ vector<string> mkgrp::split(string str, char pattern)
     return results;
 }
 
-void mkgrp::modificarArchivo(string pathDisco, string nombrePart,string nombreArchivo, string nombreG)
+void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG)
 {
     if(nombreG.size()<11)
     {
@@ -396,4 +396,9 @@ void mkgrp::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tam
 
         fclose(arch);
     }
+}
+
+void mkgrp::ejecutarRmgrp(mkgrp *grupo,mount paMoun[])
+{
+
 }

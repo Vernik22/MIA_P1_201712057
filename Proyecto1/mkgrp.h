@@ -13,7 +13,10 @@ class mkgrp
         void ejecutarMkgrp(mkgrp *grupo,mount []);
         vector<string> split(string str, char pattern);
         void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart);
-        void modificarArchivo(string pathDisco, string nombrePart,string nombreArchivo, string nombreG);
+        void modificarArchivo(string pathDisco, string nombrePart, string nombreG);
+        //para el comando RMGRP, eliminar un grupo
+        void ejecutarRmgrp(mkgrp *grupo,mount []);
+
 
         void setName(string s){
             name=s;

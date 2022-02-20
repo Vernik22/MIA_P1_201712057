@@ -48,6 +48,8 @@
 		<Unit filename="mkfs.h" />
 		<Unit filename="mkgrp.cpp" />
 		<Unit filename="mkgrp.h" />
+		<Unit filename="mkusr.cpp" />
+		<Unit filename="mkusr.h" />
 		<Unit filename="mount.cpp" />
 		<Unit filename="mount.h" />
 		<Unit filename="reporte.cpp" />
