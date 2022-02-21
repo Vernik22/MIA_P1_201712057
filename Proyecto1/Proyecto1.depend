@@ -5,7 +5,7 @@
 1645196880 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1645305230 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1645462040 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	<vector>
 	"manejador.h"
@@ -86,7 +86,7 @@
 	"estructuras.h"
 	"mount.h"
 
-1645133432 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
+1645399304 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
 	"manejador.h"
 	<algorithm>
 	<iostream>
@@ -108,12 +108,12 @@
 	"login.h"
 	<iostream>
 
-1645219529 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.h
+1645399102 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.h
 	"mount.h"
 	<vector>
 	"estructuras.h"
 
-1645302819 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.cpp
+1645462060 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.cpp
 	"mkgrp.h"
 	<iostream>
 	<string>

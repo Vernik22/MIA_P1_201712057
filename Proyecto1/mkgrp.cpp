@@ -34,12 +34,12 @@ void mkgrp::ejecutarMkgrp(mkgrp *grupo,mount paMoun[])
             }
 
         }
-        modificarArchivo(pathDisco, nombrePart,"users.txt",grupo->getName());
+        modificarArchivo(pathDisco, nombrePart,grupo->getName());
 
     }
     else
     {
-        cout<<"Usuario incorrecto"<<endl;
+        cout<<"Usuario incorrecto, no es el usuario root"<<endl;
     }
 
 }
