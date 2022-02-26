@@ -15,6 +15,7 @@ mkgrp::~mkgrp()
     //dtor
 }
 
+
 void mkgrp::ejecutarMkgrp(mkgrp *grupo,mount paMoun[])
 {
     cout<<"\n************Ejecutar MKGRP************\n"<<endl;
@@ -400,5 +401,37 @@ void mkgrp::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tam
 
 void mkgrp::ejecutarRmgrp(mkgrp *grupo,mount paMoun[])
 {
+        cout<<"\n************Ejecutar RMGRP************\n"<<endl;
+
+    if(getDatosUsu().nombreUsuario == "root")
+    {
+        string pathDisco;
+        string nombrePart;
+        for(int i =0; i<100; i++)
+        {
+            if(getDatosUsu().idPartMontada == paMoun[i].getId())
+            {
+                pathDisco = paMoun[i].getPath();
+                nombrePart = paMoun[i].getName();
+                break;
+
+            }
+
+        }
+        modificarArchivoRM(pathDisco, nombrePart,grupo->getName());
+
+    }
+    else
+    {
+        cout<<"Usuario incorrecto, no es el usuario root"<<endl;
+    }
+
 
 }
+
+void mkgrp::modificarArchivoRM(string pathDisco, string nombrePart, string nombreG){
+
+
+}
+
+

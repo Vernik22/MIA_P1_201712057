@@ -57,7 +57,7 @@ int main()
 
             fd->setName("Prueba");
             fd->setPath("/home/vernik/Escritorio/misDiscos/Disco1.dk");
-            fd->setSize(2);
+            fd->setSize(100);
             fd->setType("P");
             fd->setUnit("k");
             fd->setFit("BF");
@@ -102,6 +102,7 @@ int main()
             gr->ejecutarMkgrp(gr,ParticionesMontadas);
             gr->setName("prueba9");
             gr->ejecutarMkgrp(gr,ParticionesMontadas);
+
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);

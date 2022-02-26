@@ -13,6 +13,7 @@ mkusr::~mkusr()
     //dtor
 }
 
+
 void mkusr::ejecutarMkusr(mkusr *usua,mount paMoun[])
 {
     cout<<"\n************Ejecutar MKUSR************\n"<<endl;
@@ -330,8 +331,37 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
 }
 
-void mkusr::ejecutarRmusr(mkusr *grupo,mount paMoun[])
+void mkusr::ejecutarRmusr(mkusr *usua,mount paMoun[])
 {
+    cout<<"\n************Ejecutar RMUSR************\n"<<endl;
+
+    if(getDatosUsu().nombreUsuario == "root")
+    {
+        string pathDisco;
+        string nombrePart;
+        for(int i =0; i<100; i++)
+        {
+            if(getDatosUsu().idPartMontada == paMoun[i].getId())
+            {
+                pathDisco = paMoun[i].getPath();
+                nombrePart = paMoun[i].getName();
+                break;
+
+            }
+
+        }
+        modificarArchivoRM(pathDisco, nombrePart,usua->getUsuario());
+
+    }
+    else
+    {
+        cout<<"Usuario incorrecto, no es el usuario root"<<endl;
+    }
+
+}
+
+void mkusr::modificarArchivoRM(string pathDisco, string nombrePart, string nombreUser){
+
 
 }
 
@@ -352,4 +382,5 @@ vector<string> mkusr::split(string str, char pattern)
 
     return results;
 }
+
 

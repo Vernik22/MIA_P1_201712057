@@ -58,15 +58,15 @@ void mkfs::ejecutarComandoMkfs(mkfs *fs, mount paMoun[])
             {
                 //Ext3
                 //n = (tamParticion - sizeof(SupB))/(1 + 3 + sizeof(Inodo) + 3*sizeof(BArchivo)+sizeof(Bitacora));
-                //floor(n);
                 n = (tamParticion - sizeof(SupB)) / (4 + sizeof(Inodo) + sizeof(Bitacora) + 3 * 64); //voy a usar esta
+                //floor(n);
             }
             else
             {
                 //Ext2
-                n = (tamParticion - sizeof(SupB))/(1 + 3 + sizeof(Inodo) + 3*sizeof(BArchivo));
-                floor(n);
-                //n = (tamParticion - sizeof(SupB)) / (4 + sizeof(Inodo) + 3 * 64); //voy a usar esta
+                //n = (tamParticion - sizeof(SupB))/(1 + 3 + sizeof(Inodo) + 3*sizeof(BArchivo));
+                n = (tamParticion - sizeof(SupB)) / (4 + sizeof(Inodo) + 3 * 64); //voy a usar esta
+                //floor(n);
             }
 
             //No estructuras
@@ -138,20 +138,21 @@ void mkfs::ejecutarComandoMkfs(mkfs *fs, mount paMoun[])
             superBloque.s_mtime = fcreacion;
             superBloque.s_umtime = fcreacion;
             superBloque.s_mnt_count = 1;
+            superBloque.s_umnt_count = 0;
             superBloque.s_magic = 0xEF53;
             superBloque.s_inode_size = sizeof(Inodo);
             superBloque.s_block_size = sizeof(BArchivo);
-            superBloque.s_first_ino = inicioInodo;
-            superBloque.s_first_blo = inicioBlockApun;
+            superBloque.s_first_ino = 0;
+            superBloque.s_first_blo = 0;
             superBloque.s_bm_inode_start = inicioBitmapInodo;
-            superBloque.s_bm_blockAp_start = inicioBitmapBlockApun;
-            superBloque.s_bm_blockAr_start = inicioBitmapBlockArch;
-            superBloque.s_bm_blockC_start = inicioBitmapBlockCarp;
+            superBloque.s_bm_block_start = inicioBitmapBlockApun;
+            //superBloque.s_bm_blockAr_start = inicioBitmapBlockArch;
+            //superBloque.s_bm_blockC_start = inicioBitmapBlockCarp;
 
             superBloque.s_inode_start = inicioInodo;
-            superBloque.s_blockAp_start = inicioBlockApun;
-            superBloque.s_blockAr_start = inicioBlockArch;
-            superBloque.s_blockC_start = inicioBlockCarp;
+            superBloque.s_block_start = inicioBlockApun;
+            //superBloque.s_blockAr_start = inicioBlockArch;
+            //superBloque.s_blockC_start = inicioBlockCarp;
 
             //ahora escribir el superbloque en la particion
             arch = fopen(pathD.c_str(),"rb+");
@@ -196,72 +197,65 @@ void mkfs::crearRaiz(string path,int inicioPart)
         fseek(arch, inicioPart,SEEK_SET);
         SupB superB;
         fread(&superB,sizeof(SupB),1,arch);
-        int bit = 1;
-        //escribir 1 en el bitmap de apuntadores y escribir apuntador
-        fseek(arch, superB.s_bm_blockC_start,SEEK_SET);
-        fwrite(&bit,sizeof(bit),1,arch);
-        BApun bloqueRaiz;
-        for(int i = 0; i<16; i++) //inicializar los 16 apuntadores
-        {
-            bloqueRaiz.b_pointers[i] = -1;
-        }
-        fseek(arch,superB.s_blockAp_start, SEEK_SET);
-        for(int i=0; i<superB.s_inodes_count; i++)
-        {
-            fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
-        }
-        bloqueRaiz.b_pointers[0] = 0;
-        fseek(arch, superB.s_blockAp_start,SEEK_SET);
-        fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
-        bloqueRaiz.b_pointers[0] = 1;
-        fseek(arch, (superB.s_blockAp_start+sizeof(BApun)),SEEK_SET);
-        fwrite(&bloqueRaiz,sizeof(BApun),1,arch);
+        int bit = 1; //para cambiar el estado de una posicion en los bitmaps
         //escribir 1 en el bitmap de inodo y escribir el inodo carpeta raiz
         fseek(arch, superB.s_bm_inode_start,SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch); //escribe inodo de la carpeta raiz es el primero primerisimo de este se deriba el bloque carpeta que es la carpeta /
         Inodo inodoTemp;
-        inodoTemp.i_block= superB.s_blockAp_start;
+        inodoTemp.i_atime = superB.s_mtime;
+        inodoTemp.i_ctime = superB.s_mtime;
+        inodoTemp.i_mtime = superB.s_mtime;
+        inodoTemp.i_block[0]= 0;
         inodoTemp.i_gid = 1;
         inodoTemp.i_uid = 1;
-        inodoTemp.i_size = 10;
+        inodoTemp.i_size = 0;
         inodoTemp.i_type = '0';
-        inodoTemp.i_perm = 777;
+        inodoTemp.i_perm = 664;
         fseek(arch, superB.s_inode_start,SEEK_SET);
         fwrite(&inodoTemp,sizeof(Inodo),1,arch);
         cout<<"Se creo la carpeta raiz (/)"<<endl;
 
         fseek(arch, superB.s_bm_inode_start+sizeof(bit),SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch);
-        inodoTemp.i_block= superB.s_blockAr_start + sizeof(BApun);
+        inodoTemp.i_block[0]= 1;
         inodoTemp.i_gid = 1;
         inodoTemp.i_uid = 1;
         inodoTemp.i_size = 27;
         inodoTemp.i_type = '1';
-        inodoTemp.i_perm = 777;
+        inodoTemp.i_perm = 664;
         fseek(arch, superB.s_inode_start+sizeof(Inodo),SEEK_SET);
         fwrite(&inodoTemp,sizeof(Inodo),1,arch);
 
         //escribir 1 en el bitmap de carpeta y escribir carpeta
-        fseek(arch, superB.s_bm_blockC_start,SEEK_SET);
+        fseek(arch, superB.s_bm_block_start,SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch);
         BCarpeta carpetRaiz;
         string raiz = "users.txt";
-        strcpy(carpetRaiz.b_content[0].b_name,raiz.c_str());
-        carpetRaiz.b_content[0].b_inodo = 1;
-        fseek(arch, superB.s_blockC_start,SEEK_SET);
+        string punto = ".";
+        string Dpunto = "..";
+        strcpy(carpetRaiz.b_content[0].b_name,punto.c_str());
+        strcpy(carpetRaiz.b_content[1].b_name,Dpunto.c_str());
+        strcpy(carpetRaiz.b_content[2].b_name,raiz.c_str());
+        carpetRaiz.b_content[0].b_inodo = 0;
+        carpetRaiz.b_content[1].b_inodo = 0;
+        carpetRaiz.b_content[2].b_inodo = 1;
+        fseek(arch, superB.s_block_start,SEEK_SET);
         fwrite(&carpetRaiz,sizeof(BCarpeta),1,arch);
 
         //escribir 1 en el bitmap de archivo y escribir el root en el users.txt
-        fseek(arch, superB.s_bm_blockAr_start,SEEK_SET);
+        fseek(arch, superB.s_bm_block_start+ sizeof(bit),SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch);
         BArchivo contenidoUsers;
         string contenido = "1,G,root\n1,U,root,root,123\n?";
         strcpy(contenidoUsers.b_content,contenido.c_str());
-        fseek(arch, superB.s_blockAr_start,SEEK_SET);
+        fseek(arch, superB.s_block_start+sizeof(BArchivo),SEEK_SET);
         fwrite(&contenidoUsers,sizeof(BArchivo),1,arch);
         cout<<"Se creo el archivo /users.txt"<<endl<<endl;
 
-        superB.s_free_blocks_count = superB.s_free_blocks_count - 1;
+        superB.s_free_blocks_count = superB.s_free_blocks_count - 2;
+        superB.s_free_inodes_count = superB.s_free_inodes_count - 2;
+        superB.s_first_blo = superB.s_first_blo + 2;
+        superB.s_first_ino = superB.s_first_ino + 2;
         //actualizar el superbloque
         fseek(arch, inicioPart,SEEK_SET);
         fwrite(&superB,sizeof(SupB),1,arch);
@@ -277,14 +271,14 @@ void mkfs::crearRaiz(string path,int inicioPart)
 
 void mkfs::inicializarBitmaps(string path,int partStart,SupB superBlock)
 {
-    Inodo inodoTemp;
-    BCarpeta blockCarpeta;
-    BArchivo blockArch; //contenido del archivo users.txt
-    BApun blockApuntador;
-    Bitacora journaling;
-
     FILE *arch;
     arch = fopen(path.c_str(),"rb+");
+
+    Inodo inodoTemp;
+    //BCarpeta blockCarpeta;
+    //BArchivo blockArch; //contenido del archivo users.txt
+    //BApun blockApuntador;
+    Bitacora journaling;
 
     if(superBlock.s_filesystem_type==3)
     {
@@ -308,11 +302,12 @@ void mkfs::inicializarBitmaps(string path,int partStart,SupB superBlock)
     }
 
     //lleno de ceros el espacio del bitmap de bloques
-    fseek(arch, superBlock.s_bm_blockAp_start,SEEK_SET);
-    for(int i=0; i< superBlock.s_inodes_count; i++)
+    fseek(arch, superBlock.s_bm_block_start,SEEK_SET);
+    for(int i=0; i< superBlock.s_blocks_count; i++)
     {
         fwrite(&llenar, sizeof(llenar),1,arch);
     }
+    /*
     fseek(arch, superBlock.s_bm_blockC_start,SEEK_SET);
     for(int i=0; i< superBlock.s_inodes_count; i++)
     {
@@ -323,10 +318,13 @@ void mkfs::inicializarBitmaps(string path,int partStart,SupB superBlock)
     {
         fwrite(&llenar, sizeof(llenar),1,arch);
     }
-
+    */
     //escribir tabla de inodos
     fseek(arch,superBlock.s_inode_start,SEEK_SET);
-    inodoTemp.i_block = -1;
+    for(int i=0; i<15; i++)
+    {
+        inodoTemp.i_block[i] = -1;
+    }
     inodoTemp.i_type = '-';
     inodoTemp.i_atime = superBlock.s_mtime;
     inodoTemp.i_ctime = superBlock.s_mtime;
@@ -337,12 +335,24 @@ void mkfs::inicializarBitmaps(string path,int partStart,SupB superBlock)
     {
         fwrite(&inodoTemp,sizeof(Inodo),1,arch);
     }
+    /*
 
     //escribir los bloques
-    for(int i = 0; i<16; i++) //inicializar los 16 apuntadores
-    {
-        blockApuntador.b_pointers[i] = -1;
-    }
+
+    blockApuntador.b_apuntadores[0].b_inodo= -1;
+    blockApuntador.b_apuntadores[1].b_inodo= -1;
+    blockApuntador.b_apuntadores[2].b_inodo= -1;
+    blockApuntador.b_apuntadores[3].b_inodo= -1;
+
+    string apunt = "Apuntador1";
+    strcpy(blockApuntador.b_apuntadores[0].b_name,apunt.c_str());
+    apunt = "Apuntador2";
+    strcpy(blockApuntador.b_apuntadores[1].b_name,apunt.c_str());
+    apunt = "Apuntador3";
+    strcpy(blockApuntador.b_apuntadores[2].b_name,apunt.c_str());
+    apunt = "Apuntador4";
+    strcpy(blockApuntador.b_apuntadores[3].b_name,apunt.c_str());
+
     fseek(arch,superBlock.s_blockAp_start, SEEK_SET);
     for(int i=0; i<superBlock.s_inodes_count; i++)
     {
@@ -370,7 +380,7 @@ void mkfs::inicializarBitmaps(string path,int partStart,SupB superBlock)
     }
 
 
-    /*
+
         int prueba = 1;
         fseek(arch, superBlock.s_bm_blockC_start, SEEK_SET);
         fread(&prueba,sizeof(prueba),1,arch);

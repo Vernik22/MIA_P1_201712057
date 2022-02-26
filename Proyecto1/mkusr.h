@@ -14,8 +14,10 @@ class mkusr
         vector<string> split(string str, char pattern);
         void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart);
         void modificarArchivo(string pathDisco, string nombrePart, string nombreUser, string contrasena, string grupo);
+
         //comando para eliminar usuarios
-        void ejecutarRmusr(mkusr *grupo,mount []);
+        void ejecutarRmusr(mkusr *usua,mount []);
+        void modificarArchivoRM(string pathDisco, string nombrePart, string nombreUser);
 
         void setUsuario(string s){
             usuario = s;

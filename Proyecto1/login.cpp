@@ -47,18 +47,18 @@ bool login::ejecutarComandoLogin(login *usuario, mount paMoun[])
             fseek(arch,iniPart,SEEK_SET);
             fread(&superBlock,sizeof(SupB),1,arch);
 
-            BApun apuntadoresArch;
-            fseek(arch,(superBlock.s_blockAp_start+sizeof(BApun)),SEEK_SET);
-            fread(&apuntadoresArch,sizeof(BApun),1,arch);
+            Inodo inodoUsers;
+            fseek(arch,(superBlock.s_inode_start+sizeof(Inodo)),SEEK_SET);
+            fread(&inodoUsers,sizeof(Inodo),1,arch);
 
             BArchivo texto;
             string userstxt = "";
-            for(int i =0; i<16; i++)
+            for(int i =0; i<15; i++)
             {
-                if(apuntadoresArch.b_pointers[i]!=-1)
+                if(inodoUsers.i_block[i]!=-1)
                 {
                     //cont++;
-                    fseek(arch,(superBlock.s_blockAr_start+(apuntadoresArch.b_pointers[i]-1)*sizeof(BArchivo)),SEEK_SET);
+                    fseek(arch,(superBlock.s_block_start+(inodoUsers.i_block[i])*sizeof(BArchivo)),SEEK_SET);
                     fread(&texto,sizeof(BArchivo),1,arch);
                     userstxt+=texto.b_content;
 

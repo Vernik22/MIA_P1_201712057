@@ -81,13 +81,15 @@ typedef struct{
     int s_first_ino; //Primer inodo libre
     int s_first_blo; //Primer bloque libre
     int s_bm_inode_start; //guardara el inicio del bitmap de inodos
-    int s_bm_blockAp_start; //guarda el inicio del bitmap de bloques
-    int s_bm_blockAr_start;
-    int s_bm_blockC_start;
+    int s_bm_block_start; //guarda el inicio del bitmap de bloques
+    int s_inode_start;//guarda donde empiezan los inodos
+    int s_block_start;//guarda donde empiezan los bloques
+    /*
     int s_inode_start;
     int s_blockAp_start;
     int s_blockAr_start;
     int s_blockC_start;
+    */
 }SupB;
 
 //struct para el inodo
@@ -95,10 +97,10 @@ typedef struct{
     int i_uid;
     int i_gid;
     int i_size;
-    _mTime i_atime;
-    _mTime i_ctime;
-    _mTime i_mtime;
-    int i_block; //cantidad de bloques que hay; apunta hacia el bloque apuntador que tiene los 16 apuntadores
+    _mTime i_atime; //ultima vez que se leyo sin modificar
+    _mTime i_ctime; //fecha en la que se creo el inodo
+    _mTime i_mtime; //ultima vez que se modifico
+    int i_block[15]; //cantidad de bloques que hay; apunta hacia el bloque apuntador que tiene los 16 apuntadores
     char i_type; //indica si es carpeta o archivo :: 1=Archivo  0=Carpeta
     //int i_array_bloques[4];
     int i_perm;
@@ -121,7 +123,7 @@ typedef struct{
 
 //struct para el bloque de APUNTADORES
 typedef struct{
-    int b_pointers[16]; //array con los apuntadores a bloques(archivo o carpeta)
+    Content b_apuntadores[4]; //array con los apuntadores a bloques(archivo o carpeta)
 }BApun;
 
 typedef struct{
