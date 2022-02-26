@@ -53,7 +53,7 @@ bool login::ejecutarComandoLogin(login *usuario, mount paMoun[])
 
             BArchivo texto;
             string userstxt = "";
-            for(int i =0; i<15; i++)
+            for(int i =0; i<12; i++)
             {
                 if(inodoUsers.i_block[i]!=-1)
                 {
@@ -69,14 +69,144 @@ bool login::ejecutarComandoLogin(login *usuario, mount paMoun[])
                 }
 
             }
+            if(inodoUsers.i_block[12]!=-1)
+            {
+                //concatenar pero es bloque simple indirecto
+                BApun b_apuntador;
+                fseek(arch,(superBlock.s_block_start+(inodoUsers.i_block[12])*sizeof(BArchivo)),SEEK_SET);
+                fread(&b_apuntador,sizeof(BApun),1,arch);
+
+                for(int i =0; i<4; i++)
+                {
+                    if(b_apuntador.b_apuntadores[i].b_inodo!=-1)
+                    {
+                        //cont++;
+                        fseek(arch,(superBlock.s_block_start+(b_apuntador.b_apuntadores[i].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                        fread(&texto,sizeof(BArchivo),1,arch);
+                        userstxt+=texto.b_content;
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+
+            }
+            if(inodoUsers.i_block[13]!=-1)
+            {
+                //concatenar pero es bloque doble indirecto
+                BApun b_apuntador1;
+                fseek(arch,(superBlock.s_block_start+(inodoUsers.i_block[13])*sizeof(BApun)),SEEK_SET);
+                fread(&b_apuntador1,sizeof(BApun),1,arch);
+
+                for(int j = 0; j<4; j++)
+                {
+
+                    if(b_apuntador1.b_apuntadores[j].b_inodo!=-1)
+                    {
+                        BApun b_apuntador;
+                        fseek(arch,(superBlock.s_block_start+(b_apuntador1.b_apuntadores[j].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                        fread(&b_apuntador,sizeof(BApun),1,arch);
+
+                        for(int i =0; i<4; i++)
+                        {
+                            if(b_apuntador.b_apuntadores[i].b_inodo!=-1)
+                            {
+                                //cont++;
+                                fseek(arch,(superBlock.s_block_start+(b_apuntador.b_apuntadores[i].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                                fread(&texto,sizeof(BArchivo),1,arch);
+                                userstxt+=texto.b_content;
+
+                            }
+                            else
+                            {
+                                break;
+                            }
+
+                        }
+
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+
+            }
+            if(inodoUsers.i_block[14]!=-1)
+            {
+                //concatenar pero es bloque triple indirecto
+                BApun b_apuntador2;
+                fseek(arch,(superBlock.s_block_start+(inodoUsers.i_block[14])*sizeof(BApun)),SEEK_SET);
+                fread(&b_apuntador2,sizeof(BApun),1,arch);
+                for(int k = 0 ; k<4; k++)
+                {
+                    if(b_apuntador2.b_apuntadores[k].b_inodo!=-1)
+                    {
+                        BApun b_apuntador1;
+                        fseek(arch,(superBlock.s_block_start+(b_apuntador2.b_apuntadores[k].b_inodo)*sizeof(BApun)),SEEK_SET);
+                        fread(&b_apuntador1,sizeof(BApun),1,arch);
+
+                        for(int j = 0; j<4; j++)
+                        {
+
+                            if(b_apuntador1.b_apuntadores[j].b_inodo!=-1)
+                            {
+                                BApun b_apuntador;
+                                fseek(arch,(superBlock.s_block_start+(b_apuntador1.b_apuntadores[j].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                                fread(&b_apuntador,sizeof(BApun),1,arch);
+
+                                for(int i =0; i<4; i++)
+                                {
+                                    if(b_apuntador.b_apuntadores[i].b_inodo!=-1)
+                                    {
+                                        //cont++;
+                                        fseek(arch,(superBlock.s_block_start+(b_apuntador.b_apuntadores[i].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                        userstxt+=texto.b_content;
+
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+
+                                }
+
+
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+
+            }
             //cout<<"contenido Users.txt"<<endl;
             //cout<< userstxt<<endl;
             vector<string> listaUsuarios = split(userstxt,'\n');
             int cont = listaUsuarios.size();
-            for(int i=0; i<cont-1; i++){
+            for(int i=0; i<cont-1; i++)
+            {
                 vector<string> linea = split(listaUsuarios[i],',');
-                if(linea[1]=="U"&&linea[0]!="0"){
-                    if(linea[3]==usuario->getUsuario()&&linea[4]==usuario->getPassword()){
+                if(linea[1]=="U"&&linea[0]!="0")
+                {
+                    if(linea[3]==usuario->getUsuario()&&linea[4]==usuario->getPassword())
+                    {
                         cout<<"Bienvenido al sistema: "<<usuario->getUsuario()<<endl;
                         return true;
                     }
@@ -134,7 +264,8 @@ vector<string> login::split(string str, char pattern)
     return results;
 }
 
-bool login::logout(){
+bool login::logout()
+{
     cout<<"\n************Ejecutar LOGOUT************\n"<<endl;
     cout<<"Se cerro la sesion"<<endl;
     return false;
