@@ -202,6 +202,10 @@ void mkfs::crearRaiz(string path,int inicioPart)
         fseek(arch, superB.s_bm_inode_start,SEEK_SET);
         fwrite(&bit,sizeof(bit),1,arch); //escribe inodo de la carpeta raiz es el primero primerisimo de este se deriba el bloque carpeta que es la carpeta /
         Inodo inodoTemp;
+        for(int i=0; i<15; i++)
+        {
+            inodoTemp.i_block[i] = -1;
+        }
         inodoTemp.i_atime = superB.s_mtime;
         inodoTemp.i_ctime = superB.s_mtime;
         inodoTemp.i_mtime = superB.s_mtime;
@@ -239,6 +243,7 @@ void mkfs::crearRaiz(string path,int inicioPart)
         carpetRaiz.b_content[0].b_inodo = 0;
         carpetRaiz.b_content[1].b_inodo = 0;
         carpetRaiz.b_content[2].b_inodo = 1;
+        carpetRaiz.b_content[3].b_inodo = -1;
         fseek(arch, superB.s_block_start,SEEK_SET);
         fwrite(&carpetRaiz,sizeof(BCarpeta),1,arch);
 
@@ -254,8 +259,8 @@ void mkfs::crearRaiz(string path,int inicioPart)
 
         superB.s_free_blocks_count = superB.s_free_blocks_count - 2;
         superB.s_free_inodes_count = superB.s_free_inodes_count - 2;
-        superB.s_first_blo = superB.s_first_blo + 2;
-        superB.s_first_ino = superB.s_first_ino + 2;
+        superB.s_first_blo =  2;
+        superB.s_first_ino =  2;
         //actualizar el superbloque
         fseek(arch, inicioPart,SEEK_SET);
         fwrite(&superB,sizeof(SupB),1,arch);

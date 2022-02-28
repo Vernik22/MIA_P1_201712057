@@ -18,6 +18,7 @@ class mkgrp
         //para el comando RMGRP, eliminar un grupo
         void ejecutarRmgrp(mkgrp *grupo,mount []);
         void modificarArchivoRM(string pathDisco, string nombrePart, string nombreG);
+        int cantidadBloquesUsar(string data);
 
 
         void setName(string s){

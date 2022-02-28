@@ -60,21 +60,19 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
             fseek(arch,iniPart,SEEK_SET);
             fread(&superBlock,sizeof(SupB),1,arch);
 
-            BApun apuntadoresArch;
-            fseek(arch,(superBlock.s_blockAp_start+sizeof(BApun)),SEEK_SET);
-            fread(&apuntadoresArch,sizeof(BApun),1,arch);
+            Inodo inodoTemp;
+            fseek(arch,(superBlock.s_inode_start+sizeof(Inodo)),SEEK_SET);
+            fread(&inodoTemp,sizeof(Inodo),1,arch);
 
             BArchivo texto;
             string userstxt = "";
-            for(int i =0; i<16; i++)
+            for(int i =0; i<12; i++)
             {
-                if(apuntadoresArch.b_pointers[i]!=-1)
+                if(inodoTemp.i_block[i]!=-1)
                 {
-                    //cont++;
-                    char str[64];
-                    fseek(arch,(superBlock.s_blockAr_start+(apuntadoresArch.b_pointers[i]-1)*sizeof(BArchivo)),SEEK_SET);
+
+                    fseek(arch,(superBlock.s_block_start+(inodoTemp.i_block[i])*sizeof(BArchivo)),SEEK_SET);
                     fread(&texto,sizeof(BArchivo),1,arch);
-                    //str = texto.b_content;
                     userstxt+=texto.b_content;
 
                 }
@@ -82,6 +80,136 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                 {
                     break;
                 }
+
+            }
+
+            if(inodoTemp.i_block[12]!=-1)
+            {
+                //concatenar pero es bloque simple indirecto
+                BApun b_apuntador;
+                fseek(arch,(superBlock.s_block_start+(inodoTemp.i_block[12])*sizeof(BArchivo)),SEEK_SET);
+                fread(&b_apuntador,sizeof(BApun),1,arch);
+
+                for(int i =0; i<4; i++)
+                {
+                    if(b_apuntador.b_apuntadores[i].b_inodo!=-1)
+                    {
+
+                        fseek(arch,(superBlock.s_block_start+(b_apuntador.b_apuntadores[i].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                        fread(&texto,sizeof(BArchivo),1,arch);
+                        userstxt+=texto.b_content;
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+
+            }
+
+            if(inodoTemp.i_block[13]!=-1)
+            {
+                //concatenar pero es bloque doble indirecto
+                BApun b_apuntador1;
+                fseek(arch,(superBlock.s_block_start+(inodoTemp.i_block[13])*sizeof(BApun)),SEEK_SET);
+                fread(&b_apuntador1,sizeof(BApun),1,arch);
+
+                for(int j = 0; j<4; j++)
+                {
+
+                    if(b_apuntador1.b_apuntadores[j].b_inodo!=-1)
+                    {
+                        BApun b_apuntador;
+                        fseek(arch,(superBlock.s_block_start+(b_apuntador1.b_apuntadores[j].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                        fread(&b_apuntador,sizeof(BApun),1,arch);
+
+                        for(int i =0; i<4; i++)
+                        {
+                            if(b_apuntador.b_apuntadores[i].b_inodo!=-1)
+                            {
+                                //cont++;
+                                fseek(arch,(superBlock.s_block_start+(b_apuntador.b_apuntadores[i].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                                fread(&texto,sizeof(BArchivo),1,arch);
+                                userstxt+=texto.b_content;
+
+                            }
+                            else
+                            {
+                                break;
+                            }
+
+                        }
+
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+
+            }
+
+            if(inodoTemp.i_block[14]!=-1)
+            {
+                //concatenar pero es bloque triple indirecto
+                BApun b_apuntador2;
+                fseek(arch,(superBlock.s_block_start+(inodoTemp.i_block[14])*sizeof(BApun)),SEEK_SET);
+                fread(&b_apuntador2,sizeof(BApun),1,arch);
+                for(int k = 0 ; k<4; k++)
+                {
+                    if(b_apuntador2.b_apuntadores[k].b_inodo!=-1)
+                    {
+                        BApun b_apuntador1;
+                        fseek(arch,(superBlock.s_block_start+(b_apuntador2.b_apuntadores[k].b_inodo)*sizeof(BApun)),SEEK_SET);
+                        fread(&b_apuntador1,sizeof(BApun),1,arch);
+
+                        for(int j = 0; j<4; j++)
+                        {
+
+                            if(b_apuntador1.b_apuntadores[j].b_inodo!=-1)
+                            {
+                                BApun b_apuntador;
+                                fseek(arch,(superBlock.s_block_start+(b_apuntador1.b_apuntadores[j].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                                fread(&b_apuntador,sizeof(BApun),1,arch);
+
+                                for(int i =0; i<4; i++)
+                                {
+                                    if(b_apuntador.b_apuntadores[i].b_inodo!=-1)
+                                    {
+                                        //cont++;
+                                        fseek(arch,(superBlock.s_block_start+(b_apuntador.b_apuntadores[i].b_inodo)*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                        userstxt+=texto.b_content;
+
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+
+                                }
+
+
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
 
             }
 
