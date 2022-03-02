@@ -375,30 +375,6 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                         fwrite(&superBlock,sizeof(SupB),1,arch);
 
                         cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
-
-                        /*
-                        bitCont = 1;
-                        for(int i = 0; i< superBlock.s_inodes_count; i++)
-                        {
-                            fseek(arch,(superBlock.s_blockAr_start+(bitCont-1)*sizeof(BArchivo)), SEEK_SET);
-                            fread(&texto,sizeof(BArchivo),1,arch);
-                            if(texto.b_content[0]=='-')
-                            {
-                                strcpy(texto.b_content,textEnBlock.c_str());
-                                fseek(arch, (superBlock.s_blockAr_start+(bitCont-1)*sizeof(BArchivo)),SEEK_SET);
-                                fwrite(&texto,sizeof(BArchivo),1,arch);
-                                apuntadoresArch.b_pointers[1]=bitCont;
-                                fseek(arch,(superBlock.s_blockAp_start+sizeof(BApun)),SEEK_SET);
-                                fwrite(&apuntadoresArch,sizeof(BApun),1,arch);
-                                cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
-                                break;
-
-                            }
-
-                            bitCont++;
-
-                        }
-                        */
                         int llenar = 1;
                         int actual;
                         for(int i = 0 ; i < superBlock.s_blocks_count; i++)
@@ -410,6 +386,7 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                             {
                                 fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
                                 fwrite(&llenar, sizeof(llenar),1,arch);
+                                break;
                             }
 
                         }
@@ -421,131 +398,1711 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                 else
                 {
                     //cuando hay mas de 1 bloque
-                    if(noBloques<13)
+                    if(noBloques<97)
                     {
                         //si estan en los bloques directos
 
                         string nuevaCadena = "";
-                        for(int i =0; i<12; i++) //para recorrer los bloques directos del inodo
+                        for(int i =0; i<15; i++) //para recorrer los bloques directos del inodo
                         {
                             //cout<<"wl apuntador es: "<<apuntadoresArch.b_pointers[i]<<endl;
                             if(inodoTemp1.i_block[i]==-1)
                             {
-
-                                //cont++;
-                                fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
-                                fread(&texto,sizeof(BArchivo),1,arch);
-                                nuevaCadena=texto.b_content;
-
-                                nuevaC = split(nuevaCadena,'?');
-
-                                nuevaC[0]+=nuevoCont;
-
-                                if(nuevaC[0].size()<64)
+                                if(i < 11)
                                 {
-                                    strcpy(texto.b_content,nuevaC[0].c_str());
-                                    fseek(arch, superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo),SEEK_SET);
-                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                    fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                    fread(&texto,sizeof(BArchivo),1,arch);
+                                    nuevaCadena=texto.b_content;
 
-                                    time_t rawtime;
-                                    struct tm *timeinfo;
-                                    time(&rawtime);
-                                    timeinfo = localtime(&rawtime);
-                                    string fecha = asctime(timeinfo);
-                                    _mTime fcreacion;
-                                    strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
-                                    inodoTemp1.i_mtime = fcreacion;
+                                    nuevaC = split(nuevaCadena,'?');
 
-                                    fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
-                                    fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
-                                    cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                    nuevaC[0]+=nuevoCont;
+
+                                    if(nuevaC[0].size()<64)
+                                    {
+                                        strcpy(texto.b_content,nuevaC[0].c_str());
+                                        fseek(arch, superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo),SEEK_SET);
+                                        fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                        time_t rawtime;
+                                        struct tm *timeinfo;
+                                        time(&rawtime);
+                                        timeinfo = localtime(&rawtime);
+                                        string fecha = asctime(timeinfo);
+                                        _mTime fcreacion;
+                                        strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                        inodoTemp1.i_mtime = fcreacion;
+
+                                        fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                        fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                        cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                    }
+                                    else
+                                    {
+                                        //REvisar esta algo mal
+                                        nuevaCadena = nuevaC[0];
+                                        string textEnBlock = "";
+                                        int bitCont = 0;
+                                        for(int j = 0; j< nuevaC[0].size(); j++)
+                                        {
+                                            if(bitCont<63)
+                                            {
+                                                textEnBlock += nuevaCadena[j];
+                                            }
+                                            else
+                                            {
+                                                bitCont = -1;
+                                                strcpy(texto.b_content,textEnBlock.c_str());
+                                                fseek(arch,(superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                                fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                textEnBlock = "";
+                                                j--;
+                                            }
+                                            bitCont ++;
+                                        }
+
+                                        strcpy(texto.b_content,textEnBlock.c_str());
+                                        fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo*sizeof(BArchivo)),SEEK_SET);
+                                        fwrite(&texto,sizeof(BArchivo),1,arch);
+                                        inodoTemp1.i_block[i]=superBlock.s_first_blo;
+
+                                        time_t rawtime;
+                                        struct tm *timeinfo;
+                                        time(&rawtime);
+                                        timeinfo = localtime(&rawtime);
+                                        string fecha = asctime(timeinfo);
+                                        _mTime fcreacion;
+                                        strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                        inodoTemp1.i_mtime = fcreacion;
+
+                                        fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                        fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                        superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                        superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                        fseek(arch,iniPart,SEEK_SET);
+                                        fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                        cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                        int llenar = 1;
+                                        int actual;
+                                        for(int j = 0 ; j < superBlock.s_blocks_count; j++)
+                                        {
+                                            fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                            fread(&actual, sizeof(llenar),1,arch);
+
+                                            if(actual==0)
+                                            {
+                                                fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                                fwrite(&llenar, sizeof(llenar),1,arch);
+                                                break;
+                                            }
+
+                                        }
+
+                                    }
+                                    break;
+
+
                                 }
                                 else
                                 {
-                                    //REvisar esta algo mal
-                                    nuevaCadena = nuevaC[0];
-                                    string textEnBlock = "";
-                                    int bitCont = 0;
-                                    for(int j = 0; j< nuevaC[0].size(); j++)
+                                    if(i==12)
                                     {
-                                        if(bitCont<63)
+                                        fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                        nuevaCadena=texto.b_content;
+
+                                        nuevaC = split(nuevaCadena,'?');
+
+                                        nuevaC[0]+=nuevoCont;
+                                        if(nuevaC[0].size()<64)
                                         {
-                                            textEnBlock += nuevaCadena[j];
+                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                            fseek(arch, superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo),SEEK_SET);
+                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                            time_t rawtime;
+                                            struct tm *timeinfo;
+                                            time(&rawtime);
+                                            timeinfo = localtime(&rawtime);
+                                            string fecha = asctime(timeinfo);
+                                            _mTime fcreacion;
+                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                            inodoTemp1.i_mtime = fcreacion;
+
+                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
                                         }
                                         else
                                         {
-                                            bitCont = -1;
+                                            nuevaCadena = nuevaC[0];
+                                            string textEnBlock = "";
+                                            int bitCont = 0;
+                                            for(int j = 0; j< nuevaC[0].size(); j++)
+                                            {
+                                                if(bitCont<63)
+                                                {
+                                                    textEnBlock += nuevaCadena[j];
+                                                }
+                                                else
+                                                {
+                                                    bitCont = -1;
+                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                    fseek(arch,(superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                    textEnBlock = "";
+                                                    j--;
+                                                }
+                                                bitCont ++;
+                                            }
+                                            BApun apuntadorNuevo;
+                                            apuntadorNuevo.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 1;
+                                            apuntadorNuevo.b_apuntadores[1].b_inodo= -1;
+                                            apuntadorNuevo.b_apuntadores[2].b_inodo= -1;
+                                            apuntadorNuevo.b_apuntadores[3].b_inodo= -1;
+
+                                            string apunt = "Apuntador1";
+                                            strcpy(apuntadorNuevo.b_apuntadores[0].b_name,apunt.c_str());
+                                            apunt = "Apuntador2";
+                                            strcpy(apuntadorNuevo.b_apuntadores[1].b_name,apunt.c_str());
+                                            apunt = "Apuntador3";
+                                            strcpy(apuntadorNuevo.b_apuntadores[2].b_name,apunt.c_str());
+                                            apunt = "Apuntador4";
+                                            strcpy(apuntadorNuevo.b_apuntadores[3].b_name,apunt.c_str());
+
+                                            inodoTemp1.i_block[i]=superBlock.s_first_blo;
+
+                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
+                                            fwrite(&apuntadorNuevo,sizeof(BApun),1,arch);
+
                                             strcpy(texto.b_content,textEnBlock.c_str());
-                                            fseek(arch,(superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+ 1)*sizeof(BArchivo),SEEK_SET);
                                             fwrite(&texto,sizeof(BArchivo),1,arch);
-                                            textEnBlock = "";
-                                            j--;
-                                        }
-                                        bitCont ++;
-                                    }
 
-                                    strcpy(texto.b_content,textEnBlock.c_str());
-                                    fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo*sizeof(BArchivo)),SEEK_SET);
-                                    fwrite(&texto,sizeof(BArchivo),1,arch);
-                                    inodoTemp1.i_block[i]=superBlock.s_first_blo;
 
-                                    time_t rawtime;
-                                    struct tm *timeinfo;
-                                    time(&rawtime);
-                                    timeinfo = localtime(&rawtime);
-                                    string fecha = asctime(timeinfo);
-                                    _mTime fcreacion;
-                                    strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
-                                    inodoTemp1.i_mtime = fcreacion;
+                                            time_t rawtime;
+                                            struct tm *timeinfo;
+                                            time(&rawtime);
+                                            timeinfo = localtime(&rawtime);
+                                            string fecha = asctime(timeinfo);
+                                            _mTime fcreacion;
+                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                            inodoTemp1.i_mtime = fcreacion;
 
-                                    fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
-                                    fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
-                                    superBlock.s_first_blo = superBlock.s_first_blo + 1;
-                                    superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
-                                    fseek(arch,iniPart,SEEK_SET);
-                                    fwrite(&superBlock,sizeof(SupB),1,arch);
+                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                            superBlock.s_first_blo = superBlock.s_first_blo + 2;
+                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 2;
+                                            fseek(arch,iniPart,SEEK_SET);
+                                            fwrite(&superBlock,sizeof(SupB),1,arch);
 
-                                    cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
-                                    /*
-                                    bitCont = 1;
-                                    for(int j = 0; j< superBlock.s_inodes_count; j++)
-                                    {
-                                        fseek(arch,(superBlock.s_blockAr_start+(bitCont-1)*sizeof(BArchivo)), SEEK_SET);
-                                        fread(&texto,sizeof(BArchivo),1,arch);
-                                        if(texto.b_content[0]=='-')
-                                        {
-                                            strcpy(texto.b_content,textEnBlock.c_str());
-                                            fseek(arch, (superBlock.s_blockAr_start+(bitCont-1)*sizeof(BArchivo)),SEEK_SET);
-                                            fwrite(&texto,sizeof(BArchivo),1,arch);
-                                            apuntadoresArch.b_pointers[i]=bitCont;
-                                            fseek(arch,(superBlock.s_blockAp_start+sizeof(BApun)),SEEK_SET);
-                                            fwrite(&apuntadoresArch,sizeof(BApun),1,arch);
                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
-                                            break;
+
+                                            int llenar = 1;
+                                            int actual;
+                                            for(int j = 0 ; j < superBlock.s_blocks_count; j++)
+                                            {
+                                                fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                if(actual==0)
+                                                {
+                                                    fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                    break;
+                                                }
+
+                                            }
 
                                         }
-                                        bitCont++;
+                                        break;
+
 
                                     }
-                                    */
-
-                                    int llenar = 1;
-                                    int actual;
-                                    for(int i = 0 ; i < superBlock.s_blocks_count; i++)
+                                    else if(i == 13)
                                     {
-                                        fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
-                                        fread(&actual, sizeof(llenar),1,arch);
+                                        BApun apuntadorNuevo;
+                                        fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&apuntadorNuevo,sizeof(BApun),1,arch);
 
-                                        if(actual==0)
+                                        for(int j = 0 ; j<4; j++)
                                         {
-                                            fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
-                                            fwrite(&llenar, sizeof(llenar),1,arch);
+                                            if(apuntadorNuevo.b_apuntadores[j].b_inodo==-1)
+                                            {
+                                                fseek(arch,superBlock.s_block_start+(apuntadorNuevo.b_apuntadores[j-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&texto,sizeof(BArchivo),1,arch);
+                                                nuevaCadena=texto.b_content;
+                                                nuevaC = split(nuevaCadena,'?');
+
+                                                nuevaC[0]+=nuevoCont;
+                                                if(nuevaC[0].size()<64)
+                                                {
+                                                    strcpy(texto.b_content,nuevaC[0].c_str());
+                                                    fseek(arch, superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                    time_t rawtime;
+                                                    struct tm *timeinfo;
+                                                    time(&rawtime);
+                                                    timeinfo = localtime(&rawtime);
+                                                    string fecha = asctime(timeinfo);
+                                                    _mTime fcreacion;
+                                                    strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                    inodoTemp1.i_mtime = fcreacion;
+
+                                                    fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                    fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                    cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                }
+                                                else
+                                                {
+                                                    nuevaCadena = nuevaC[0];
+                                                    string textEnBlock = "";
+                                                    int bitCont = 0;
+                                                    for(int k = 0; k< nuevaC[0].size(); k++)
+                                                    {
+                                                        if(bitCont<63)
+                                                        {
+                                                            textEnBlock += nuevaCadena[k];
+                                                        }
+                                                        else
+                                                        {
+                                                            bitCont = -1;
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch,(superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                            textEnBlock = "";
+                                                            j--;
+                                                        }
+                                                        bitCont ++;
+                                                    }
+
+                                                    apuntadorNuevo.b_apuntadores[j].b_inodo= superBlock.s_first_blo;
+
+                                                    fseek(arch, superBlock.s_block_start+(inodoTemp1.i_block[12])*sizeof(BArchivo),SEEK_SET);
+                                                    fwrite(&apuntadorNuevo,sizeof(BApun),1,arch);
+
+                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                    fseek(arch, (superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                    time_t rawtime;
+                                                    struct tm *timeinfo;
+                                                    time(&rawtime);
+                                                    timeinfo = localtime(&rawtime);
+                                                    string fecha = asctime(timeinfo);
+                                                    _mTime fcreacion;
+                                                    strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                    inodoTemp1.i_mtime = fcreacion;
+
+                                                    fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                    fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                    superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                    superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                    fseek(arch,iniPart,SEEK_SET);
+                                                    fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                    cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                    int llenar = 1;
+                                                    int actual;
+                                                    for(int k = 0 ; k < superBlock.s_blocks_count; k++)
+                                                    {
+                                                        fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
+                                                        fread(&actual, sizeof(llenar),1,arch);
+
+                                                        if(actual==0)
+                                                        {
+                                                            fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
+                                                            fwrite(&llenar, sizeof(llenar),1,arch);
+                                                            break;
+                                                        }
+
+                                                    }
+
+                                                }
+                                                break;
+
+                                            }
+                                            else if(j==3)
+                                            {
+                                                fseek(arch,superBlock.s_block_start+(apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&texto,sizeof(BArchivo),1,arch);
+                                                nuevaCadena=texto.b_content;
+                                                nuevaC = split(nuevaCadena,'?');
+
+                                                nuevaC[0]+=nuevoCont;
+                                                if(nuevaC[0].size()<64)
+                                                {
+                                                    strcpy(texto.b_content,nuevaC[0].c_str());
+                                                    fseek(arch, superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                    time_t rawtime;
+                                                    struct tm *timeinfo;
+                                                    time(&rawtime);
+                                                    timeinfo = localtime(&rawtime);
+                                                    string fecha = asctime(timeinfo);
+                                                    _mTime fcreacion;
+                                                    strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                    inodoTemp1.i_mtime = fcreacion;
+
+                                                    fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                    fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                    cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                }
+                                                else
+                                                {
+                                                    nuevaCadena = nuevaC[0];
+                                                    string textEnBlock = "";
+                                                    int bitCont = 0;
+                                                    for(int k = 0; k< nuevaC[0].size(); k++)
+                                                    {
+                                                        if(bitCont<63)
+                                                        {
+                                                            textEnBlock += nuevaCadena[k];
+                                                        }
+                                                        else
+                                                        {
+                                                            bitCont = -1;
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch,(superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                            textEnBlock = "";
+                                                            j--;
+                                                        }
+                                                        bitCont ++;
+                                                    }
+
+                                                    BApun apuntadorIndirectoD1;
+                                                    apuntadorIndirectoD1.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 2;
+                                                    apuntadorIndirectoD1.b_apuntadores[1].b_inodo= -1;
+                                                    apuntadorIndirectoD1.b_apuntadores[2].b_inodo= -1;
+                                                    apuntadorIndirectoD1.b_apuntadores[3].b_inodo= -1;
+
+                                                    string apunt = "Apuntador1";
+                                                    strcpy(apuntadorIndirectoD1.b_apuntadores[0].b_name,apunt.c_str());
+                                                    apunt = "Apuntador2";
+                                                    strcpy(apuntadorIndirectoD1.b_apuntadores[1].b_name,apunt.c_str());
+                                                    apunt = "Apuntador3";
+                                                    strcpy(apuntadorIndirectoD1.b_apuntadores[2].b_name,apunt.c_str());
+                                                    apunt = "Apuntador4";
+                                                    strcpy(apuntadorIndirectoD1.b_apuntadores[3].b_name,apunt.c_str());
+
+                                                    BApun apuntadorIndirectoD;
+                                                    apuntadorIndirectoD.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 1;
+                                                    apuntadorIndirectoD.b_apuntadores[1].b_inodo= -1;
+                                                    apuntadorIndirectoD.b_apuntadores[2].b_inodo= -1;
+                                                    apuntadorIndirectoD.b_apuntadores[3].b_inodo= -1;
+
+                                                    apunt = "Apuntador1";
+                                                    strcpy(apuntadorIndirectoD.b_apuntadores[0].b_name,apunt.c_str());
+                                                    apunt = "Apuntador2";
+                                                    strcpy(apuntadorIndirectoD.b_apuntadores[1].b_name,apunt.c_str());
+                                                    apunt = "Apuntador3";
+                                                    strcpy(apuntadorIndirectoD.b_apuntadores[2].b_name,apunt.c_str());
+                                                    apunt = "Apuntador4";
+                                                    strcpy(apuntadorIndirectoD.b_apuntadores[3].b_name,apunt.c_str());
+
+
+
+                                                    inodoTemp1.i_block[13]=superBlock.s_first_blo;
+
+                                                    fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
+                                                    fwrite(&apuntadorIndirectoD,sizeof(BApun),1,arch);
+
+                                                    fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+1)*sizeof(BArchivo),SEEK_SET);
+                                                    fwrite(&apuntadorIndirectoD1,sizeof(BApun),1,arch);
+
+                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                    fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+2)*sizeof(BArchivo),SEEK_SET);
+                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                    time_t rawtime;
+                                                    struct tm *timeinfo;
+                                                    time(&rawtime);
+                                                    timeinfo = localtime(&rawtime);
+                                                    string fecha = asctime(timeinfo);
+                                                    _mTime fcreacion;
+                                                    strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                    inodoTemp1.i_mtime = fcreacion;
+
+                                                    fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                    fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                    superBlock.s_first_blo = superBlock.s_first_blo + 3;
+                                                    superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 3;
+                                                    fseek(arch,iniPart,SEEK_SET);
+                                                    fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                    cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                    int llenar = 1;
+                                                    int actual;
+                                                    for(int k = 0 ; k < superBlock.s_blocks_count; k++)
+                                                    {
+                                                        fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
+                                                        fread(&actual, sizeof(llenar),1,arch);
+
+                                                        if(actual==0)
+                                                        {
+                                                            fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
+                                                            fwrite(&llenar, sizeof(llenar),1,arch);
+                                                            fwrite(&llenar, sizeof(llenar),1,arch);
+                                                            fwrite(&llenar, sizeof(llenar),1,arch);
+                                                            break;
+                                                        }
+
+                                                    }
+
+                                                }
+                                                break;
+                                            }
+
+
                                         }
+
+                                        break;
+                                    }
+                                    else if(i == 14)
+                                    {
+                                        BApun apuntadorNuevo;
+                                        fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&apuntadorNuevo,sizeof(BApun),1,arch);
+                                        for(int j = 0 ; j<4; j++)
+                                        {
+                                            if(apuntadorNuevo.b_apuntadores[j].b_inodo==-1)
+                                            {
+                                                BApun segundoApuntador;
+                                                fseek(arch,superBlock.s_block_start+(apuntadorNuevo.b_apuntadores[j-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&segundoApuntador,sizeof(BApun),1,arch);
+
+                                                for(int k=0; k < 4; k++)
+                                                {
+                                                    if(segundoApuntador.b_apuntadores[k].b_inodo==-1)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int l = 0; l< nuevaC[0].size(); l++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[l];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+
+                                                            segundoApuntador.b_apuntadores[k].b_inodo =superBlock.s_first_blo;
+
+
+                                                            fseek(arch,superBlock.s_block_start+(apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&segundoApuntador,sizeof(BApun),1,arch);
+
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int l = 0 ; l < superBlock.s_blocks_count; l++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                        break;
+
+                                                    }
+                                                    else if(k==3)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int l = 0; l< nuevaC[0].size(); l++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[l];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+                                                            BApun apuntadorIndirectoD2;
+                                                            apuntadorIndirectoD2.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 1;
+                                                            apuntadorIndirectoD2.b_apuntadores[1].b_inodo= -1;
+                                                            apuntadorIndirectoD2.b_apuntadores[2].b_inodo= -1;
+                                                            apuntadorIndirectoD2.b_apuntadores[3].b_inodo= -1;
+
+                                                            string apunt = "Apuntador1";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[0].b_name,apunt.c_str());
+                                                            apunt = "Apuntador2";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[1].b_name,apunt.c_str());
+                                                            apunt = "Apuntador3";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[2].b_name,apunt.c_str());
+                                                            apunt = "Apuntador4";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[3].b_name,apunt.c_str());
+
+                                                            apuntadorNuevo.b_apuntadores[j].b_inodo =superBlock.s_first_blo;
+
+
+                                                            fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i-1]*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&apuntadorNuevo,sizeof(BApun),1,arch);
+
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&apuntadorIndirectoD2,sizeof(BApun),1,arch);
+
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+1)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 2;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 2;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int l = 0 ; l < superBlock.s_blocks_count; l++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    break;
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                        break;
+
+
+                                                    }
+
+
+                                                }
+
+                                                break;
+
+                                            }
+                                            else if(j==3)
+                                            {
+                                                BApun segundoApuntador;
+                                                fseek(arch,superBlock.s_block_start+(apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&segundoApuntador,sizeof(BApun),1,arch);
+
+                                                for(int k=0; k < 4; k++)
+                                                {
+                                                    if(segundoApuntador.b_apuntadores[k].b_inodo==-1)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int l = 0; l< nuevaC[0].size(); l++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[l];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+
+                                                            segundoApuntador.b_apuntadores[k].b_inodo =superBlock.s_first_blo;
+
+
+                                                            fseek(arch,superBlock.s_block_start+(apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&segundoApuntador,sizeof(BApun),1,arch);
+
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+3)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int l = 0 ; l < superBlock.s_blocks_count; l++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+
+                                                        }
+
+                                                        break;
+
+                                                    }
+                                                    else if(k==3)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int l = 0; l< nuevaC[0].size(); l++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[l];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+                                                            BApun apuntadorIndirectoD2;
+                                                            apuntadorIndirectoD2.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 3;
+                                                            apuntadorIndirectoD2.b_apuntadores[1].b_inodo= -1;
+                                                            apuntadorIndirectoD2.b_apuntadores[2].b_inodo= -1;
+                                                            apuntadorIndirectoD2.b_apuntadores[3].b_inodo= -1;
+
+                                                            string apunt = "Apuntador1";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[0].b_name,apunt.c_str());
+                                                            apunt = "Apuntador2";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[1].b_name,apunt.c_str());
+                                                            apunt = "Apuntador3";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[2].b_name,apunt.c_str());
+                                                            apunt = "Apuntador4";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[3].b_name,apunt.c_str());
+
+                                                            BApun apuntadorIndirectoD1;
+                                                            apuntadorIndirectoD1.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 2;
+                                                            apuntadorIndirectoD1.b_apuntadores[1].b_inodo= -1;
+                                                            apuntadorIndirectoD1.b_apuntadores[2].b_inodo= -1;
+                                                            apuntadorIndirectoD1.b_apuntadores[3].b_inodo= -1;
+
+                                                            apunt = "Apuntador1";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[0].b_name,apunt.c_str());
+                                                            apunt = "Apuntador2";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[1].b_name,apunt.c_str());
+                                                            apunt = "Apuntador3";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[2].b_name,apunt.c_str());
+                                                            apunt = "Apuntador4";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[3].b_name,apunt.c_str());
+
+                                                            BApun apuntadorIndirectoD;
+                                                            apuntadorIndirectoD.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 1;
+                                                            apuntadorIndirectoD.b_apuntadores[1].b_inodo= -1;
+                                                            apuntadorIndirectoD.b_apuntadores[2].b_inodo= -1;
+                                                            apuntadorIndirectoD.b_apuntadores[3].b_inodo= -1;
+
+                                                            apunt = "Apuntador1";
+                                                            strcpy(apuntadorIndirectoD.b_apuntadores[0].b_name,apunt.c_str());
+                                                            apunt = "Apuntador2";
+                                                            strcpy(apuntadorIndirectoD.b_apuntadores[1].b_name,apunt.c_str());
+                                                            apunt = "Apuntador3";
+                                                            strcpy(apuntadorIndirectoD.b_apuntadores[2].b_name,apunt.c_str());
+                                                            apunt = "Apuntador4";
+                                                            strcpy(apuntadorIndirectoD.b_apuntadores[3].b_name,apunt.c_str());
+
+
+
+                                                            inodoTemp1.i_block[14]=superBlock.s_first_blo;
+
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&apuntadorIndirectoD,sizeof(BApun),1,arch);
+
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+1)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&apuntadorIndirectoD1,sizeof(BApun),1,arch);
+
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+2)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&apuntadorIndirectoD2,sizeof(BApun),1,arch);
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+3)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 4;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 4;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int l = 0 ; l < superBlock.s_blocks_count; l++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    break;
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                        break;
+
+                                                    }
+
+
+                                                }
+
+
+                                                break;
+
+
+                                            }
+
+                                        }
+
+
+                                        break;
+                                    }
+
+                                }
+
+
+                            }
+                            else if(i == 14)
+                            {
+                                //cuando estamos en el ultimo bloque del inodo, los bloques indirectos triples
+                                BApun bapuntadorPrimero;
+                                fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i]*sizeof(BArchivo)),SEEK_SET);
+                                fread(&bapuntadorPrimero,sizeof(BApun),1,arch);
+                                for(int j = 0 ; j<4; j++)
+                                {
+                                    if(bapuntadorPrimero.b_apuntadores[j].b_inodo==-1)
+                                    {
+                                        BApun bapuntadorSegundo;
+                                        fseek(arch,superBlock.s_block_start+(bapuntadorPrimero.b_apuntadores[j-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&bapuntadorSegundo,sizeof(BApun),1,arch);
+                                        for(int k = 0 ; k<4; k++)
+                                        {
+                                            if(bapuntadorSegundo.b_apuntadores[k].b_inodo==-1)
+                                            {
+                                                BApun bapuntadorTercero;
+                                                fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&bapuntadorTercero,sizeof(BApun),1,arch);
+                                                for(int l = 0 ; l<4; l++)
+                                                {
+
+                                                    if(bapuntadorTercero.b_apuntadores[l].b_inodo==-1)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int n = 0; n< nuevaC[0].size(); n++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[n];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+                                                            bapuntadorTercero.b_apuntadores[l].b_inodo = superBlock.s_first_blo;
+                                                            fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&bapuntadorTercero,sizeof(BApun),1,arch);
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int n = 0 ; n < superBlock.s_blocks_count; n++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+                                                        }
+                                                        break;
+
+                                                    }
+                                                    else if(l==3)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                        cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
+                                                        }
+                                                        break;
+
+                                                    }
+                                                }
+                                                break;
+
+
+                                            }
+                                            else if(k==3)
+                                            {
+                                                BApun bapuntadorTercero;
+                                                fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&bapuntadorTercero,sizeof(BApun),1,arch);
+                                                for(int l = 0 ; l<4; l++)
+                                                {
+
+                                                    if(bapuntadorTercero.b_apuntadores[l].b_inodo==-1)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int n = 0; n< nuevaC[0].size(); n++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[n];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+                                                            bapuntadorTercero.b_apuntadores[l].b_inodo = superBlock.s_first_blo;
+                                                            fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&bapuntadorTercero,sizeof(BApun),1,arch);
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int n = 0 ; n < superBlock.s_blocks_count; n++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+                                                        }
+                                                        break;
+
+                                                    }
+                                                    else if(l==3)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int n = 0; n< nuevaC[0].size(); n++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[n];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+
+                                                            BApun apuntadorIndirectoD2;
+                                                            apuntadorIndirectoD2.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 2;
+                                                            apuntadorIndirectoD2.b_apuntadores[1].b_inodo= -1;
+                                                            apuntadorIndirectoD2.b_apuntadores[2].b_inodo= -1;
+                                                            apuntadorIndirectoD2.b_apuntadores[3].b_inodo= -1;
+
+                                                            string apunt = "Apuntador1";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[0].b_name,apunt.c_str());
+                                                            apunt = "Apuntador2";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[1].b_name,apunt.c_str());
+                                                            apunt = "Apuntador3";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[2].b_name,apunt.c_str());
+                                                            apunt = "Apuntador4";
+                                                            strcpy(apuntadorIndirectoD2.b_apuntadores[3].b_name,apunt.c_str());
+
+                                                            BApun apuntadorIndirectoD1;
+                                                            apuntadorIndirectoD1.b_apuntadores[0].b_inodo= superBlock.s_first_blo + 1;
+                                                            apuntadorIndirectoD1.b_apuntadores[1].b_inodo= -1;
+                                                            apuntadorIndirectoD1.b_apuntadores[2].b_inodo= -1;
+                                                            apuntadorIndirectoD1.b_apuntadores[3].b_inodo= -1;
+
+                                                            apunt = "Apuntador1";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[0].b_name,apunt.c_str());
+                                                            apunt = "Apuntador2";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[1].b_name,apunt.c_str());
+                                                            apunt = "Apuntador3";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[2].b_name,apunt.c_str());
+                                                            apunt = "Apuntador4";
+                                                            strcpy(apuntadorIndirectoD1.b_apuntadores[3].b_name,apunt.c_str());
+
+                                                            bapuntadorPrimero.b_apuntadores[j].b_inodo = superBlock.s_first_blo;
+                                                            fseek(arch,superBlock.s_block_start+(inodoTemp1.i_block[i]*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&bapuntadorPrimero,sizeof(BApun),1,arch);
+
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&apuntadorIndirectoD1,sizeof(BApun),1,arch);
+
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+1)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&apuntadorIndirectoD2,sizeof(BApun),1,arch);
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo+2)*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 3;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 3;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int n = 0 ; n < superBlock.s_blocks_count; n++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+
+                                                        }
+                                                        break;
+
+                                                    }
+                                                }
+                                                break;
+
+                                            }
+
+                                        }
+                                        break;
+
+                                    }
+                                    else if(j==3)
+                                    {
+                                        BApun bapuntadorSegundo;
+                                        fseek(arch,superBlock.s_block_start+(bapuntadorPrimero.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&bapuntadorSegundo,sizeof(BApun),1,arch);
+                                        for(int k = 0 ; k<4; k++)
+                                        {
+                                            if(bapuntadorSegundo.b_apuntadores[k].b_inodo==-1)
+                                            {
+                                                BApun bapuntadorTercero;
+                                                fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&bapuntadorTercero,sizeof(BApun),1,arch);
+                                                for(int l = 0 ; l<4; l++)
+                                                {
+
+                                                    if(bapuntadorTercero.b_apuntadores[l].b_inodo==-1)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int n = 0; n< nuevaC[0].size(); n++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[n];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+                                                            bapuntadorTercero.b_apuntadores[l].b_inodo = superBlock.s_first_blo;
+                                                            fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&bapuntadorTercero,sizeof(BApun),1,arch);
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int n = 0 ; n < superBlock.s_blocks_count; n++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+                                                        }
+                                                        break;
+
+                                                    }
+                                                    else if(l==3)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                        cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
+                                                        }
+                                                        break;
+
+                                                    }
+                                                }
+                                                break;
+
+
+                                            }
+                                            else if(k==3)
+                                            {
+                                                BApun bapuntadorTercero;
+                                                fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&bapuntadorTercero,sizeof(BApun),1,arch);
+                                                for(int l = 0 ; l<4; l++)
+                                                {
+
+                                                    if(bapuntadorTercero.b_apuntadores[l].b_inodo==-1)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                            nuevaCadena = nuevaC[0];
+                                                            string textEnBlock = "";
+                                                            int bitCont = 0;
+                                                            for(int n = 0; n< nuevaC[0].size(); n++)
+                                                            {
+                                                                if(bitCont<63)
+                                                                {
+                                                                    textEnBlock += nuevaCadena[n];
+                                                                }
+                                                                else
+                                                                {
+                                                                    bitCont = -1;
+                                                                    strcpy(texto.b_content,textEnBlock.c_str());
+                                                                    fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                                    fwrite(&texto,sizeof(BArchivo),1,arch);
+                                                                    textEnBlock = "";
+                                                                    j--;
+                                                                }
+                                                                bitCont ++;
+                                                            }
+                                                            bapuntadorTercero.b_apuntadores[l].b_inodo = superBlock.s_first_blo;
+                                                            fseek(arch,superBlock.s_block_start+(bapuntadorSegundo.b_apuntadores[k].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&bapuntadorTercero,sizeof(BApun),1,arch);
+
+                                                            strcpy(texto.b_content,textEnBlock.c_str());
+                                                            fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            superBlock.s_first_blo = superBlock.s_first_blo + 1;
+                                                            superBlock.s_free_blocks_count = superBlock.s_free_blocks_count - 1;
+                                                            fseek(arch,iniPart,SEEK_SET);
+                                                            fwrite(&superBlock,sizeof(SupB),1,arch);
+
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+
+                                                            int llenar = 1;
+                                                            int actual;
+                                                            for(int n = 0 ; n < superBlock.s_blocks_count; n++)
+                                                            {
+                                                                fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                fread(&actual, sizeof(llenar),1,arch);
+
+                                                                if(actual==0)
+                                                                {
+                                                                    fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
+                                                                    fwrite(&llenar, sizeof(llenar),1,arch);
+
+                                                                    break;
+                                                                }
+
+                                                            }
+                                                        }
+                                                        break;
+
+                                                    }
+                                                    else if(l==3)
+                                                    {
+                                                        fseek(arch,superBlock.s_block_start+(bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
+                                                        fread(&texto,sizeof(BArchivo),1,arch);
+                                                        nuevaCadena=texto.b_content;
+                                                        nuevaC = split(nuevaCadena,'?');
+
+                                                        nuevaC[0]+=nuevoCont;
+                                                        if(nuevaC[0].size()<64)
+                                                        {
+                                                            strcpy(texto.b_content,nuevaC[0].c_str());
+                                                            fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
+                                                            fwrite(&texto,sizeof(BArchivo),1,arch);
+
+                                                            time_t rawtime;
+                                                            struct tm *timeinfo;
+                                                            time(&rawtime);
+                                                            timeinfo = localtime(&rawtime);
+                                                            string fecha = asctime(timeinfo);
+                                                            _mTime fcreacion;
+                                                            strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                                                            inodoTemp1.i_mtime = fcreacion;
+
+                                                            fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                                                            fwrite(&inodoTemp1,sizeof(Inodo),1,arch);
+                                                            cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
+                                                        }
+                                                        else
+                                                        {
+                                                        cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
+                                                        }
+                                                        break;
+
+                                                    }
+                                                }
+                                                break;
+
+                                            }
+
+                                        }
+                                        break;
 
                                     }
 
                                 }
                                 break;
+
 
                             }
                         }
@@ -553,8 +2110,8 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                     }
                     else
                     {
-                        //si esta en los bloques indirectos
-
+                        //mas de 96 bloques
+                        cout<<"ERROR: No se pueden crear mas grupos"<<endl;
                     }
                 }
 

@@ -140,10 +140,16 @@ void mkdisk::dirExist(mkdisk *disco)
     }
     else
     {
-        printf("No Existe el directorio: %s\n", disco->path.c_str());
-        string comando = "mkdir -p " + newpath;
-        system(comando.c_str());
-        printf("Se creo el dir en: %s \n", disco->path.c_str());
+        try{
+            printf("No Existe el directorio: %s\n", disco->path.c_str());
+            string comando = "mkdir -p " + newpath;
+            system(comando.c_str());
+            printf("Se creo el dir en: %s \n", disco->path.c_str());
+
+        }catch(...){
+            cout<<"ERROR: no se pudo crear la carpeta"<<endl;
+        }
+
     }
 }
 
