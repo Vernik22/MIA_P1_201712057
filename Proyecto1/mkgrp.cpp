@@ -375,14 +375,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                         fwrite(&superBlock,sizeof(SupB),1,arch);
 
                         cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
-                        int llenar = 1;
-                        int actual;
+                        char llenar = '1';
+                        char actual;
                         for(int i = 0 ; i < superBlock.s_blocks_count; i++)
                         {
                             fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
                             fread(&actual, sizeof(llenar),1,arch);
 
-                            if(actual==0)
+                            if(actual=='0')
                             {
                                 fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
                                 fwrite(&llenar, sizeof(llenar),1,arch);
@@ -484,14 +484,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                         cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                        int llenar = 1;
-                                        int actual;
+                                        char llenar = '1';
+                                        char actual;
                                         for(int j = 0 ; j < superBlock.s_blocks_count; j++)
                                         {
                                             fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                             fread(&actual, sizeof(llenar),1,arch);
 
-                                            if(actual==0)
+                                            if(actual=='0')
                                             {
                                                 fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                                 fwrite(&llenar, sizeof(llenar),1,arch);
@@ -600,14 +600,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                            int llenar = 1;
-                                            int actual;
+                                            char llenar = '1';
+                                            char actual;
                                             for(int j = 0 ; j < superBlock.s_blocks_count; j++)
                                             {
                                                 fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                if(actual==0)
+                                                if(actual=='0')
                                                 {
                                                     fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -708,14 +708,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                     cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                    int llenar = 1;
-                                                    int actual;
+                                                    char llenar = '1';
+                                                    char actual;
                                                     for(int k = 0 ; k < superBlock.s_blocks_count; k++)
                                                     {
                                                         fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                         fread(&actual, sizeof(llenar),1,arch);
 
-                                                        if(actual==0)
+                                                        if(actual=='0')
                                                         {
                                                             fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                             fwrite(&llenar, sizeof(llenar),1,arch);
@@ -841,14 +841,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                     cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                    int llenar = 1;
-                                                    int actual;
+                                                    char llenar = '1';
+                                                    char actual;
                                                     for(int k = 0 ; k < superBlock.s_blocks_count; k++)
                                                     {
                                                         fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                         fread(&actual, sizeof(llenar),1,arch);
 
-                                                        if(actual==0)
+                                                        if(actual=='0')
                                                         {
                                                             fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                             fwrite(&llenar, sizeof(llenar),1,arch);
@@ -963,14 +963,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1082,14 +1082,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1199,14 +1199,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1351,14 +1351,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1493,14 +1493,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1542,7 +1542,7 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                                                         }
                                                         else
                                                         {
-                                                        cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
+                                                            cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
                                                         }
                                                         break;
 
@@ -1636,14 +1636,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1770,14 +1770,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1893,14 +1893,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1942,7 +1942,7 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                                                         }
                                                         else
                                                         {
-                                                        cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
+                                                            cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
                                                         }
                                                         break;
 
@@ -2036,14 +2036,14 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
 
                                                             cout<<"Se creo el Grupo exitosamente: " <<nombreG<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -2085,7 +2085,7 @@ void mkgrp::modificarArchivo(string pathDisco, string nombrePart, string nombreG
                                                         }
                                                         else
                                                         {
-                                                        cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
+                                                            cout<<"ERROR: No se pueden crear mas grupos, espacio insuficiente"<<endl;
                                                         }
                                                         break;
 

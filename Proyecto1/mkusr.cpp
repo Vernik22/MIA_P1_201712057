@@ -1,5 +1,10 @@
 #include "mkusr.h"
 #include <iostream>
+#include <string>
+#include <string.h>
+#include <cstdlib>
+#include <math.h>
+#include <time.h>
 
 using namespace std;
 
@@ -239,7 +244,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
             if(!existeElGrupo)
             {
-                Inodo inodoTemp;
+                Inodo inodoTemp1;
                 fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
                 fread(&inodoTemp,sizeof(Inodo),1,arch);
 
@@ -261,11 +266,13 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                 int bitsTotales = inodoTemp.i_size;
                 int contad = nombreUser.size();
-                contad += 5;
+                contad += grupo.size();
+                contad += contrasena.size();
+                contad += 7;
                 inodoTemp.i_size += contad;
 
-                fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
-                fwrite(&inodoTemp,sizeof(Inodo),1,arch);
+                //fseek(arch, superBlock.s_inode_start+sizeof(Inodo),SEEK_SET);
+                //fwrite(&inodoTemp,sizeof(Inodo),1,arch);
 
 
 
@@ -352,14 +359,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                         fwrite(&superBlock,sizeof(SupB),1,arch);
 
                         cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
-                        int llenar = 1;
-                        int actual;
+                        char llenar = '1';
+                        char actual;
                         for(int i = 0 ; i < superBlock.s_blocks_count; i++)
                         {
                             fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
                             fread(&actual, sizeof(llenar),1,arch);
 
-                            if(actual==0)
+                            if(actual=='0')
                             {
                                 fseek(arch, superBlock.s_bm_block_start+i*sizeof(llenar),SEEK_SET);
                                 fwrite(&llenar, sizeof(llenar),1,arch);
@@ -461,14 +468,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                         cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                        int llenar = 1;
-                                        int actual;
+                                        char llenar = '1';
+                                        char actual;
                                         for(int j = 0 ; j < superBlock.s_blocks_count; j++)
                                         {
                                             fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                             fread(&actual, sizeof(llenar),1,arch);
 
-                                            if(actual==0)
+                                            if(actual=='0')
                                             {
                                                 fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                                 fwrite(&llenar, sizeof(llenar),1,arch);
@@ -577,14 +584,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                            int llenar = 1;
-                                            int actual;
+                                            char llenar = '1';
+                                            char actual;
                                             for(int j = 0 ; j < superBlock.s_blocks_count; j++)
                                             {
                                                 fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                if(actual==0)
+                                                if(actual=='0')
                                                 {
                                                     fseek(arch, superBlock.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -685,14 +692,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                     cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                    int llenar = 1;
-                                                    int actual;
+                                                    char llenar = '1';
+                                                    char actual;
                                                     for(int k = 0 ; k < superBlock.s_blocks_count; k++)
                                                     {
                                                         fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                         fread(&actual, sizeof(llenar),1,arch);
 
-                                                        if(actual==0)
+                                                        if(actual=='0')
                                                         {
                                                             fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                             fwrite(&llenar, sizeof(llenar),1,arch);
@@ -818,14 +825,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                     cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                    int llenar = 1;
-                                                    int actual;
+                                                    char llenar = '1';
+                                                    char actual;
                                                     for(int k = 0 ; k < superBlock.s_blocks_count; k++)
                                                     {
                                                         fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                         fread(&actual, sizeof(llenar),1,arch);
 
-                                                        if(actual==0)
+                                                        if(actual=='0')
                                                         {
                                                             fseek(arch, superBlock.s_bm_block_start+k*sizeof(llenar),SEEK_SET);
                                                             fwrite(&llenar, sizeof(llenar),1,arch);
@@ -940,14 +947,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1059,14 +1066,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1176,14 +1183,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1328,14 +1335,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int l = 0 ; l < superBlock.s_blocks_count; l++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+l*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1470,14 +1477,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1519,7 +1526,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                         }
                                                         else
                                                         {
-                                                        cout<<"ERROR: No se pueden crear mas usuarios, espacio insuficiente"<<endl;
+                                                            cout<<"ERROR: No se pueden crear mas usuarios, espacio insuficiente"<<endl;
                                                         }
                                                         break;
 
@@ -1613,14 +1620,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1747,14 +1754,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1870,14 +1877,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -1919,7 +1926,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                         }
                                                         else
                                                         {
-                                                        cout<<"ERROR: No se pueden crear mas usuarios, espacio insuficiente"<<endl;
+                                                            cout<<"ERROR: No se pueden crear mas usuarios, espacio insuficiente"<<endl;
                                                         }
                                                         break;
 
@@ -2013,14 +2020,14 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
 
                                                             cout<<"Se creo el usuario exitosamente: " <<nombreUser<<endl;
 
-                                                            int llenar = 1;
-                                                            int actual;
+                                                            char llenar = '1';
+                                                            char actual;
                                                             for(int n = 0 ; n < superBlock.s_blocks_count; n++)
                                                             {
                                                                 fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                 fread(&actual, sizeof(llenar),1,arch);
 
-                                                                if(actual==0)
+                                                                if(actual=='0')
                                                                 {
                                                                     fseek(arch, superBlock.s_bm_block_start+n*sizeof(llenar),SEEK_SET);
                                                                     fwrite(&llenar, sizeof(llenar),1,arch);
@@ -2062,7 +2069,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                         }
                                                         else
                                                         {
-                                                        cout<<"ERROR: No se pueden crear mas usuarios, espacio insuficiente"<<endl;
+                                                            cout<<"ERROR: No se pueden crear mas usuarios, espacio insuficiente"<<endl;
                                                         }
                                                         break;
 
@@ -2135,7 +2142,8 @@ void mkusr::ejecutarRmusr(mkusr *usua,mount paMoun[])
 
 }
 
-void mkusr::modificarArchivoRM(string pathDisco, string nombrePart, string nombreUser){
+void mkusr::modificarArchivoRM(string pathDisco, string nombrePart, string nombreUser)
+{
 
 
 }
@@ -2158,4 +2166,55 @@ vector<string> mkusr::split(string str, char pattern)
     return results;
 }
 
+void mkusr::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart)
+{
+    Particion parts[4];
+    parts[0] = mbrTemp.mbr_partition_1;
+    parts[1] = mbrTemp.mbr_partition_2;
+    parts[2] = mbrTemp.mbr_partition_3;
+    parts[3] = mbrTemp.mbr_partition_4;
+    bool noEncontrada = true;
+
+    if(mbrTemp.mbr_partition_1.part_name == nombrePart|| mbrTemp.mbr_partition_2.part_name == nombrePart|| mbrTemp.mbr_partition_3.part_name == nombrePart|| mbrTemp.mbr_partition_4.part_name == nombrePart)
+    {
+        for(int i = 0; i<4; i++)
+        {
+            if(parts[i].part_name == nombrePart)
+            {
+                tamPart = parts[i].part_size;
+                iniPart = parts[i].part_start;
+                noEncontrada = false;
+                break;
+            }
+        }
+    }
+    if(noEncontrada)
+    {
+        EBR ebrExTemp;
+        FILE *arch;
+        arch = fopen(pathD.c_str(), "rb+");
+        for(int i=0; i<4; i++) // encuentra la particion extendida para revisar dentro de sus particiones logicas
+        {
+            if(parts[i].part_type == 'E')
+            {
+                fseek(arch,parts[i].part_start,SEEK_SET);
+                fread(&ebrExTemp, sizeof(EBR),1,arch); //partExTemp guarda el EBR de la particion E
+                break;
+            }
+        }
+        while(ebrExTemp.part_next != -1) //revisa hasta la ultima particion logica o hasta que la encuentre
+        {
+            if(ebrExTemp.part_name == nombrePart)
+            {
+                tamPart = ebrExTemp.part_size;
+                iniPart = ebrExTemp.part_start;
+                break;
+            }
+            fseek(arch, ebrExTemp.part_next, SEEK_SET);
+            fread(&ebrExTemp, sizeof(EBR), 1, arch);
+        }
+
+        fclose(arch);
+    }
+}
 

@@ -9,6 +9,7 @@
 #include "login.h"
 #include "mkgrp.h"
 #include "estructuras.h"
+#include "reporte.h"
 
 
 
@@ -27,6 +28,7 @@ int main()
     mkfs *fs = new mkfs();
     login *log = new login();
     mkgrp *gr = new mkgrp();
+    reporte *rep = new reporte();
     //vector<mount> ParticionesMontadas;
     mount ParticionesMontadas[100];//creo el array para las particiones que estan montadas
     mount nueva;// creo una calase mount para inicializar las posiciones del array en vacias
@@ -102,6 +104,13 @@ int main()
             gr->ejecutarMkgrp(gr,ParticionesMontadas);
             gr->setName("prueba9");
             gr->ejecutarMkgrp(gr,ParticionesMontadas);
+
+            rep->setId("571A");
+            rep->setPath("/home/vernik/Imágenes/rep/inodo.txt");
+            rep->ejecutarRepBmInodo(rep, ParticionesMontadas);
+
+            rep->setPath("/home/vernik/Imágenes/rep/bloques.txt");
+            rep->ejecutarRepBmBloque(rep, ParticionesMontadas);
 
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
