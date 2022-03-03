@@ -297,11 +297,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                         fseek(arch, superBlock.s_block_start+inodoTemp1.i_block[0]*sizeof(BArchivo),SEEK_SET);
                         fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                        time_t rawtime;
-                        struct tm *timeinfo;
-                        time(&rawtime);
-                        timeinfo = localtime(&rawtime);
-                        string fecha = asctime(timeinfo);
+                        string fecha = retFecha();
                         _mTime fcreacion;
                         strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                         inodoTemp1.i_mtime = fcreacion;
@@ -342,11 +338,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                         fwrite(&texto,sizeof(BArchivo),1,arch);
                         inodoTemp1.i_block[1]=superBlock.s_first_blo;
 
-                        time_t rawtime;
-                        struct tm *timeinfo;
-                        time(&rawtime);
-                        timeinfo = localtime(&rawtime);
-                        string fecha = asctime(timeinfo);
+                        string fecha = retFecha();
                         _mTime fcreacion;
                         strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                         inodoTemp1.i_mtime = fcreacion;
@@ -408,11 +400,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                         fseek(arch, superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo),SEEK_SET);
                                         fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                        time_t rawtime;
-                                        struct tm *timeinfo;
-                                        time(&rawtime);
-                                        timeinfo = localtime(&rawtime);
-                                        string fecha = asctime(timeinfo);
+                                        string fecha = retFecha();
                                         _mTime fcreacion;
                                         strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                         inodoTemp1.i_mtime = fcreacion;
@@ -450,11 +438,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                         fwrite(&texto,sizeof(BArchivo),1,arch);
                                         inodoTemp1.i_block[i]=superBlock.s_first_blo;
 
-                                        time_t rawtime;
-                                        struct tm *timeinfo;
-                                        time(&rawtime);
-                                        timeinfo = localtime(&rawtime);
-                                        string fecha = asctime(timeinfo);
+                                        string fecha = retFecha();
                                         _mTime fcreacion;
                                         strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                         inodoTemp1.i_mtime = fcreacion;
@@ -506,11 +490,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                             fseek(arch, superBlock.s_block_start+inodoTemp1.i_block[i-1]*sizeof(BArchivo),SEEK_SET);
                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                            time_t rawtime;
-                                            struct tm *timeinfo;
-                                            time(&rawtime);
-                                            timeinfo = localtime(&rawtime);
-                                            string fecha = asctime(timeinfo);
+                                            string fecha = retFecha();
                                             _mTime fcreacion;
                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                             inodoTemp1.i_mtime = fcreacion;
@@ -566,11 +546,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
 
-                                            time_t rawtime;
-                                            struct tm *timeinfo;
-                                            time(&rawtime);
-                                            timeinfo = localtime(&rawtime);
-                                            string fecha = asctime(timeinfo);
+                                            string fecha = retFecha();
                                             _mTime fcreacion;
                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                             inodoTemp1.i_mtime = fcreacion;
@@ -628,11 +604,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                     fseek(arch, superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                     fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                    time_t rawtime;
-                                                    struct tm *timeinfo;
-                                                    time(&rawtime);
-                                                    timeinfo = localtime(&rawtime);
-                                                    string fecha = asctime(timeinfo);
+                                                    string fecha = retFecha();
                                                     _mTime fcreacion;
                                                     strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                     inodoTemp1.i_mtime = fcreacion;
@@ -673,12 +645,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                     fseek(arch, (superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo)),SEEK_SET);
                                                     fwrite(&texto,sizeof(BArchivo),1,arch);
 
-
-                                                    time_t rawtime;
-                                                    struct tm *timeinfo;
-                                                    time(&rawtime);
-                                                    timeinfo = localtime(&rawtime);
-                                                    string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                     _mTime fcreacion;
                                                     strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                     inodoTemp1.i_mtime = fcreacion;
@@ -726,11 +693,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                     fseek(arch, superBlock.s_block_start+apuntadorNuevo.b_apuntadores[j].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                     fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                    time_t rawtime;
-                                                    struct tm *timeinfo;
-                                                    time(&rawtime);
-                                                    timeinfo = localtime(&rawtime);
-                                                    string fecha = asctime(timeinfo);
+                                                    string fecha = retFecha();
                                                     _mTime fcreacion;
                                                     strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                     inodoTemp1.i_mtime = fcreacion;
@@ -807,11 +770,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                     fwrite(&texto,sizeof(BArchivo),1,arch);
 
 
-                                                    time_t rawtime;
-                                                    struct tm *timeinfo;
-                                                    time(&rawtime);
-                                                    timeinfo = localtime(&rawtime);
-                                                    string fecha = asctime(timeinfo);
+                                                    string fecha = retFecha();
                                                     _mTime fcreacion;
                                                     strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                     inodoTemp1.i_mtime = fcreacion;
@@ -881,11 +840,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -928,12 +883,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+(superBlock.s_first_blo)*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -983,11 +933,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1048,11 +994,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1117,11 +1059,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1165,11 +1103,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1219,11 +1153,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+segundoApuntador.b_apuntadores[k].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1317,11 +1247,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1415,11 +1341,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1458,12 +1380,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1511,11 +1428,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1558,11 +1471,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1601,12 +1510,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1654,11 +1558,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1735,12 +1635,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
 
-
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1815,11 +1710,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1858,12 +1749,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1911,11 +1797,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -1958,11 +1840,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l-1].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -2001,12 +1879,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch,(superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo)),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -2054,11 +1927,7 @@ void mkusr::modificarArchivo(string pathDisco, string nombrePart, string nombreU
                                                             fseek(arch, superBlock.s_block_start+bapuntadorTercero.b_apuntadores[l].b_inodo*sizeof(BArchivo),SEEK_SET);
                                                             fwrite(&texto,sizeof(BArchivo),1,arch);
 
-                                                            time_t rawtime;
-                                                            struct tm *timeinfo;
-                                                            time(&rawtime);
-                                                            timeinfo = localtime(&rawtime);
-                                                            string fecha = asctime(timeinfo);
+                                                            string fecha = retFecha();
                                                             _mTime fcreacion;
                                                             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
                                                             inodoTemp1.i_mtime = fcreacion;
@@ -2216,5 +2085,21 @@ void mkusr::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tam
 
         fclose(arch);
     }
+}
+
+string mkusr::retFecha()
+{
+
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+    // El lugar en donde se pondrá la fecha y hora formateadas
+    char fechaHora[70];
+    // El formato. Mira más en https://en.cppreference.com/w/c/chrono/strftime
+    char *formato = "%Y-%m-%d %H:%M:%S";
+    // Intentar formatear
+    int bytesEscritos =
+        strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
+    string fecha = fechaHora;
+    return fecha;
 }
 

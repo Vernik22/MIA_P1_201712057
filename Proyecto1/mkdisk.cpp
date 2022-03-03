@@ -4,6 +4,7 @@
 #include <string.h>
 #include <cstdlib>
 #include <sys/stat.h>
+#include <stdio.h>
 
 using namespace std;
 mkdisk::mkdisk()
@@ -60,26 +61,39 @@ void mkdisk::ejecutarComandoMkdisk(mkdisk *disco)
     }
 
     //hora actual para el mbr
-    time_t rawtime;
-    struct tm *timeinfo;
-    time(&rawtime);
-    timeinfo = localtime(&rawtime);
-    string fecha = asctime(timeinfo);
+    time_t t = time(NULL);
+    struct tm tiempoLocal = *localtime(&t);
+    // El lugar en donde se pondrá la fecha y hora formateadas
+    char fechaHora[70];
+    // El formato. Mira más en https://en.cppreference.com/w/c/chrono/strftime
+    char *formato = "%Y-%m-%d %H:%M:%S";
+    // Intentar formatear
+    int bytesEscritos =
+        strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
+    string fecha = fechaHora;
     _mTime fcreacion;
     strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
     mbrDisco.mbr_fecha_creacion = fcreacion;
     srand (time(NULL)); // para crear numeros aleatorios de verdad
     mbrDisco.mbr_dsk_signature = (rand()%200); //numero random para darle etiqueta al disco
     //si el fit viene vacio se pone el primer ajuste
-    if(disco->getFit().empty()==true){
+    if(disco->getFit().empty()==true)
+    {
         mbrDisco.dsk_fit = 'F'; // se toma el primer ajuste
-    }else {
+    }
+    else
+    {
         //se asigna el fit que viene
-        if(disco->getFit()=="W"){
+        if(disco->getFit()=="W")
+        {
             mbrDisco.dsk_fit='W';
-        }else if(disco->getFit()=="B"){
+        }
+        else if(disco->getFit()=="B")
+        {
             mbrDisco.dsk_fit='B';
-        }else{
+        }
+        else
+        {
             mbrDisco.dsk_fit='F';
         }
     }
@@ -101,11 +115,14 @@ void mkdisk::ejecutarComandoMkdisk(mkdisk *disco)
     //Agrego el mbr creado al disco que creé
     //se abre en modo de escritura mixto que permite actualizar un fichero sin borrar el contenido anterior
     arch = fopen(disco->getPath().c_str(),"rb+");
-    if(arch != NULL){
+    if(arch != NULL)
+    {
         fseek(arch,0,SEEK_SET);
         fwrite(&mbrDisco,sizeof(MBR),1,arch);
         cout<<"Disco creado correctametne...!!"<<endl;
-    }else{
+    }
+    else
+    {
         cout<<"Error, no se puede acceder al disco, MBR no creado"<<endl;
     }
     fclose(arch);
@@ -120,11 +137,13 @@ void mkdisk::dirExist(mkdisk *disco)
     string newpath = "";
     string pathconc = "";
     for (int i = 1; i < resultados.size() - 1; i++)
-    {                                             //llenar el string con el path sin el disk.dk
+    {
+        //llenar el string con el path sin el disk.dk
         //pathconc += "/\"" + resultados[i] + "\""; //le agrego comillas a los nombres por si vienen con espacios por ejemplo "mis discos"
-        if(strstr(resultados[i].c_str(), " ")!=NULL){
-           vector<string> conc = split(resultados[i], ' ');
-           resultados[i]="\""+conc[0] + " "+conc[1]+"\"";
+        if(strstr(resultados[i].c_str(), " ")!=NULL)
+        {
+            vector<string> conc = split(resultados[i], ' ');
+            resultados[i]="\""+conc[0] + " "+conc[1]+"\"";
         }
         newpath += "/" + resultados[i];           //este es sin comillas para buscar el directorio no importa si vienen con espacios
     }
@@ -134,19 +153,23 @@ void mkdisk::dirExist(mkdisk *disco)
     if (stat(disco->path.c_str(), &st) == 0)
     {
         printf("Existe el archivo en: %s\n", disco->path.c_str());
-    }else if (stat(newpath.c_str(), &st) == 0)
+    }
+    else if (stat(newpath.c_str(), &st) == 0)
     {
         printf("Existe el directorio: %s\n",newpath.c_str());
     }
     else
     {
-        try{
+        try
+        {
             printf("No Existe el directorio: %s\n", disco->path.c_str());
             string comando = "mkdir -p " + newpath;
             system(comando.c_str());
             printf("Se creo el dir en: %s \n", disco->path.c_str());
 
-        }catch(...){
+        }
+        catch(...)
+        {
             cout<<"ERROR: no se pudo crear la carpeta"<<endl;
         }
 

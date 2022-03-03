@@ -18,6 +18,7 @@ class mkusr
         //comando para eliminar usuarios
         void ejecutarRmusr(mkusr *usua,mount []);
         void modificarArchivoRM(string pathDisco, string nombrePart, string nombreUser);
+        string retFecha();
 
         void setUsuario(string s){
             usuario = s;

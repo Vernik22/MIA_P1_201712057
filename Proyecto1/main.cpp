@@ -112,6 +112,9 @@ int main()
             rep->setPath("/home/vernik/Imágenes/rep/bloques.txt");
             rep->ejecutarRepBmBloque(rep, ParticionesMontadas);
 
+            rep->setPath("/home/vernik/Imágenes/rep/SuperB.pdf");
+            rep->ejecutarRepSuperB(rep,ParticionesMontadas);
+
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);

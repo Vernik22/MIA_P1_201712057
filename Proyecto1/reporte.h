@@ -15,9 +15,15 @@ class reporte
         void ejecutarRepBmBloque(reporte *rep,mount []);
         void ejecutarRepSuperB(reporte *rep,mount []);
         void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart);
+        void ejecutarRepDisk(reporte *rep,mount []);
+        void ejecutarRepMBR(reporte *rep,mount []);
+        void ejecutarRepInodo(reporte *rep,mount []);
+        void ejecutarRepBloque(reporte *rep,mount []);
+        void ejecutarRepTree(reporte *rep,mount []);
 
         vector<string> split(string str, char pattern);
         void dirExist(reporte *disco);
+        string pathConComillas(string pathDestino);
 
 
         void setName(string s){

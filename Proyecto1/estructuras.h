@@ -28,7 +28,7 @@ typedef struct{
 
 //estructura de tiempo
 typedef struct{
-    char mbr_fecha_creacion[16];
+    char mbr_fecha_creacion[20];
 }_mTime;
 
 

@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <math.h>
 #include <time.h>
+#include <stdio.h>
 
 mkfs::mkfs()
 {
@@ -128,11 +129,23 @@ void mkfs::ejecutarComandoMkfs(mkfs *fs, mount paMoun[])
             superBloque.s_free_blocks_count = cantidadInodos*3;
             superBloque.s_free_inodes_count = cantidadInodos;
 
-            time_t rawtime;
-            struct tm *timeinfo;
-            time(&rawtime);
-            timeinfo = localtime(&rawtime);
-            string fecha = asctime(timeinfo);
+            time_t t = time(NULL);
+            struct tm tiempoLocal = *localtime(&t);
+            // El lugar en donde se pondrá la fecha y hora formateadas
+            char fechaHora[70];
+            // El formato. Mira más en https://en.cppreference.com/w/c/chrono/strftime
+            char *formato = "%Y-%m-%d %H:%M:%S";
+            // Intentar formatear
+            int bytesEscritos =
+                strftime(fechaHora, sizeof fechaHora, formato, &tiempoLocal);
+
+
+            //time_t rawtime;
+            //struct tm *timeinfo;
+            //time(&rawtime);
+            //timeinfo = localtime(&rawtime);
+            //string fecha = asctime(timeinfo);
+            string fecha = fechaHora;
             _mTime fcreacion;
             strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
             superBloque.s_mtime = fcreacion;

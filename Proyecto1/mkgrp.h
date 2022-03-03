@@ -19,6 +19,7 @@ class mkgrp
         void ejecutarRmgrp(mkgrp *grupo,mount []);
         void modificarArchivoRM(string pathDisco, string nombrePart, string nombreG);
         int cantidadBloquesUsar(string data);
+        string retFecha();
 
 
         void setName(string s){
