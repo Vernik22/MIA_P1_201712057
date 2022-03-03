@@ -278,6 +278,9 @@ void reporte::ejecutarRepSuperB(reporte *rep,mount paMoun[])
 
 void reporte::ejecutarRepDisk(reporte *rep,mount paMoun[])
 {
+    char PartName[16];
+    PartName[0]='\0';
+
     string grafo = "digraph G{\ntbl [\nshape=box\nlabel=<\n<table border='0' cellborder='2' width='100' height=\"30\" color='lightblue4'>\n<tr>";
     string cuerpo = "";
     string finG = "     </tr>\n</table>\n>];\n}";
@@ -292,7 +295,7 @@ void reporte::ejecutarRepDisk(reporte *rep,mount paMoun[])
         arch = fopen(pathDisco.c_str(),"rb+");
         if(arch != NULL)
         {
-            double porcentajeUtilizado = 0.0;
+            float porcentajeUtilizado = 0.0;
             int espacioUtilizado = 0;
             fseek(arch,0,SEEK_SET);
             fread(&mbrTemp,sizeof(MBR),1,arch);
@@ -306,9 +309,98 @@ void reporte::ejecutarRepDisk(reporte *rep,mount paMoun[])
 
             cuerpo += "<td height='30' width='75'> MBR </td>";
 
-            for(int i= 0; i < 4; i++){
+            for(int i= 0; i < 4; i++)
+            {
+                if(parts[i].part_name!= PartName && parts[i].part_type == 'P')
+                {
+                    float partfff = parts[i].part_size;
+                    porcentajeUtilizado = (partfff/tamanioDisco)*100;
+                    cuerpo += "<td height='30' width='75.0'>PRIMARIA <br/>";
+                    cuerpo += parts[i].part_name;
+                    cuerpo += " <br/> Ocupado: "+ std::to_string(porcentajeUtilizado)+"%</td>";
+                    espacioUtilizado += parts[i].part_size;
 
 
+                }
+                else if(parts[i].part_status == '0')
+                {
+                    cuerpo += "<td height='30' width='75.0'>Libre</td>";
+
+                }
+                if(parts[i].part_type == 'E')
+                {
+                    float partfff = parts[i].part_size;
+                    espacioUtilizado += parts[i].part_size;
+                    porcentajeUtilizado = (partfff/tamanioDisco)*100;
+                    cuerpo += "<td  height='30' width='15.0'>\n";
+                    cuerpo += "<table border='5'  height='30' WIDTH='15.0' cellborder='1'>\n";
+                    cuerpo += " <tr>  <td height='60' colspan='100%'>EXTENDIDA <br/>";
+                    cuerpo += parts[i].part_name;
+                    cuerpo += " <br/> Ocupado:" + std::to_string(porcentajeUtilizado) +"%</td>  </tr>\n<tr>";
+                    int inicioExtendida = parts[i].part_start;
+
+                    EBR ebrTemp;
+                    fseek(arch,inicioExtendida,SEEK_SET);
+                    fread(&ebrTemp,sizeof(EBR),1,arch);
+                    if(ebrTemp.part_next == -1)
+                    {
+                        cout<<"No hay particiones logicas"<<endl;
+
+                    }
+                    else
+                    {
+                        espacioUtilizado = 0;
+                        int conta = 0;
+                        fseek(arch,inicioExtendida,SEEK_SET);
+                        fread(&ebrTemp,sizeof(EBR),1,arch);
+
+                        while(true)
+                        {
+                            if(ebrTemp.part_next == -1)
+                            {
+                                break;
+
+                            }
+                            else
+                            {
+                                fseek(arch,ebrTemp.part_next,SEEK_SET);
+                                fread(&ebrTemp,sizeof(EBR),1,arch);
+                                float partfff = parts[i].part_size;
+                                float ebrParff = ebrTemp.part_size;
+                                espacioUtilizado += ebrTemp.part_size;
+                                porcentajeUtilizado = (ebrParff/partfff)*100;
+                                cuerpo += "<td height='30'>EBR</td><td height='30'> Logica:  ";
+                                cuerpo += ebrTemp.part_name;
+                                cuerpo += " "+std::to_string(porcentajeUtilizado) +"%</td>";
+                                conta ++;
+
+                            }
+
+
+                        }
+                        if(parts[i].part_size-espacioUtilizado > 0)
+                        {
+                            float h1 = tamanioDisco;
+                            float h2 = espacioUtilizado;
+                            porcentajeUtilizado = ((h1-h2)/h1)*100;
+                            cuerpo +="<td height='30' width='100%'>Libre: "+ std::to_string(porcentajeUtilizado)+"%</td>";
+
+                        }
+                    }
+                    cuerpo += "</tr>\n";
+                    cuerpo += "</table>\n</td>";
+
+
+                }
+
+            }
+            if((tamanioDisco - espacioUtilizado) > 0)
+            {
+                cout<<espacioUtilizado<<endl;
+                float h1 = tamanioDisco;
+                float h2 = espacioUtilizado;
+                porcentajeUtilizado = ((h1-h2)/h1)*100;
+                cuerpo += "<td height='30' width='75.0'>Libre: "+ std::to_string(porcentajeUtilizado)+"%</td>";
             }
 
 
@@ -334,6 +426,7 @@ void reporte::ejecutarRepDisk(reporte *rep,mount paMoun[])
                 file_out<<textoFinal<<endl;
                 try
                 {
+                    vector<string> resultados;
                     resultados = split(rep->getPath(), '.');
                     string comando = "dot -T"+resultados[1] +" repDisk.txt -o " + newPath;
                     system(comando.c_str());

@@ -5,7 +5,7 @@
 1646275429 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1646274843 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1646342070 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	<vector>
 	"manejador.h"
@@ -23,13 +23,14 @@
 	<string>
 	"estructuras.h"
 
-1646093908 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
+1646275722 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
 	"mkdisk.h"
 	<iostream>
 	<time.h>
 	<string.h>
 	<cstdlib>
 	<sys/stat.h>
+	<stdio.h>
 
 1644251572 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/rmdisk.cpp
 	"rmdisk.h"
@@ -74,7 +75,7 @@
 1645048691 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.h
 	"mount.h"
 
-1646275555 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.cpp
+1646275634 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfs.cpp
 	"mkfs.h"
 	<iostream>
 	<string.h>
@@ -97,7 +98,7 @@
 	<cstdlib>
 	<cstring>
 
-1646275016 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
+1646343812 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
 	"reporte.h"
 	<iostream>
 	<fstream>
@@ -118,12 +119,12 @@
 	"login.h"
 	<iostream>
 
-1645980262 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.h
+1646275833 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.h
 	"mount.h"
 	<vector>
 	"estructuras.h"
 
-1646260125 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.cpp
+1646276111 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkgrp.cpp
 	"mkgrp.h"
 	<iostream>
 	<string>
@@ -131,8 +132,9 @@
 	<cstdlib>
 	<math.h>
 	<time.h>
+	<stdio.h>
 
-1646259932 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkusr.cpp
+1646276426 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkusr.cpp
 	"mkusr.h"
 	<iostream>
 	<string>
@@ -141,7 +143,7 @@
 	<math.h>
 	<time.h>
 
-1645643804 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkusr.h
+1646276148 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkusr.h
 	"mount.h"
 	<vector>
 	"estructuras.h"
