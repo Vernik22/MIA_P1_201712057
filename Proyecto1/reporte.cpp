@@ -450,11 +450,180 @@ void reporte::ejecutarRepDisk(reporte *rep,mount paMoun[])
 
 void reporte::ejecutarRepMBR(reporte *rep,mount paMoun[])
 {
+    char PartName[16];
+    PartName[0]='\0';
+
+    string grafo = "digraph G{\nsubgraph cluster{\nlabel=\"MBR\"\ntbl[shape=box,label=<\n<table border='0' cellborder='1' cellspacing='0' width='300'  height='200' >\n<tr>  <td width='150'> <b>Nombre</b> </td> <td width='150'> <b>Valor</b> </td>  </tr>\n";
+    string cuerpo = "";
+    string finG = "}\n";
     cout<<"\n************Ejecutar REPORTE MBR-EBR************\n"<<endl;
     string pathDisco="";
     string partName="";
     if(existeIdMount(rep->getId(),paMoun, pathDisco, partName))
     {
+
+        dirExist(rep);
+        MBR mbrTemp;
+        FILE *arch;
+        arch = fopen(pathDisco.c_str(),"rb+");
+        if(arch != NULL)
+        {
+            fseek(arch,0,SEEK_SET);
+            fread(&mbrTemp,sizeof(MBR),1,arch);
+
+            cuerpo += "<tr>  <td><b>mbr_tamaño</b></td><td>"+ std::to_string(mbrTemp.mbr_tamano) +"</td>  </tr>\n";
+            cuerpo += "<tr>  <td><b>mbr_Fecha_Creacion</b></td><td>";
+            cuerpo += mbrTemp.mbr_fecha_creacion.mbr_fecha_creacion;
+            cuerpo += "</td>  </tr>\n";
+            cuerpo += "<tr>  <td><b>mbr_Disk_Signature</b></td><td>" + std::to_string(mbrTemp.mbr_dsk_signature) + "</td>  </tr>\n";
+            cuerpo += "<tr>  <td><b>mbr_Disk_Fit</b></td><td>";
+            cuerpo += mbrTemp.dsk_fit;
+            cuerpo += "</td>  </tr>";
+
+            Particion parts[4];
+            parts[0] = mbrTemp.mbr_partition_1;
+            parts[1] = mbrTemp.mbr_partition_2;
+            parts[2] = mbrTemp.mbr_partition_3;
+            parts[3] = mbrTemp.mbr_partition_4;
+
+
+            for(int i =0; i < 4; i++)
+            {
+                if(parts[i].part_name!= PartName)
+                {
+                    string agre = "bgcolor=\"lightblue\"";
+                    cuerpo += "<tr>  <td "+ agre +"><b>part_Status_"+ std::to_string(i+1)+ "</b></td><td "+agre+">" ;
+                    cuerpo += parts[i].part_status;
+                    cuerpo += "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>Tipo_Particion_"+ std::to_string(i+1)+ "</b></td><td>";
+                    cuerpo += parts[i].part_type;
+                    cuerpo += "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>Tipo_Ajuste_"+ std::to_string(i+1)+ "</b></td><td>";
+                    cuerpo += parts[i].part_fit;
+                    cuerpo += "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>Inicio_Particion_"+ std::to_string(i+1)+ "</b></td><td>" + std::to_string(parts[i].part_start) + "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>TamanioTotal_"+std::to_string(i+1) + "</b></td><td>" + std::to_string(parts[i].part_size) + "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>NombreParticion_"+ std::to_string(i+1)+ "</b></td><td>";
+                    cuerpo += parts[i].part_name;
+                    cuerpo += "</td>  </tr>\n";
+
+                }
+
+            }
+
+            cuerpo += "</table>\n>];\n}";
+
+            //verificar si hay EBR
+            for(int i=0; i<4; i++)
+            {
+                if(parts[i].part_type == 'E')
+                {
+                    cuerpo += "subgraph cluster_1{\n label=\"EBR_Inicial\"\ntbl_1[shape=box, label=<\n<table border='0' cellborder='1' cellspacing='0'  width='300' height='160' >\n<tr>  <td width='150'><b>Nombre</b></td> <td width='150'><b>Valor</b></td>  </tr>\n";
+                    int inicioExtendida = parts[i].part_start;
+                    EBR ebrTemp;
+                    fseek(arch,inicioExtendida,SEEK_SET);
+                    fread(&ebrTemp,sizeof(EBR),1,arch);
+
+                    string agre = "bgcolor=\"pink\"";
+                    cuerpo += "<tr>  <td "+agre+"><b>Tipo_Ajuste_"+ std::to_string(i+1)+ "</b></td><td "+agre+">";
+                    cuerpo += ebrTemp.part_fit;
+                    cuerpo += "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>Part_Status"+ std::to_string(i+1)+ "</b></td><td>";
+                    cuerpo += ebrTemp.part_status;
+                    cuerpo += "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>Inicio_Particion_"+ std::to_string(i+1)+ "</b></td><td>" + std::to_string(ebrTemp.part_start) + "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>Particion_Siguiente_"+ std::to_string(i+1)+ "</b></td><td>" + std::to_string(ebrTemp.part_next) + "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>TamanioTotal_"+std::to_string(i+1) + "</b></td><td>" + std::to_string(ebrTemp.part_size) + "</td>  </tr>\n";
+                    cuerpo += "<tr>  <td><b>NombreParticion_"+ std::to_string(i+1)+ "</b></td><td>";
+                    cuerpo += ebrTemp.part_name;
+                    cuerpo += "</td>  </tr>\n";
+                    cuerpo += "</table>\n>];\n}";
+
+                    if(ebrTemp.part_next == -1)
+                    {
+                        cout<<"No hay particiones Logicas"<<endl;
+
+                    }
+                    else
+                    {
+                        int cont = 0;
+                        fseek(arch,ebrTemp.part_next,SEEK_SET);
+                        fread(&ebrTemp,sizeof(EBR),1,arch);
+                        while(true)
+                        {
+                            if(ebrTemp.part_next == -1)
+                            {
+
+                                break;
+                            }
+                            else
+                            {
+                                fseek(arch,ebrTemp.part_next,SEEK_SET);
+                                fread(&ebrTemp,sizeof(EBR),1,arch);
+                                cont++;
+
+                            }
+                            cuerpo += "subgraph cluster_"+ std::to_string(cont+1) + "{\n label=\"EBR_"+std::to_string(cont+1)+"\"\ntbl_"+ std::to_string(cont+1) + "[shape=box, label=<\n<table border='0' cellborder='1' cellspacing='0'  width='300' height='160' >\n<tr>  <td width='150'><b>Nombre</b></td> <td width='150'><b>Valor</b></td>  </tr>\n";
+                            string agre = "bgcolor=\"pink\"";
+                            cuerpo += "<tr>  <td "+agre+"><b>Tipo_Ajuste_"+ std::to_string(i+1)+ "</b></td><td "+agre+">";
+                            cuerpo += ebrTemp.part_fit;
+                            cuerpo += "</td>  </tr>\n";
+                            cuerpo += "<tr>  <td><b>Part_Status"+ std::to_string(i+1)+ "</b></td><td>";
+                            cuerpo += ebrTemp.part_status;
+                            cuerpo += "</td>  </tr>\n";
+                            cuerpo += "<tr>  <td><b>Inicio_Particion_"+ std::to_string(i+1)+ "</b></td><td>" + std::to_string(ebrTemp.part_start) + "</td>  </tr>\n";
+                            cuerpo += "<tr>  <td><b>Particion_Siguiente_"+ std::to_string(i+1)+ "</b></td><td>" + std::to_string(ebrTemp.part_next) + "</td>  </tr>\n";
+                            cuerpo += "<tr>  <td><b>TamanioTotal_"+std::to_string(i+1) + "</b></td><td>" + std::to_string(ebrTemp.part_size) + "</td>  </tr>\n";
+                            cuerpo += "<tr>  <td><b>NombreParticion_"+ std::to_string(i+1)+ "</b></td><td>";
+                            cuerpo += ebrTemp.part_name;
+                            cuerpo += "</td>  </tr>\n";
+                            cuerpo += "</table>\n>];\n}";
+
+
+
+                        }
+
+
+                    }
+
+                }
+
+
+            }
+
+
+            string textoFinal =grafo + cuerpo +finG;
+
+            string newPath = pathConComillas(rep->getPath());
+
+
+            string filename("repMBR.txt");
+            fstream file_out;
+            file_out.open(filename,std::ios_base::out);
+            if(!file_out.is_open())
+            {
+                cout<<"no se pudo abrir el archivo"<<endl;
+            }
+            else
+            {
+
+                file_out<<textoFinal<<endl;
+                try
+                {
+                    vector<string> resultados;
+                    resultados = split(rep->getPath(), '.');
+                    string comando = "dot -T"+resultados[1] +" repMBR.txt -o " + newPath;
+                    system(comando.c_str());
+                    cout<<"Reporte MBR-EBR creado correctamente"<<endl;
+                }
+                catch(...)
+                {
+                    cout<<"ERROR: no se pudo crear el reporte"<<endl;
+
+                }
+            }
+
+        }
 
     }
     else

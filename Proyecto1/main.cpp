@@ -118,6 +118,9 @@ int main()
             rep->setPath("/home/vernik/Imágenes/rep/repDisk.pdf");
             rep->ejecutarRepDisk(rep,ParticionesMontadas);
 
+            rep->setPath("/home/vernik/Imágenes/rep/repMbr.pdf");
+            rep->ejecutarRepMBR(rep,ParticionesMontadas);
+
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);
