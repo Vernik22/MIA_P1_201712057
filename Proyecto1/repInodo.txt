@@ -1,0 +1,6 @@
+digraph G{ 
+ rankdir=LR; 
+struct0 [shape=record,label="<f0> Inodo 0|i_uid : 1|i_gid : 1|i_zise : 0|i_atime : 2022-03-03 20:38:16|i_ctime : 2022-03-03 20:38:16|i_mtime : 2022-03-03 20:38:16|i_type : 0|i_perm : 664|i_block1 : 0|i_block2 : -1|i_block3 : -1|i_block4 : -1|i_block5 : -1|i_block6 : -1|i_block7 : -1|i_block8 : -1|i_block9 : -1|i_block10 : -1|i_block11 : -1|i_block12 : -1|i_block13 : -1|i_block14 : -1|i_block15 : -1"];struct1 [shape=record,label="<f0> Inodo 1|i_uid : 1|i_gid : 1|i_zise : 146|i_atime : 2022-03-03 20:38:16|i_ctime : 2022-03-03 20:38:16|i_mtime : 2022-03-03 20:38:16|i_type : 1|i_perm : 664|i_block1 : 1|i_block2 : 2|i_block3 : 3|i_block4 : -1|i_block5 : -1|i_block6 : -1|i_block7 : -1|i_block8 : -1|i_block9 : -1|i_block10 : -1|i_block11 : -1|i_block12 : -1|i_block13 : -1|i_block14 : -1|i_block15 : -1"];
+ 
+struct0:f0 -> struct1:f0
+}

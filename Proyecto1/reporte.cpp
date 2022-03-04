@@ -636,6 +636,116 @@ void reporte::ejecutarRepMBR(reporte *rep,mount paMoun[])
 
 void reporte::ejecutarRepInodo(reporte *rep,mount paMoun[])
 {
+    string grafo = "digraph G{ \n rankdir=LR; \n";
+    string cuerpo = "";
+    string finG = "\n}";
+
+
+    SupB superBloque;
+    char buffer='0';
+    cout<<"\n************Ejecutar REPORTE Inodo************\n"<<endl;
+    string pathDisco="";
+    string partName="";
+    if(existeIdMount(rep->getId(),paMoun, pathDisco, partName))
+    {
+        dirExist(rep);
+        MBR mbrTemp;
+        FILE *arch;
+        arch = fopen(pathDisco.c_str(),"rb+");
+        if(arch != NULL)
+        {
+            fseek(arch,0,SEEK_SET);
+            fread(&mbrTemp,sizeof(MBR),1,arch);
+
+            int tamParticion, iniPart;
+            returnDatosPart(mbrTemp, pathDisco,partName,tamParticion, iniPart);
+
+            fseek(arch,iniPart,SEEK_SET);
+            fread(&superBloque,sizeof(SupB),1,arch);
+            int contador = 0;
+
+                for(int i =0; i<superBloque.s_inodes_count; i++)
+                {
+
+                    fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                    fread(&buffer,sizeof(buffer),1,arch);
+                    if(buffer == '1')
+                    {
+                        Inodo inodoTemp;
+                        fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                        fread(&inodoTemp,sizeof(Inodo),1,arch);
+
+                        cuerpo += "struct"+std::to_string(i)+" [shape=record,label=\"<f0> Inodo "+ std::to_string(i)+"|i_uid : "+std::to_string(inodoTemp.i_uid)+"|i_gid : "+std::to_string(inodoTemp.i_gid)+"|i_size : "+std::to_string(inodoTemp.i_size)+"|i_atime : ";
+                        cuerpo += inodoTemp.i_atime.mbr_fecha_creacion;
+                        cuerpo += "|i_ctime : ";
+                        cuerpo += inodoTemp.i_ctime.mbr_fecha_creacion;
+                        cuerpo += "|i_mtime : ";
+                        cuerpo += inodoTemp.i_mtime.mbr_fecha_creacion;
+                        cuerpo += "|i_type : ";
+                        cuerpo += inodoTemp.i_type;
+                        cuerpo += "|i_perm : "+std::to_string(inodoTemp.i_perm);
+                        contador ++;
+
+                        for(int j=0; j<15; j++){
+
+                            cuerpo+= "|i_block"+std::to_string(j+1)+" : "+std::to_string(inodoTemp.i_block[j]);
+
+                        }
+
+                        cuerpo += "\"];";
+
+
+                    }
+
+                }
+                cuerpo += "\n \n";
+
+                for(int i=1; i<contador; i++){
+
+                    cuerpo += "struct"+std::to_string(i-1)+":f0 -> struct"+std::to_string(i)+":f0";
+                }
+
+
+            fclose(arch);
+
+             string textoFinal =grafo + cuerpo +finG;
+
+            string newPath = pathConComillas(rep->getPath());
+
+            string filename("repInodo.txt");
+            fstream file_out;
+            file_out.open(filename,std::ios_base::out);
+            if(!file_out.is_open())
+            {
+                cout<<"no se pudo abrir el archivo"<<endl;
+            }
+            else
+            {
+
+                file_out<<textoFinal<<endl;
+                try
+                {
+                    vector<string> resultados;
+                    resultados = split(rep->getPath(), '.');
+                    string comando = "dot -T"+resultados[1] +" repInodo.txt -o " + newPath;
+                    system(comando.c_str());
+                    cout<<"Reporte Inodo creado correctamente"<<endl;
+                }
+                catch(...)
+                {
+                    cout<<"ERROR: no se pudo crear el reporte"<<endl;
+
+                }
+            }
+
+
+        }
+
+    }
+    else
+    {
+        cout<<"El id no existe, la particion no esta montada"<<endl;
+    }
 
 }
 
