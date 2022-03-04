@@ -664,51 +664,53 @@ void reporte::ejecutarRepInodo(reporte *rep,mount paMoun[])
             fread(&superBloque,sizeof(SupB),1,arch);
             int contador = 0;
 
-                for(int i =0; i<superBloque.s_inodes_count; i++)
+            for(int i =0; i<superBloque.s_inodes_count; i++)
+            {
+
+                fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                fread(&buffer,sizeof(buffer),1,arch);
+                if(buffer == '1')
                 {
+                    Inodo inodoTemp;
+                    fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                    fread(&inodoTemp,sizeof(Inodo),1,arch);
 
-                    fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
-                    fread(&buffer,sizeof(buffer),1,arch);
-                    if(buffer == '1')
+                    cuerpo += "struct"+std::to_string(i)+" [shape=record,label=\"<f0> Inodo "+ std::to_string(i)+"|i_uid : "+std::to_string(inodoTemp.i_uid)+"|i_gid : "+std::to_string(inodoTemp.i_gid)+"|i_size : "+std::to_string(inodoTemp.i_size)+"|i_atime : ";
+                    cuerpo += inodoTemp.i_atime.mbr_fecha_creacion;
+                    cuerpo += "|i_ctime : ";
+                    cuerpo += inodoTemp.i_ctime.mbr_fecha_creacion;
+                    cuerpo += "|i_mtime : ";
+                    cuerpo += inodoTemp.i_mtime.mbr_fecha_creacion;
+                    cuerpo += "|i_type : ";
+                    cuerpo += inodoTemp.i_type;
+                    cuerpo += "|i_perm : "+std::to_string(inodoTemp.i_perm);
+                    contador ++;
+
+                    for(int j=0; j<15; j++)
                     {
-                        Inodo inodoTemp;
-                        fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
-                        fread(&inodoTemp,sizeof(Inodo),1,arch);
 
-                        cuerpo += "struct"+std::to_string(i)+" [shape=record,label=\"<f0> Inodo "+ std::to_string(i)+"|i_uid : "+std::to_string(inodoTemp.i_uid)+"|i_gid : "+std::to_string(inodoTemp.i_gid)+"|i_size : "+std::to_string(inodoTemp.i_size)+"|i_atime : ";
-                        cuerpo += inodoTemp.i_atime.mbr_fecha_creacion;
-                        cuerpo += "|i_ctime : ";
-                        cuerpo += inodoTemp.i_ctime.mbr_fecha_creacion;
-                        cuerpo += "|i_mtime : ";
-                        cuerpo += inodoTemp.i_mtime.mbr_fecha_creacion;
-                        cuerpo += "|i_type : ";
-                        cuerpo += inodoTemp.i_type;
-                        cuerpo += "|i_perm : "+std::to_string(inodoTemp.i_perm);
-                        contador ++;
-
-                        for(int j=0; j<15; j++){
-
-                            cuerpo+= "|i_block"+std::to_string(j+1)+" : "+std::to_string(inodoTemp.i_block[j]);
-
-                        }
-
-                        cuerpo += "\"];";
-
+                        cuerpo+= "|i_block"+std::to_string(j+1)+" : "+std::to_string(inodoTemp.i_block[j]);
 
                     }
 
-                }
-                cuerpo += "\n \n";
+                    cuerpo += "\"];";
 
-                for(int i=1; i<contador; i++){
 
-                    cuerpo += "struct"+std::to_string(i-1)+":f0 -> struct"+std::to_string(i)+":f0";
                 }
+
+            }
+            cuerpo += "\n \n";
+
+            for(int i=1; i<contador; i++)
+            {
+
+                cuerpo += "struct"+std::to_string(i-1)+":f0 -> struct"+std::to_string(i)+":f0  ";
+            }
 
 
             fclose(arch);
 
-             string textoFinal =grafo + cuerpo +finG;
+            string textoFinal =grafo + cuerpo +finG;
 
             string newPath = pathConComillas(rep->getPath());
 
@@ -751,6 +753,163 @@ void reporte::ejecutarRepInodo(reporte *rep,mount paMoun[])
 
 void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
 {
+
+    string grafo = "digraph G{ \n rankdir=LR; \n";
+    string cuerpo = "";
+    string finG = "\n}";
+
+
+    SupB superBloque;
+    char buffer='0';
+    cout<<"\n************Ejecutar REPORTE Bloque************\n"<<endl;
+    string pathDisco="";
+    string partName="";
+    if(existeIdMount(rep->getId(),paMoun, pathDisco, partName))
+    {
+        dirExist(rep);
+        MBR mbrTemp;
+        FILE *arch;
+        arch = fopen(pathDisco.c_str(),"rb+");
+        if(arch != NULL)
+        {
+            fseek(arch,0,SEEK_SET);
+            fread(&mbrTemp,sizeof(MBR),1,arch);
+
+            int tamParticion, iniPart;
+            returnDatosPart(mbrTemp, pathDisco,partName,tamParticion, iniPart);
+
+            fseek(arch,iniPart,SEEK_SET);
+            fread(&superBloque,sizeof(SupB),1,arch);
+            int contador = 0;
+
+            for(int i =0; i<superBloque.s_inodes_count; i++)
+            {
+
+                fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                fread(&buffer,sizeof(buffer),1,arch);
+                if(buffer == '1')
+                {
+                    Inodo inodoTemp;
+                    fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                    fread(&inodoTemp,sizeof(Inodo),1,arch);
+
+                    for(int j=0; j<15; j++)
+                    {
+
+                        if(j<12)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    BCarpeta bloTemp;
+                                    fseek(arch,superBloque.s_block_start +(i*sizeof(BCarpeta)),SEEK_SET);
+                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        cuerpo += "|{";
+                                        cuerpo += bloTemp.b_content[k].b_name;
+                                        cuerpo += "|"+ std::to_string(bloTemp.b_content[k].b_inodo)+"}";
+
+                                    }
+
+
+                                    contador ++;
+                                    cuerpo += "\"];";
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    BArchivo bloTemp;
+                                    fseek(arch,superBloque.s_block_start +(i*sizeof(BCarpeta)),SEEK_SET);
+                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                    string contenido = bloTemp.b_content;
+
+                                    vector<string> saltos;
+                                    saltos = split(contenido, '\n');
+
+                                    for(int k=0; k< saltos.size(); k++){
+                                        cuerpo += saltos[k] + "\\n";
+
+                                    }
+
+
+                                    contador ++;
+                                    cuerpo += "\"];";
+
+                                }
+
+
+                            }
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+            }
+            cuerpo += "\n \n";
+
+            for(int i=1; i<contador; i++)
+            {
+
+                cuerpo += "struct"+std::to_string(i-1)+":f0 -> struct"+std::to_string(i)+":f0  ";
+            }
+
+
+
+
+            fclose(arch);
+
+            string textoFinal =grafo + cuerpo +finG;
+
+            string newPath = pathConComillas(rep->getPath());
+
+            string filename("repBlock.txt");
+            fstream file_out;
+            file_out.open(filename,std::ios_base::out);
+            if(!file_out.is_open())
+            {
+                cout<<"no se pudo abrir el archivo"<<endl;
+            }
+            else
+            {
+
+                file_out<<textoFinal<<endl;
+                try
+                {
+                    vector<string> resultados;
+                    resultados = split(rep->getPath(), '.');
+                    string comando = "dot -T"+resultados[1] +" repBlock.txt -o " + newPath;
+                    system(comando.c_str());
+                    cout<<"Reporte Bloque creado correctamente"<<endl;
+                }
+                catch(...)
+                {
+                    cout<<"ERROR: no se pudo crear el reporte"<<endl;
+
+                }
+            }
+
+        }
+
+    }
+    else
+    {
+        cout<<"El id no existe, la particion no esta montada"<<endl;
+    }
+
 
 }
 

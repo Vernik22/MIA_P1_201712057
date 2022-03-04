@@ -124,6 +124,9 @@ int main()
             rep->setPath("/home/vernik/Imágenes/rep/repIno.pdf");
             rep->ejecutarRepInodo(rep,ParticionesMontadas);
 
+            rep->setPath("/home/vernik/Imágenes/rep/repBlock.pdf");
+            rep->ejecutarRepBloque(rep,ParticionesMontadas);
+
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);
