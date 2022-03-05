@@ -683,7 +683,7 @@ void reporte::ejecutarRepInodo(reporte *rep,mount paMoun[])
                     cuerpo += inodoTemp.i_mtime.mbr_fecha_creacion;
                     cuerpo += "|i_type : ";
                     cuerpo += inodoTemp.i_type;
-                    cuerpo += "|i_perm : "+std::to_string(inodoTemp.i_perm);
+
                     contador ++;
 
                     for(int j=0; j<15; j++)
@@ -692,6 +692,7 @@ void reporte::ejecutarRepInodo(reporte *rep,mount paMoun[])
                         cuerpo+= "|i_block"+std::to_string(j+1)+" : "+std::to_string(inodoTemp.i_block[j]);
 
                     }
+                    cuerpo += "|i_perm : "+std::to_string(inodoTemp.i_perm);
 
                     cuerpo += "\"];";
 
@@ -753,7 +754,6 @@ void reporte::ejecutarRepInodo(reporte *rep,mount paMoun[])
 
 void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
 {
-
     string grafo = "digraph G{ \n rankdir=LR; \n";
     string cuerpo = "";
     string finG = "\n}";
@@ -803,10 +803,10 @@ void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
                                 if(inodoTemp.i_type== '0' )
                                 {
                                     BCarpeta bloTemp;
-                                    fseek(arch,superBloque.s_block_start +(i*sizeof(BCarpeta)),SEEK_SET);
+                                    fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
                                     fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
-                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
 
                                     for(int k=0; k<4; k++)
                                     {
@@ -824,7 +824,7 @@ void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
                                 else   //inodo tipo archivo
                                 {
                                     BArchivo bloTemp;
-                                    fseek(arch,superBloque.s_block_start +(i*sizeof(BCarpeta)),SEEK_SET);
+                                    fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
                                     fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                     cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
@@ -835,7 +835,8 @@ void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
                                     vector<string> saltos;
                                     saltos = split(contenido, '\n');
 
-                                    for(int k=0; k< saltos.size(); k++){
+                                    for(int k=0; k< saltos.size(); k++)
+                                    {
                                         cuerpo += saltos[k] + "\\n";
 
                                     }
@@ -847,6 +848,397 @@ void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
                                 }
 
 
+                            }
+
+                        }
+                        else if(j==12)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    cuerpo += std::to_string(apuntadores.b_apuntadores [k].b_inodo) + ", ";
+
+                                }
+                                contador ++;
+                                cuerpo += "\"];";
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+
+                                            BCarpeta bloTemp;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                            for(int k=0; k<4; k++)
+                                            {
+                                                cuerpo += "|{";
+                                                cuerpo += bloTemp.b_content[k].b_name;
+                                                cuerpo += "|"+ std::to_string(bloTemp.b_content[k].b_inodo)+"}";
+
+                                            }
+
+
+                                            contador ++;
+                                            cuerpo += "\"];";
+                                        }
+
+                                    }
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BArchivo bloTemp;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                            string contenido = bloTemp.b_content;
+
+                                            vector<string> saltos;
+                                            saltos = split(contenido, '\n');
+
+                                            for(int l=0; l< saltos.size(); l++)
+                                            {
+                                                cuerpo += saltos[l] + "\\n";
+
+                                            }
+
+
+                                            contador ++;
+                                            cuerpo += "\"];";
+
+                                        }
+                                    }
+
+
+
+                                }
+                            }
+
+                        }
+                        else if(j==13)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    cuerpo += std::to_string(apuntadores.b_apuntadores [k].b_inodo) + ", ";
+
+                                }
+                                contador ++;
+                                cuerpo += "\"];";
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+
+                                        cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            cuerpo += std::to_string(apun1.b_apuntadores [l].b_inodo) + ", ";
+
+                                        }
+                                        contador ++;
+                                        cuerpo += "\"];";
+                                    }
+
+
+                                }
+
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BCarpeta bloTemp;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                                    for(int m=0; m<4; m++)
+                                                    {
+                                                        cuerpo += "|{";
+                                                        cuerpo += bloTemp.b_content[m].b_name;
+                                                        cuerpo += "|"+ std::to_string(bloTemp.b_content[m].b_inodo)+"}";
+
+                                                    }
+
+
+                                                    contador ++;
+                                                    cuerpo += "\"];";
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BArchivo bloTemp;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                                    string contenido = bloTemp.b_content;
+
+                                                    vector<string> saltos;
+                                                    saltos = split(contenido, '\n');
+
+                                                    for(int n=0; n< saltos.size(); n++)
+                                                    {
+                                                        cuerpo += saltos[n] + "\\n";
+
+                                                    }
+
+
+                                                    contador ++;
+                                                    cuerpo += "\"];";
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+
+
+                                }
+                            }
+
+                        }
+                        else if(j==14)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    cuerpo += std::to_string(apuntadores.b_apuntadores [k].b_inodo) + ", ";
+
+                                }
+                                contador ++;
+                                cuerpo += "\"];";
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+
+                                        cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            cuerpo += std::to_string(apun1.b_apuntadores [l].b_inodo) + ", ";
+
+                                        }
+                                        contador ++;
+                                        cuerpo += "\"];";
+                                    }
+
+
+                                }
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            if(apun1.b_apuntadores [l].b_inodo != -1)
+                                            {
+
+                                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
+                                                BApun apun2;
+                                                fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                fread(&apun2,sizeof(BApun),1,arch);
+
+                                                for(int n=0; n<4; n++)
+                                                {
+                                                    cuerpo += std::to_string(apun2.b_apuntadores [n].b_inodo) + ", ";
+
+                                                }
+                                                contador ++;
+                                                cuerpo += "\"];";
+                                            }
+
+
+                                        }
+                                    }
+
+
+                                }
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BApun apun2;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&apun2,sizeof(BApun),1,arch);
+
+                                                    for(int n=0; n<4; n++)
+                                                    {
+                                                        if(apun2.b_apuntadores [n].b_inodo != -1)
+                                                        {
+                                                            BCarpeta bloTemp;
+                                                            fseek(arch,superBloque.s_block_start +(apun2.b_apuntadores [n].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+
+                                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                                            for(int m=0; m<4; m++)
+                                                            {
+                                                                cuerpo += "|{";
+                                                                cuerpo += bloTemp.b_content[m].b_name;
+                                                                cuerpo += "|"+ std::to_string(bloTemp.b_content[m].b_inodo)+"}";
+
+                                                            }
+
+
+                                                            contador ++;
+                                                            cuerpo += "\"];";
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores[k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BApun apun2;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores[l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&apun2,sizeof(BApun),1,arch);
+
+                                                    for(int n=0; n<4; n++)
+                                                    {
+                                                        if(apun2.b_apuntadores [n].b_inodo != -1)
+                                                        {
+                                                            BArchivo bloTemp;
+                                                            fseek(arch,superBloque.s_block_start +(apun2.b_apuntadores[n].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                                            string contenido = bloTemp.b_content;
+
+                                                            vector<string> saltos;
+                                                            saltos = split(contenido, '\n');
+
+                                                            for(int n=0; n< saltos.size(); n++)
+                                                            {
+                                                                cuerpo += saltos[n] + "\\n";
+
+                                                            }
+
+
+                                                            contador ++;
+                                                            cuerpo += "\"];";
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
                             }
 
                         }
@@ -914,6 +1306,1011 @@ void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
 }
 
 void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
+{
+    string grafo = "digraph G{ \n rankdir=LR;\n node [shape = record, style=filled, fillcolor=lightBlue]; \n";
+    string cuerpo = "";
+    string finG = "\n}";
+
+
+    SupB superBloque;
+    char buffer='0';
+    cout<<"\n************Ejecutar REPORTE Tree************\n"<<endl;
+    string pathDisco="";
+    string partName="";
+    if(existeIdMount(rep->getId(),paMoun, pathDisco, partName))
+    {
+        dirExist(rep);
+        MBR mbrTemp;
+        FILE *arch;
+        arch = fopen(pathDisco.c_str(),"rb+");
+        if(arch != NULL)
+        {
+            fseek(arch,0,SEEK_SET);
+            fread(&mbrTemp,sizeof(MBR),1,arch);
+
+            int tamParticion, iniPart;
+            returnDatosPart(mbrTemp, pathDisco,partName,tamParticion, iniPart);
+
+            fseek(arch,iniPart,SEEK_SET);
+            fread(&superBloque,sizeof(SupB),1,arch);
+            int contadorIno = 0;
+            int actualIno = 0;
+            int contador = 0;
+            int actualBlo = 0;
+
+            //Graficando los inodos
+
+            for(int i =0; i<superBloque.s_inodes_count; i++)
+            {
+
+                fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                fread(&buffer,sizeof(buffer),1,arch);
+                if(buffer == '1')
+                {
+                    Inodo inodoTemp;
+                    fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                    fread(&inodoTemp,sizeof(Inodo),1,arch);
+
+                    cuerpo += "inodo"+std::to_string(contadorIno)+" [shape=record,label=\"<f0> Inodo "+ std::to_string(contadorIno)+"|i_uid : "+std::to_string(inodoTemp.i_uid)+"|i_gid : "+std::to_string(inodoTemp.i_gid)+"|i_size : "+std::to_string(inodoTemp.i_size)+"|i_atime : ";
+                    cuerpo += inodoTemp.i_atime.mbr_fecha_creacion;
+                    cuerpo += "|i_ctime : ";
+                    cuerpo += inodoTemp.i_ctime.mbr_fecha_creacion;
+                    cuerpo += "|i_mtime : ";
+                    cuerpo += inodoTemp.i_mtime.mbr_fecha_creacion;
+                    cuerpo += "|i_type : ";
+                    cuerpo += inodoTemp.i_type;
+
+                    contadorIno ++;
+
+                    for(int j=0; j<15; j++)
+                    {
+
+                        cuerpo+= "|<f"+std::to_string(j+1)+"> i_block"+std::to_string(j+1)+" : "+std::to_string(inodoTemp.i_block[j]);
+
+                    }
+                    cuerpo += "|i_perm : "+std::to_string(inodoTemp.i_perm);
+
+                    cuerpo += "\"];";
+
+
+                }
+
+            }
+
+            //Graficando Bloques
+            cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+
+            for(int i =0; i<superBloque.s_inodes_count; i++)
+            {
+
+                fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                fread(&buffer,sizeof(buffer),1,arch);
+                if(buffer == '1')
+                {
+                    Inodo inodoTemp;
+                    fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                    fread(&inodoTemp,sizeof(Inodo),1,arch);
+
+                    for(int j=0; j<15; j++)
+                    {
+
+                        if(j<12)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    BCarpeta bloTemp;
+                                    fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
+                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        cuerpo += "|{";
+                                        cuerpo += bloTemp.b_content[k].b_name;
+                                        cuerpo += "|<f"+std::to_string(k+1)+"> "+ std::to_string(bloTemp.b_content[k].b_inodo)+"}";
+
+                                    }
+
+
+                                    contador ++;
+                                    cuerpo += "\"];";
+                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    BArchivo bloTemp;
+                                    fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
+                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                    string contenido = bloTemp.b_content;
+
+                                    vector<string> saltos;
+                                    saltos = split(contenido, '\n');
+
+                                    for(int k=0; k< saltos.size(); k++)
+                                    {
+                                        cuerpo += saltos[k] + "\\n";
+
+                                    }
+
+
+                                    contador ++;
+                                    cuerpo += "\"];";
+
+                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+
+                                }
+
+
+                            }
+
+                        }
+                        else if(j==12)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    cuerpo += "|{";
+                                    cuerpo += apuntadores.b_apuntadores [k].b_name;
+                                    cuerpo += "|<f"+std::to_string(k+1)+"> "+ std::to_string(apuntadores.b_apuntadores [k].b_inodo)+"}";
+
+                                }
+                                contador ++;
+                                cuerpo += "\"];";
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+
+                                            BCarpeta bloTemp;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
+                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                            for(int k=0; k<4; k++)
+                                            {
+                                                cuerpo += "|{";
+                                                cuerpo += bloTemp.b_content[k].b_name;
+                                                cuerpo += "|<f"+std::to_string(k+1)+"> "+ std::to_string(bloTemp.b_content[k].b_inodo)+"}";
+
+                                            }
+
+
+                                            contador ++;
+                                            cuerpo += "\"];";
+                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+                                        }
+
+                                    }
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BArchivo bloTemp;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
+                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                            string contenido = bloTemp.b_content;
+
+                                            vector<string> saltos;
+                                            saltos = split(contenido, '\n');
+
+                                            for(int l=0; l< saltos.size(); l++)
+                                            {
+                                                cuerpo += saltos[l] + "\\n";
+
+                                            }
+
+
+                                            contador ++;
+                                            cuerpo += "\"];";
+                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+
+                                        }
+                                    }
+
+
+
+                                }
+                            }
+
+                        }
+                        else if(j==13)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    cuerpo += "|{";
+                                    cuerpo += apuntadores.b_apuntadores [k].b_name;
+                                    cuerpo += "|<f"+std::to_string(k+1)+"> "+ std::to_string(apuntadores.b_apuntadores [k].b_inodo)+"}";
+
+
+                                }
+                                contador ++;
+                                cuerpo += "\"];";
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+
+                                        cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            cuerpo += "|{";
+                                            cuerpo += apun1.b_apuntadores [l].b_name;
+                                            cuerpo += "|<f"+std::to_string(l+1)+"> "+ std::to_string(apun1.b_apuntadores [l].b_inodo)+"}";
+
+
+                                        }
+                                        contador ++;
+                                        cuerpo += "\"];";
+                                    }
+
+
+                                }
+
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BCarpeta bloTemp;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
+                                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                                    for(int m=0; m<4; m++)
+                                                    {
+                                                        cuerpo += "|{";
+                                                        cuerpo += bloTemp.b_content[m].b_name;
+                                                        cuerpo += "|<f"+std::to_string(m+1)+"> "+ std::to_string(bloTemp.b_content[m].b_inodo)+"}";
+
+                                                    }
+
+
+                                                    contador ++;
+                                                    cuerpo += "\"];";
+                                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BArchivo bloTemp;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
+                                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                                    string contenido = bloTemp.b_content;
+
+                                                    vector<string> saltos;
+                                                    saltos = split(contenido, '\n');
+
+                                                    for(int n=0; n< saltos.size(); n++)
+                                                    {
+                                                        cuerpo += saltos[n] + "\\n";
+
+                                                    }
+
+
+                                                    contador ++;
+                                                    cuerpo += "\"];";
+                                                    cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+
+
+                                }
+                            }
+
+                        }
+                        else if(j==14)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    cuerpo += "|{";
+                                    cuerpo += apuntadores.b_apuntadores [k].b_name;
+                                    cuerpo += "|<f"+std::to_string(k+1)+"> "+ std::to_string(apuntadores.b_apuntadores [k].b_inodo)+"}";
+
+
+                                }
+                                contador ++;
+                                cuerpo += "\"];";
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+
+                                        cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            cuerpo += "|{";
+                                            cuerpo += apun1.b_apuntadores [l].b_name;
+                                            cuerpo += "|<f"+std::to_string(l+1)+"> "+ std::to_string(apun1.b_apuntadores [l].b_inodo)+"}";
+
+
+                                        }
+                                        contador ++;
+                                        cuerpo += "\"];";
+                                    }
+
+
+                                }
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            if(apun1.b_apuntadores [l].b_inodo != -1)
+                                            {
+
+                                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                                BApun apun2;
+                                                fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                fread(&apun2,sizeof(BApun),1,arch);
+
+                                                for(int n=0; n<4; n++)
+                                                {
+
+                                                    cuerpo += "|{";
+                                                    cuerpo += apun2.b_apuntadores [n].b_name;
+                                                    cuerpo += "|<f"+std::to_string(n+1)+"> "+ std::to_string(apun2.b_apuntadores [n].b_inodo)+"}";
+
+                                                }
+                                                contador ++;
+                                                cuerpo += "\"];";
+                                            }
+
+
+                                        }
+                                    }
+
+
+                                }
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BApun apun2;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&apun2,sizeof(BApun),1,arch);
+
+                                                    for(int n=0; n<4; n++)
+                                                    {
+                                                        if(apun2.b_apuntadores [n].b_inodo != -1)
+                                                        {
+                                                            BCarpeta bloTemp;
+                                                            fseek(arch,superBloque.s_block_start +(apun2.b_apuntadores [n].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+
+                                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
+                                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+
+                                                            for(int m=0; m<4; m++)
+                                                            {
+                                                                cuerpo += "|{";
+                                                                cuerpo += bloTemp.b_content[m].b_name;
+                                                                cuerpo += "|<f"+std::to_string(l+1)+"> "+ std::to_string(bloTemp.b_content[m].b_inodo)+"}";
+
+                                                            }
+
+
+                                                            contador ++;
+                                                            cuerpo += "\"];";
+                                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                                else   //inodo tipo archivo
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores[k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BApun apun2;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores[l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&apun2,sizeof(BApun),1,arch);
+
+                                                    for(int n=0; n<4; n++)
+                                                    {
+                                                        if(apun2.b_apuntadores [n].b_inodo != -1)
+                                                        {
+                                                            BArchivo bloTemp;
+                                                            fseek(arch,superBloque.s_block_start +(apun2.b_apuntadores[n].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
+                                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+
+
+                                                            string contenido = bloTemp.b_content;
+
+                                                            vector<string> saltos;
+                                                            saltos = split(contenido, '\n');
+
+                                                            for(int n=0; n< saltos.size(); n++)
+                                                            {
+                                                                cuerpo += saltos[n] + "\\n";
+
+                                                            }
+
+
+                                                            contador ++;
+                                                            cuerpo += "\"];";
+                                                            cuerpo += "\n node [shape = record, style=filled, fillcolor=pink]; \n";
+                                                        }
+                                                    }
+
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                            }
+
+                        }
+
+                    }
+
+
+
+
+                }
+
+            }
+
+
+            cuerpo += "\n \n";
+            //creando las lineas de los inodos a los bloques
+
+            for(int i =0; i<superBloque.s_inodes_count; i++)
+            {
+
+                fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                fread(&buffer,sizeof(buffer),1,arch);
+                if(buffer == '1')
+                {
+                    Inodo inodoTemp;
+                    fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                    fread(&inodoTemp,sizeof(Inodo),1,arch);
+
+                    for(int j=0; j<15; j++)
+                    {
+                        if(inodoTemp.i_block[j] != -1)
+                        {
+                            cuerpo += "inodo"+std::to_string(i)+":f"+std::to_string(j+1) +"-> struct"+std::to_string(inodoTemp.i_block[j])+":f0  \n";
+                        }
+
+                    }
+
+                }
+
+            }
+
+            //creando las lineas para los bloques a los inodos
+
+
+            for(int i =0; i<superBloque.s_inodes_count; i++)
+            {
+
+                fseek(arch,superBloque.s_bm_inode_start +(i*sizeof(buffer)),SEEK_SET);
+                fread(&buffer,sizeof(buffer),1,arch);
+                if(buffer == '1')
+                {
+                    Inodo inodoTemp;
+                    fseek(arch,superBloque.s_inode_start +(i*sizeof(Inodo)),SEEK_SET);
+                    fread(&inodoTemp,sizeof(Inodo),1,arch);
+
+                    for(int j=0; j<15; j++)
+                    {
+
+                        if(j<12)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    BCarpeta bloTemp;
+                                    fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        string p = ".";
+                                        string pp = "..";
+                                        if(bloTemp.b_content[k].b_inodo != -1 && bloTemp.b_content[k].b_name != p && bloTemp.b_content[k].b_name != pp)
+                                        {
+                                            cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(bloTemp.b_content[k].b_inodo)+":f0  \n";
+                                            actualBlo ++;
+                                        }
+
+                                    }
+                                }
+                                else
+                                {
+                                    actualBlo ++;
+                                }
+                            }
+
+                        }
+                        else if(j==12)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores[k].b_inodo != -1)
+                                    {
+                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        actualBlo++;
+                                    }
+                                }
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+
+                                            BCarpeta bloTemp;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+                                            for(int k=0; k<4; k++)
+                                            {
+                                                string p = ".";
+                                                string pp = "..";
+                                                if(bloTemp.b_content[k].b_inodo != -1 && bloTemp.b_content[k].b_name != p && bloTemp.b_content[k].b_name != pp)
+                                                {
+
+                                                    cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(bloTemp.b_content[k].b_inodo)+":f0  \n";
+                                                    actualBlo++;
+                                                }
+                                            }
+
+                                        }
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    actualBlo ++;
+                                }
+                            }
+
+                        }
+                        else if(j==13)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores[k].b_inodo != -1)
+                                    {
+                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        actualBlo++;
+                                    }
+                                }
+
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+
+
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            if(apun1.b_apuntadores[l].b_inodo != -1)
+                                            {
+                                                cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
+                                                actualBlo++;
+                                            }
+                                        }
+
+                                    }
+
+
+                                }
+
+
+                                if(inodoTemp.i_type== '0' )
+                                {
+                                    for(int k=0; k<4; k++)
+                                    {
+                                        if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                        {
+                                            BApun apun1;
+                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                            fread(&apun1,sizeof(BApun),1,arch);
+                                            for(int l=0; l<4; l++)
+                                            {
+                                                if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                {
+                                                    BCarpeta bloTemp;
+                                                    fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                    fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+
+                                                    for(int m=0; m<4; m++)
+                                                    {
+                                                        string p = ".";
+                                                        string pp = "..";
+                                                        if(bloTemp.b_content[m].b_inodo != -1 && bloTemp.b_content[m].b_name != p && bloTemp.b_content[m].b_name != pp)
+                                                        {
+
+                                                            cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(m+1) +"-> inodo"+std::to_string(bloTemp.b_content[m].b_inodo)+":f0  \n";
+                                                            actualBlo++;
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+
+                                        }
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    actualBlo ++;
+                                }
+
+                            }
+
+                        }
+                        else if(j==14)
+                        {
+                            if(inodoTemp.i_block[j] != -1 )
+                            {
+
+                                BApun apuntadores;
+                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fread(&apuntadores,sizeof(BApun),1,arch);
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores[k].b_inodo != -1)
+                                    {
+                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        actualBlo++;
+                                    }
+                                }
+
+
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+
+
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            if(apun1.b_apuntadores[l].b_inodo != -1)
+                                            {
+                                                cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
+                                                actualBlo++;
+                                            }
+
+
+                                        }
+
+                                    }
+
+
+                                }
+                                for(int k=0; k<4; k++)
+                                {
+                                    if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                    {
+                                        BApun apun1;
+                                        fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                        fread(&apun1,sizeof(BApun),1,arch);
+
+
+                                        for(int l=0; l<4; l++)
+                                        {
+                                            if(apun1.b_apuntadores [l].b_inodo != -1)
+                                            {
+
+                                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                                BApun apun2;
+                                                fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                fread(&apun2,sizeof(BApun),1,arch);
+
+                                                for(int n=0; n<4; n++)
+                                                {
+
+                                                    if(apun2.b_apuntadores[n].b_inodo != -1)
+                                                    {
+                                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(n+1) +"-> inodo"+std::to_string(apun2.b_apuntadores[n].b_inodo)+":f0  \n";
+                                                        actualBlo++;
+
+                                                    }
+
+                                                }
+
+
+                                            }
+                                        }
+
+
+                                    }
+
+                                    if(inodoTemp.i_type== '0' )
+                                    {
+                                        for(int k=0; k<4; k++)
+                                        {
+                                            if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                            {
+                                                BApun apun1;
+                                                fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                fread(&apun1,sizeof(BApun),1,arch);
+                                                for(int l=0; l<4; l++)
+                                                {
+                                                    if(apun1.b_apuntadores [l].b_inodo != -1)
+                                                    {
+                                                        BApun apun2;
+                                                        fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                        fread(&apun2,sizeof(BApun),1,arch);
+
+                                                        for(int n=0; n<4; n++)
+                                                        {
+                                                            if(apun2.b_apuntadores [n].b_inodo != -1)
+                                                            {
+                                                                BCarpeta bloTemp;
+                                                                fseek(arch,superBloque.s_block_start +(apun2.b_apuntadores [n].b_inodo*sizeof(BCarpeta)),SEEK_SET);
+                                                                fread(&bloTemp,sizeof(BCarpeta),1,arch);
+
+
+                                                                for(int m=0; m<4; m++)
+                                                                {
+                                                                    string p = ".";
+                                                                    string pp = "..";
+                                                                    if(bloTemp.b_content[m].b_inodo != -1 && bloTemp.b_content[m].b_name != p && bloTemp.b_content[m].b_name != pp)
+                                                                    {
+
+                                                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(m+1) +"-> inodo"+std::to_string(bloTemp.b_content[m].b_inodo)+":f0  \n";
+                                                                        actualBlo++;
+
+                                                                    }
+
+                                                                }
+
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+
+
+                                            }
+
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        actualBlo ++;
+                                    }
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+            /*
+
+            for(int i=1; i<contador; i++)
+            {
+
+                cuerpo += "struct"+std::to_string(i-1)+":f0 -> struct"+std::to_string(i)+":f0  ";
+            }
+            */
+
+            fclose(arch);
+
+            string textoFinal =grafo + cuerpo +finG;
+
+            string newPath = pathConComillas(rep->getPath());
+
+            string filename("repTree.txt");
+            fstream file_out;
+            file_out.open(filename,std::ios_base::out);
+            if(!file_out.is_open())
+            {
+                cout<<"no se pudo abrir el archivo"<<endl;
+            }
+            else
+            {
+
+                file_out<<textoFinal<<endl;
+                try
+                {
+                    vector<string> resultados;
+                    resultados = split(rep->getPath(), '.');
+                    string comando = "dot -T"+resultados[1] +" repTree.txt -o " + newPath;
+                    system(comando.c_str());
+                    cout<<"Reporte Tree creado correctamente"<<endl;
+                }
+                catch(...)
+                {
+                    cout<<"ERROR: no se pudo crear el reporte"<<endl;
+
+                }
+            }
+
+
+        }
+    }
+
+    else
+    {
+        cout<<"El id no existe, la particion no esta montada"<<endl;
+    }
+
+}
+
+void reporte::ejecutarRepFile(reporte *rep,mount paMoun[])
+{
+
+}
+
+void reporte::ejecutarRepLs(reporte *rep,mount paMoun[])
 {
 
 }

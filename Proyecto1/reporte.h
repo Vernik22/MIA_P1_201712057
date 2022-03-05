@@ -20,6 +20,8 @@ class reporte
         void ejecutarRepInodo(reporte *rep,mount []);
         void ejecutarRepBloque(reporte *rep,mount []);
         void ejecutarRepTree(reporte *rep,mount []);
+        void ejecutarRepFile(reporte *rep,mount []);
+        void ejecutarRepLs(reporte *rep,mount []);
 
         vector<string> split(string str, char pattern);
         void dirExist(reporte *disco);

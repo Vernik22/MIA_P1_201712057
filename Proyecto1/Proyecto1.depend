@@ -5,7 +5,7 @@
 1646275429 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1646365799 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1646435969 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	<vector>
 	"manejador.h"
@@ -106,7 +106,7 @@
 	<cstdlib>
 	<string.h>
 
-1646268180 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.h
+1646431944 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.h
 	"mount.h"
 	<string>
 	<vector>
