@@ -134,6 +134,10 @@ int main()
             rep->setPath("/home/vernik/Imágenes/rep/repFile.pdf");
             rep->ejecutarRepFile(rep,ParticionesMontadas);
 
+            rep->setRuta("/");
+            rep->setPath("/home/vernik/Imágenes/rep/repLS.pdf");
+            rep->ejecutarRepLs(rep,ParticionesMontadas);
+
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);
