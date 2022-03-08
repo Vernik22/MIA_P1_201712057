@@ -84,11 +84,11 @@ void mkdisk::ejecutarComandoMkdisk(mkdisk *disco)
     else
     {
         //se asigna el fit que viene
-        if(disco->getFit()=="W")
+        if(disco->getFit()=="WF"||disco->getFit()=="wf")
         {
             mbrDisco.dsk_fit='W';
         }
-        else if(disco->getFit()=="B")
+        else if(disco->getFit()=="BF"||disco->getFit()=="bf")
         {
             mbrDisco.dsk_fit='B';
         }

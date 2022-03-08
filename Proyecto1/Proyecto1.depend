@@ -5,7 +5,7 @@
 1646275429 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1646677204 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1646691447 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	<vector>
 	"manejador.h"
@@ -23,7 +23,7 @@
 	<string>
 	"estructuras.h"
 
-1646275722 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
+1646690139 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.cpp
 	"mkdisk.h"
 	<iostream>
 	<time.h>
@@ -84,12 +84,12 @@
 	<time.h>
 	<stdio.h>
 
-1645196848 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.h
+1646679922 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.h
 	<vector>
 	"estructuras.h"
 	"mount.h"
 
-1645399304 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
+1646692005 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
 	"manejador.h"
 	<algorithm>
 	<iostream>
@@ -97,8 +97,18 @@
 	<string>
 	<cstdlib>
 	<cstring>
+	<fstream>
+	<stdio.h>
+	"mkdisk.h"
+	"rmdisk.h"
+	"mkfs.h"
+	"fdisk.h"
+	"login.h"
+	"mkgrp.h"
+	"estructuras.h"
+	"reporte.h"
 
-1646611227 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
+1646678935 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
 	"reporte.h"
 	<iostream>
 	<fstream>

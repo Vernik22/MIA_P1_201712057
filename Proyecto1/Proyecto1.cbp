@@ -33,6 +33,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="chmod.cpp" />
+		<Unit filename="chmod.h" />
 		<Unit filename="estructuras.cpp" />
 		<Unit filename="estructuras.h" />
 		<Unit filename="fdisk.cpp" />

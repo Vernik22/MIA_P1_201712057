@@ -45,11 +45,13 @@ int main()
         cout<<"\n------------------------------Ingrese un comando------------------------------\n\n";
         comando = "";
         //getline(cin, comando);
-        cin>>comando;
+        //cin>>comando;
+        getline(cin, comando);
         if(comando != ""&&comando!= "salir")
         {
             cout<<endl;
-            //leer->leerTexto(comando,ParticionesMontadas);
+            leer->leerTexto(comando,ParticionesMontadas);
+            /*
             disco1->setSPath("/home/vernik/Escritorio/misDiscos/Disco1.dk");
             disco1->setSize(5);
             disco1->setFit("F");
@@ -138,6 +140,7 @@ int main()
             rep->setPath("/home/vernik/Imágenes/rep/repLS.pdf");
             rep->ejecutarRepLs(rep,ParticionesMontadas);
 
+            */
             /*
             disco1->setSPath("/home/vernik/Escritorio/Disco1.dk");
             disco1->setSize(5);

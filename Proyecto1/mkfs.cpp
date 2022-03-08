@@ -242,7 +242,7 @@ void mkfs::crearRaiz(string path,int inicioPart)
         inodoTemp.i_uid = 1;
         inodoTemp.i_size = 0;
         inodoTemp.i_type = '0';
-        inodoTemp.i_perm = 664;
+        inodoTemp.i_perm = 777;
         fseek(arch, superB.s_inode_start,SEEK_SET);
         fwrite(&inodoTemp,sizeof(Inodo),1,arch);
         cout<<"Se creo la carpeta raiz (/)"<<endl;
@@ -254,7 +254,7 @@ void mkfs::crearRaiz(string path,int inicioPart)
         inodoTemp.i_uid = 1;
         inodoTemp.i_size = 27;
         inodoTemp.i_type = '1';
-        inodoTemp.i_perm = 664;
+        inodoTemp.i_perm = 777;
         fseek(arch, superB.s_inode_start+sizeof(Inodo),SEEK_SET);
         fwrite(&inodoTemp,sizeof(Inodo),1,arch);
 

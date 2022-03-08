@@ -13,6 +13,7 @@ class manejador
         void leerTexto(string data, mount []);
         void listaComandosValidos(vector<Comando> &listaComandos, mount []);
         vector<string> split(string str, char pattern);
+        void comandoExec(string s, mount [] );
 
         void setHayInicioSesion(bool s){
             hayInicioSesion = s;
