@@ -443,6 +443,8 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                         for(int k = 1; k<4; k++)
                                         {
                                             carpetaComprobar.b_content[k].b_inodo = -1;
+                                            string vacio = " ";
+                                            strcpy(carpetaComprobar.b_content[k].b_name,vacio.c_str());
                                         }
                                         strcpy(carpetaComprobar.b_content[0].b_name,rutaArchivo[carp -1].c_str());
                                         carpetaComprobar.b_content[0].b_inodo = superBloque.s_first_ino;
@@ -531,8 +533,7 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                         if(mfile->getSize() == 0)
                         {
                             inodoArchivoNuevo.i_size = 0;
-                            fseek(arch, superBloque.s_inode_start+(superBloque.s_first_ino*sizeof(Inodo)),SEEK_SET);
-                            fwrite(&inodoArchivoNuevo,sizeof(Inodo),1,arch);
+
 
                             for(int f = 0; f<15; f++)
                             {
@@ -569,6 +570,8 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                         for(int k = 1; k<4; k++)
                                         {
                                             carpetaComprobar.b_content[k].b_inodo = -1;
+                                            string vacio = " ";
+                                            strcpy(carpetaComprobar.b_content[k].b_name,vacio.c_str());
                                         }
                                         strcpy(carpetaComprobar.b_content[0].b_name,rutaArchivo[carp -1].c_str());
                                         carpetaComprobar.b_content[0].b_inodo = superBloque.s_first_ino;
@@ -607,6 +610,8 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
 
                                 }
                             }
+                            fseek(arch, superBloque.s_inode_start+(superBloque.s_first_ino*sizeof(Inodo)),SEEK_SET);
+                            fwrite(&inodoArchivoNuevo,sizeof(Inodo),1,arch);
 
                             superBloque.s_first_ino = superBloque.s_first_ino + 1;
                             superBloque.s_free_inodes_count = superBloque.s_free_inodes_count - 1;
@@ -661,8 +666,7 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                 }
 
                             }
-                            fseek(arch, superBloque.s_inode_start+(superBloque.s_first_ino*sizeof(Inodo)),SEEK_SET);
-                            fwrite(&inodoArchivoNuevo,sizeof(Inodo),1,arch);
+
                             int condi = 0;
                             int posicion = 0;
                             while(inodoArchivoNuevo.i_block[condi] != -1)
@@ -740,6 +744,8 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                         for(int k = 1; k<4; k++)
                                         {
                                             carpetaComprobar.b_content[k].b_inodo = -1;
+                                            string vacio = " ";
+                                            strcpy(carpetaComprobar.b_content[k].b_name,vacio.c_str());
                                         }
                                         strcpy(carpetaComprobar.b_content[0].b_name,rutaArchivo[carp -1].c_str());
                                         carpetaComprobar.b_content[0].b_inodo = superBloque.s_first_ino;
@@ -779,6 +785,9 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                 }
                             }
 
+                            fseek(arch, superBloque.s_inode_start+(superBloque.s_first_ino*sizeof(Inodo)),SEEK_SET);
+                            fwrite(&inodoArchivoNuevo,sizeof(Inodo),1,arch);
+
                             superBloque.s_first_ino = superBloque.s_first_ino + 1;
                             superBloque.s_free_inodes_count = superBloque.s_free_inodes_count - 1;
                             fseek(arch,iniPart,SEEK_SET);
@@ -808,7 +817,6 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                 {
                     if(mfile->getR())
                     {
-                        cout<<"ENtra en R"<<endl;
                         Inodo inodoArchivoNuevo;
                         for(int f=0; f<15; f++)
                         {
@@ -832,8 +840,11 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
 
                         string punto = ".";
                         string Dpunto = "..";
+                        string vacio = " ";
                         strcpy(carpetRaiz.b_content[0].b_name,punto.c_str());
                         strcpy(carpetRaiz.b_content[1].b_name,Dpunto.c_str());
+                        strcpy(carpetRaiz.b_content[2].b_name,vacio.c_str());
+                        strcpy(carpetRaiz.b_content[3].b_name,vacio.c_str());
                         carpetRaiz.b_content[0].b_inodo = superBloque.s_first_ino;
                         BCarpeta carpetaComprobar;
                         fseek(arch, superBloque.s_block_start+(inodoTemp.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
@@ -884,6 +895,8 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                     for(int k = 1; k<4; k++)
                                     {
                                         carpetaComprobar1.b_content[k].b_inodo = -1;
+                                        string vacio = " ";
+                                        strcpy(carpetaComprobar1.b_content[k].b_name,vacio.c_str());
                                     }
                                     strcpy(carpetaComprobar1.b_content[0].b_name,rutaArchivo[i].c_str());
                                     carpetaComprobar1.b_content[0].b_inodo = superBloque.s_first_ino;

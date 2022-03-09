@@ -1405,7 +1405,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                     fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                     cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
-                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                    cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(inodoTemp.i_block[j])+"|{B_name | B_inodo}";
 
                                     for(int k=0; k<4; k++)
                                     {
@@ -1428,7 +1428,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                     fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                     cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
-                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+                                    cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(inodoTemp.i_block[j])+"|";
 
 
                                     string contenido = bloTemp.b_content;
@@ -1458,7 +1458,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                         {
                             if(inodoTemp.i_block[j] != -1 )
                             {
-                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(inodoTemp.i_block[j])+"|{B_name | B_inodo}";
                                 BApun apuntadores;
                                 fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
                                 fread(&apuntadores,sizeof(BApun),1,arch);
@@ -1485,7 +1485,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                             fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                             cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
-                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                            cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(apuntadores.b_apuntadores [k].b_inodo )+"|{B_name | B_inodo}";
 
                                             for(int k=0; k<4; k++)
                                             {
@@ -1515,7 +1515,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                             fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                             cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
-                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+                                            cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(apuntadores.b_apuntadores [k].b_inodo )+"|";
 
 
                                             string contenido = bloTemp.b_content;
@@ -1547,7 +1547,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                         {
                             if(inodoTemp.i_block[j] != -1 )
                             {
-                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(inodoTemp.i_block[j])+"|{B_name | B_inodo}";
                                 BApun apuntadores;
                                 fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
                                 fread(&apuntadores,sizeof(BApun),1,arch);
@@ -1568,7 +1568,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                     if(apuntadores.b_apuntadores [k].b_inodo != -1)
                                     {
 
-                                        cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                        cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(apuntadores.b_apuntadores [k].b_inodo )+"|{B_name | B_inodo}";
                                         BApun apun1;
                                         fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
                                         fread(&apun1,sizeof(BApun),1,arch);
@@ -1607,7 +1607,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                                     fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                                     cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
-                                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                                    cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(apun1.b_apuntadores [l].b_inodo)+"|{B_name | B_inodo}";
 
                                                     for(int m=0; m<4; m++)
                                                     {
@@ -1648,7 +1648,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                                     fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                                     cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
-                                                    cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+                                                    cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(apun1.b_apuntadores [l].b_inodo)+"|";
 
 
                                                     string contenido = bloTemp.b_content;
@@ -1684,7 +1684,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                         {
                             if(inodoTemp.i_block[j] != -1 )
                             {
-                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(inodoTemp.i_block[j])+"|{B_name | B_inodo}";
                                 BApun apuntadores;
                                 fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
                                 fread(&apuntadores,sizeof(BApun),1,arch);
@@ -1705,7 +1705,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                     if(apuntadores.b_apuntadores [k].b_inodo != -1)
                                     {
 
-                                        cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                        cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(apuntadores.b_apuntadores [k].b_inodo )+"|{B_name | B_inodo}";
                                         BApun apun1;
                                         fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
                                         fread(&apun1,sizeof(BApun),1,arch);
@@ -1738,7 +1738,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                             if(apun1.b_apuntadores [l].b_inodo != -1)
                                             {
 
-                                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                                cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(apun1.b_apuntadores [l].b_inodo)+"|{B_name | B_inodo}";
                                                 BApun apun2;
                                                 fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
                                                 fread(&apun2,sizeof(BApun),1,arch);
@@ -1789,7 +1789,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
 
 
                                                             cuerpo += "\n node [shape = record, style=filled, fillcolor=orange]; \n";
-                                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                                            cuerpo += "struct"+std::to_string(apun2.b_apuntadores [n].b_inodo)+" [shape=record, width = 3,label=\"<f0> Bloque Carpeta"+ std::to_string(apun2.b_apuntadores [n].b_inodo)+"|{B_name | B_inodo}";
 
                                                             for(int m=0; m<4; m++)
                                                             {
@@ -1841,7 +1841,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                                             fread(&bloTemp,sizeof(BCarpeta),1,arch);
 
                                                             cuerpo += "\n node [shape = record, style=filled, fillcolor=gray]; \n";
-                                                            cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(contador)+"|";
+                                                            cuerpo += "struct"+std::to_string(apun2.b_apuntadores [n].b_inodo)+" [shape=record,label=\"<f0> Bloque Archivo"+ std::to_string(apun2.b_apuntadores [n].b_inodo)+"|";
 
 
                                                             string contenido = bloTemp.b_content;
@@ -1946,7 +1946,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                         string pp = "..";
                                         if(bloTemp.b_content[k].b_inodo != -1 && bloTemp.b_content[k].b_name != p && bloTemp.b_content[k].b_name != pp)
                                         {
-                                            cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(bloTemp.b_content[k].b_inodo)+":f0  \n";
+                                            cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(bloTemp.b_content[k].b_inodo)+":f0  \n";
                                             actualBlo ++;
                                         }
 
@@ -1971,7 +1971,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                 {
                                     if(apuntadores.b_apuntadores[k].b_inodo != -1)
                                     {
-                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        cuerpo += "struct"+std::to_string(inodoTemp.i_block[j] )+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
                                         actualBlo++;
                                     }
                                 }
@@ -1994,7 +1994,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                                 if(bloTemp.b_content[k].b_inodo != -1 && bloTemp.b_content[k].b_name != p && bloTemp.b_content[k].b_name != pp)
                                                 {
 
-                                                    cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(bloTemp.b_content[k].b_inodo)+":f0  \n";
+                                                    cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(bloTemp.b_content[k].b_inodo)+":f0  \n";
                                                     actualBlo++;
                                                 }
                                             }
@@ -2024,7 +2024,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                 {
                                     if(apuntadores.b_apuntadores[k].b_inodo != -1)
                                     {
-                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        cuerpo += "struct"+std::to_string(inodoTemp.i_block[j])+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
                                         actualBlo++;
                                     }
                                 }
@@ -2045,7 +2045,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                         {
                                             if(apun1.b_apuntadores[l].b_inodo != -1)
                                             {
-                                                cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
+                                                cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
                                                 actualBlo++;
                                             }
                                         }
@@ -2082,7 +2082,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                                         if(bloTemp.b_content[m].b_inodo != -1 && bloTemp.b_content[m].b_name != p && bloTemp.b_content[m].b_name != pp)
                                                         {
 
-                                                            cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(m+1) +"-> inodo"+std::to_string(bloTemp.b_content[m].b_inodo)+":f0  \n";
+                                                            cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+":f"+std::to_string(m+1) +"-> inodo"+std::to_string(bloTemp.b_content[m].b_inodo)+":f0  \n";
                                                             actualBlo++;
                                                         }
                                                     }
@@ -2116,7 +2116,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                 {
                                     if(apuntadores.b_apuntadores[k].b_inodo != -1)
                                     {
-                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        cuerpo += "struct"+std::to_string(inodoTemp.i_block[j] )+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
                                         actualBlo++;
                                     }
                                 }
@@ -2136,7 +2136,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                         {
                                             if(apun1.b_apuntadores[l].b_inodo != -1)
                                             {
-                                                cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
+                                                cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo)+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
                                                 actualBlo++;
                                             }
 
@@ -2161,7 +2161,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                             if(apun1.b_apuntadores [l].b_inodo != -1)
                                             {
 
-                                                cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
+                                                //cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"|{B_name | B_inodo}";
                                                 BApun apun2;
                                                 fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores [l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
                                                 fread(&apun2,sizeof(BApun),1,arch);
@@ -2171,7 +2171,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
 
                                                     if(apun2.b_apuntadores[n].b_inodo != -1)
                                                     {
-                                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(n+1) +"-> inodo"+std::to_string(apun2.b_apuntadores[n].b_inodo)+":f0  \n";
+                                                        cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+":f"+std::to_string(n+1) +"-> inodo"+std::to_string(apun2.b_apuntadores[n].b_inodo)+":f0  \n";
                                                         actualBlo++;
 
                                                     }
@@ -2218,7 +2218,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                                                     if(bloTemp.b_content[m].b_inodo != -1 && bloTemp.b_content[m].b_name != p && bloTemp.b_content[m].b_name != pp)
                                                                     {
 
-                                                                        cuerpo += "struct"+std::to_string(actualBlo)+":f"+std::to_string(m+1) +"-> inodo"+std::to_string(bloTemp.b_content[m].b_inodo)+":f0  \n";
+                                                                        cuerpo += "struct"+std::to_string(apun2.b_apuntadores [n].b_inodo)+":f"+std::to_string(m+1) +"-> inodo"+std::to_string(bloTemp.b_content[m].b_inodo)+":f0  \n";
                                                                         actualBlo++;
 
                                                                     }

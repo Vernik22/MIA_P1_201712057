@@ -21,6 +21,7 @@
 #include "unmount.h"
 #include "chmod.h"
 #include "mkfile.h"
+#include "mkdir.h"
 
 manejador::manejador()
 {
@@ -105,7 +106,12 @@ void manejador::leerTexto(string data, mount DisksMount[])
                             propiedadesTemp[j - 1].valor = valor_propiedad_Comando[1];
 
                         }
-                    }else if(propiedades[j]=="-r" )
+                    }else if(propiedades[j]=="-r" || propiedades[j]=="-R")
+                        {
+                            propiedadesTemp[j - 1].Nombre = propiedades[j];
+
+                        }
+                        else if(propiedades[j]=="-p" || propiedades[j]=="-P")
                         {
                             propiedadesTemp[j - 1].Nombre = propiedades[j];
 
@@ -1166,7 +1172,81 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
             else if (nombreComando == "mkdir")
             {
 
-                printf("Pause Presione una tecla para continuar... \n");
+                if(getHayInicioSesion()){
+                     bool parametrosValidos = true;
+
+                    bool flagPath = true;
+
+                    bool flagP = true;
+
+                    mkdir *mDir = new mkdir();
+
+                    for (int f = 0; f < 15; f++)
+                    {
+                        Propiedad prop=comandoTemp.propiedades[f];
+                        string nombreProp = prop.Nombre;
+                        std::for_each(nombreProp.begin(), nombreProp.end(), [](char &c)
+                        {
+                            c = ::tolower(c);
+                        });
+
+
+                        if (nombreProp == "-path")
+                        {
+                            if(strstr(prop.valor.c_str(), "\"")!=NULL)
+                            {
+                                vector<string> conc = split(prop.valor, '"');
+                                mDir->setPath(conc[1]);
+                                cout<<conc[1]<<endl;
+                            }
+                            else
+                            {
+                                mDir->setPath(prop.valor);
+                            }
+
+                            flagPath = false;
+
+                        }
+                        else if (nombreProp == "-p" )
+                        {
+                            flagP= false;
+
+                            mDir->setP(true);
+
+                        }
+
+
+                    }
+
+                    if( flagP  )
+                    {
+                        mDir->setP(false);
+
+                    }
+
+
+                    if( flagPath ==false )
+                    {
+                        parametrosValidos = false;
+
+                    }
+
+                    if (parametrosValidos)
+                    {
+                        cout<<"--- Parametros Invalidos ---\n"<<endl;
+                    }
+                    else
+                    {
+                        mDir->setDatosUsu(getUsuarioAct());
+                        mDir->ejecutarComandoMkDir(mDir, DisksMount);
+
+                    }
+
+
+
+                }else{
+                    cout<<"ERROR: No hay una sesion iniciada\n"<<endl;
+                }
 
             }
             else if (nombreComando == "copy")
