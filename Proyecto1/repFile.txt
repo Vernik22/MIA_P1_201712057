@@ -1,0 +1,4 @@
+digraph G{ 
+ rankdir=LR; 
+struct0 [shape=record,label="<f0> Archivo | nombre : pr.txt | Contenido | 012345678012345\n"];
+}

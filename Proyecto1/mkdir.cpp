@@ -98,6 +98,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
         fseek(arch,superBloque.s_inode_start,SEEK_SET);
         fread(&inodoTemp,sizeof(Inodo),1,arch);
 
+        inodoAnterior = inodoTemp;
         bool existeCarpeta = false;
         int carp = rutaArchivo.size();
 
@@ -303,6 +304,9 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
             {
                 if( i == carp -1 )
                 {
+                    fseek(arch,iniPart,SEEK_SET);
+                    fread(&superBloque,sizeof(SupB),1,arch);
+                    //cout<<superBloque.s_first_ino<<endl;
                     Inodo inodoArchivoNuevo;
                         for(int f=0; f<15; f++)
                         {
@@ -331,9 +335,9 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                         strcpy(carpetRaiz.b_content[1].b_name,Dpunto.c_str());
                         strcpy(carpetRaiz.b_content[2].b_name,vacio.c_str());
                         strcpy(carpetRaiz.b_content[3].b_name,vacio.c_str());
-                        carpetRaiz.b_content[0].b_inodo = superBloque.s_first_ino;
+                        carpetRaiz.b_content[0].b_inodo = superBloque.s_first_ino ;
                         BCarpeta carpetaComprobar;
-                        fseek(arch, superBloque.s_block_start+(inodoAnterior.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
+                        fseek(arch, superBloque.s_block_start+(inodoTemp.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
                         fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
 
                         carpetRaiz.b_content[1].b_inodo = carpetaComprobar.b_content[0].b_inodo;
@@ -398,6 +402,8 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                                     for(int k = 1; k<4; k++)
                                     {
                                         carpetaComprobar1.b_content[k].b_inodo = -1;
+                                        string vacio = " ";
+                                        strcpy(carpetaComprobar1.b_content[k].b_name,vacio.c_str());
                                     }
                                     strcpy(carpetaComprobar1.b_content[0].b_name,rutaArchivo[i].c_str());
                                     carpetaComprobar1.b_content[0].b_inodo = superBloque.s_first_ino;
@@ -460,11 +466,13 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
 
                         superBloque.s_first_ino = superBloque.s_first_ino + 1;
                         superBloque.s_free_inodes_count = superBloque.s_free_inodes_count -1;
+
                         fseek(arch,iniPart,SEEK_SET);
                         fwrite(&superBloque,sizeof(SupB),1,arch);
 
 
                         inodoTemp = inodoArchivoNuevo;
+                        //cout<<superBloque.s_first_ino<<endl;
                         cout << "Se creo la carpeta: "<<rutaArchivo[i] << endl;
 
 
@@ -475,7 +483,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                 {
                     if(mDir->getP())
                     {
-                        //cout<<"ENtra en R"<<endl;
+                        //cout<<superBloque.s_first_ino<<endl;
                         Inodo inodoArchivoNuevo;
                         for(int f=0; f<15; f++)
                         {
@@ -554,6 +562,8 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                                     for(int k = 1; k<4; k++)
                                     {
                                         carpetaComprobar1.b_content[k].b_inodo = -1;
+                                        string vacio = " ";
+                                        strcpy(carpetaComprobar1.b_content[k].b_name,vacio.c_str());
                                     }
                                     strcpy(carpetaComprobar1.b_content[0].b_name,rutaArchivo[i].c_str());
                                     carpetaComprobar1.b_content[0].b_inodo = superBloque.s_first_ino;
@@ -581,8 +591,8 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                                     superBloque.s_first_blo = superBloque.s_first_blo +1;
                                     superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
 
-                                    fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
-                                    fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
+                                    //fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
+                                    //fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
 
                                     inodoTemp.i_mtime = fcreacion;
                                     fseek(arch,superBloque.s_inode_start + (carpetaComprobar.b_content[0].b_inodo*sizeof(Inodo)),SEEK_SET);
@@ -627,14 +637,16 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                             if(actual=='0')
                             {
                                 fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
-                                fwrite(&llenar, sizeof(llenar),1,arch);
-                                fwrite(&llenar, sizeof(llenar),1,arch);
+                                //fwrite(&llenar, sizeof(llenar),1,arch);
+                                //fwrite(&llenar, sizeof(llenar),1,arch);
                                 break;
                             }
 
                         }
                         inodoTemp = inodoArchivoNuevo;
                         cout << "Se creo la carpeta: "<<rutaArchivo[i] << endl;
+                        //cout<<superBloque.s_first_ino<<endl;
+
 
                     }
                     else
@@ -647,6 +659,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
 
                  }
     }
+    fclose(arch);
 
 
 }

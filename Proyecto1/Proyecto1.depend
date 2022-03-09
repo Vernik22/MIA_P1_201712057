@@ -113,7 +113,7 @@
 	"mkfile.h"
 	"mkdir.h"
 
-1646802161 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
+1646835284 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
 	"reporte.h"
 	<iostream>
 	<fstream>
@@ -176,7 +176,7 @@
 	<vector>
 	"estructuras.h"
 
-1646806608 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfile.cpp
+1646833928 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkfile.cpp
 	"mkfile.h"
 	<time.h>
 	<stdio.h>
