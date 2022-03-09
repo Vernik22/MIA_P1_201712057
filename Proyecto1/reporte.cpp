@@ -1307,7 +1307,7 @@ void reporte::ejecutarRepBloque(reporte *rep,mount paMoun[])
 
 void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
 {
-    string grafo = "digraph G{ \n rankdir=LR;\n node [shape = record, style=filled, fillcolor=lightBlue]; \n";
+    string grafo = "digraph G{ \n rankdir=LR;\n node [shape = record, style=filled, fillcolor=lightBlue]; \n graph [pad=0.5, nodesep=1.5, ranksep=2, splines=true,]; \n";
     string cuerpo = "";
     string finG = "\n}";
 
@@ -1903,7 +1903,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                     {
                         if(inodoTemp.i_block[j] != -1)
                         {
-                            cuerpo += "inodo"+std::to_string(i)+":f"+std::to_string(j+1) +"-> struct"+std::to_string(inodoTemp.i_block[j])+":f0  \n";
+                            cuerpo += "inodo"+std::to_string(i)+":f"+std::to_string(j+1) +"-> struct"+std::to_string(inodoTemp.i_block[j])+":f0   \n";
                         }
 
                     }
@@ -2045,7 +2045,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                         {
                                             if(apun1.b_apuntadores[l].b_inodo != -1)
                                             {
-                                                cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0  \n";
+                                                cuerpo += "struct"+std::to_string(apuntadores.b_apuntadores [k].b_inodo )+":f"+std::to_string(l+1) +"-> inodo"+std::to_string(apun1.b_apuntadores[l].b_inodo)+":f0 \n";
                                                 actualBlo++;
                                             }
                                         }
@@ -2116,7 +2116,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
                                 {
                                     if(apuntadores.b_apuntadores[k].b_inodo != -1)
                                     {
-                                        cuerpo += "struct"+std::to_string(inodoTemp.i_block[j] )+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0  \n";
+                                        cuerpo += "struct"+std::to_string(inodoTemp.i_block[j] )+":f"+std::to_string(k+1) +"-> inodo"+std::to_string(apuntadores.b_apuntadores[k].b_inodo)+":f0 \n";
                                         actualBlo++;
                                     }
                                 }
@@ -2171,7 +2171,7 @@ void reporte::ejecutarRepTree(reporte *rep,mount paMoun[])
 
                                                     if(apun2.b_apuntadores[n].b_inodo != -1)
                                                     {
-                                                        cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+":f"+std::to_string(n+1) +"-> inodo"+std::to_string(apun2.b_apuntadores[n].b_inodo)+":f0  \n";
+                                                        cuerpo += "struct"+std::to_string(apun1.b_apuntadores [l].b_inodo)+":f"+std::to_string(n+1) +"-> inodo"+std::to_string(apun2.b_apuntadores[n].b_inodo)+":f0 \n";
                                                         actualBlo++;
 
                                                     }

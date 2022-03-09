@@ -234,13 +234,13 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                         }
 
                     }
-                    else if(i==14)
+                    else if(j==14)
                     {
-                        if(inodoTemp.i_block[i] != -1 )
+                        if(inodoTemp.i_block[j] != -1 )
                         {
                             //cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
                             BApun apuntadores;
-                            fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[i]*sizeof(BCarpeta)),SEEK_SET);
+                            fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
                             fread(&apuntadores,sizeof(BApun),1,arch);
 
 
