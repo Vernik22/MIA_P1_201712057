@@ -46,6 +46,8 @@
 		<Unit filename="manejador.h" />
 		<Unit filename="mkdisk.cpp" />
 		<Unit filename="mkdisk.h" />
+		<Unit filename="mkfile.cpp" />
+		<Unit filename="mkfile.h" />
 		<Unit filename="mkfs.cpp" />
 		<Unit filename="mkfs.h" />
 		<Unit filename="mkgrp.cpp" />

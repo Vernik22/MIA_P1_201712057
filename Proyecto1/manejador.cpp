@@ -20,6 +20,7 @@
 #include "reporte.h"
 #include "unmount.h"
 #include "chmod.h"
+#include "mkfile.h"
 
 manejador::manejador()
 {
@@ -82,14 +83,21 @@ void manejador::leerTexto(string data, mount DisksMount[])
                         {
                             vector<string> valor_propiedad_Comando = split(propiedades[j], '=');
                             propiedadesTemp[j - 1].Nombre = valor_propiedad_Comando[0];
-                            propiedadesTemp[j - 1].valor = valor_propiedad_Comando[1]+" "+ propiedades[j +1];
+                            propiedadesTemp[j - 1].valor = valor_propiedad_Comando[1];
+                            for(int f = j+1; f<sizeVecCom; f ++)
+                            {
+                                if(strstr(propiedades[f].c_str(), "\"") != NULL){
+                                     propiedadesTemp[j - 1].valor += " "+ propiedades[f];
+                                    break;
+
+                                }else{
+                                    propiedadesTemp[j - 1].valor += " "+ propiedades[f];
+
+                                }
+                            }
 
                         }
-                        else if(propiedades[j]=="-r" )
-                        {
-                            propiedadesTemp[j - 1].Nombre = propiedades[j];
 
-                        }
                         else
                         {
                             vector<string> valor_propiedad_Comando = split(propiedades[j], '=');
@@ -97,7 +105,11 @@ void manejador::leerTexto(string data, mount DisksMount[])
                             propiedadesTemp[j - 1].valor = valor_propiedad_Comando[1];
 
                         }
-                    }
+                    }else if(propiedades[j]=="-r" )
+                        {
+                            propiedadesTemp[j - 1].Nombre = propiedades[j];
+
+                        }
 
                 }
             }
@@ -439,7 +451,7 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
                     {
                         flagAdd = false;
                         int s = stoi(prop.valor);
-                        formDisk->setName(s);
+                        formDisk->setAdd(s);
 
                     }
 
@@ -994,7 +1006,7 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
                     else
                     {
                         permisos->setDatosUsu(getUsuarioAct());
-                        permisos->ejecutarComandoChmod(grup, DisksMount);
+                        permisos->ejecutarComandoChmod(permisos, DisksMount);
 
                     }
 
@@ -1007,8 +1019,124 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
             }
             else if (nombreComando == "mkfile")
             {
+                    if(getHayInicioSesion()){
+                     bool parametrosValidos = true;
 
-                printf("Pause Presione una tecla para continuar... \n");
+                    bool flagPath = true;
+
+                    bool flagSize = true;
+                    bool flagR = true;
+                    bool flagCont = true;
+
+                    mkfile *mfile = new mkfile();
+
+                    for (int f = 0; f < 15; f++)
+                    {
+                        Propiedad prop=comandoTemp.propiedades[f];
+                        string nombreProp = prop.Nombre;
+                        std::for_each(nombreProp.begin(), nombreProp.end(), [](char &c)
+                        {
+                            c = ::tolower(c);
+                        });
+
+
+                        if (nombreProp == "-path")
+                        {
+                            if(strstr(prop.valor.c_str(), "\"")!=NULL)
+                            {
+                                vector<string> conc = split(prop.valor, '"');
+                                mfile->setPath(conc[1]);
+                                cout<<conc[1]<<endl;
+                            }
+                            else
+                            {
+                                mfile->setPath(prop.valor);
+                            }
+
+                            flagPath = false;
+
+                        }
+                        else if (nombreProp == "-size")
+                        {
+                            flagSize= false;
+
+                            int s = stoi(prop.valor);
+                            if(s>0)
+                            {
+                                mfile->setSize(s);
+
+                            }
+                            else
+                            {
+                                cout<<"ERROR: size erroneo, es negativo"<<endl;
+                                parametrosValidos = true;
+                                flagPath= true;
+                                break;
+                            }
+
+                        }
+                        else if (nombreProp == "-r")
+                        {
+                            flagR= false;
+
+                            mfile->setR(true);
+
+                        }
+                        else if (nombreProp == "-cont")
+                        {
+                            if(strstr(prop.valor.c_str(), "\"")!=NULL)
+                            {
+                                vector<string> conc = split(prop.valor, '"');
+                                mfile->setCont(conc[1]);
+                                mfile->setBoolCont(true);
+                                cout<<conc[1]<<endl;
+                            }
+                            else
+                            {
+                                mfile->setCont(prop.valor);
+                                mfile->setBoolCont(true);
+                            }
+
+                            flagCont = false;
+
+                        }
+
+
+                    }
+                    if( flagSize  )
+                    {
+                        mfile->setSize(0);
+
+                    }
+                    if( flagCont  )
+                    {
+                        mfile->setBoolCont(false);
+
+                    }
+
+
+                    if( flagPath ==false )
+                    {
+                        parametrosValidos = false;
+
+                    }
+
+                    if (parametrosValidos)
+                    {
+                        cout<<"--- Parametros Invalidos ---\n"<<endl;
+                    }
+                    else
+                    {
+                        mfile->setDatosUsu(getUsuarioAct());
+                        mfile->ejecutarComandoMkfile(mfile, DisksMount);
+
+                    }
+
+
+
+                }else{
+                    cout<<"ERROR: No hay una sesion iniciada\n"<<endl;
+                }
 
             }
             else if (nombreComando == "cat")
@@ -1140,7 +1268,7 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
                 bool flagRuta = true;
                 string tipoRep = "";
 
-                reporte *rep = new reporte()
+                reporte *rep = new reporte();
 
                  for (int f = 0; f < 15; f++)
                 {
