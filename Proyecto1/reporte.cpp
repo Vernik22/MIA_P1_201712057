@@ -3085,7 +3085,7 @@ void reporte::ejecutarRepLs(reporte *rep,mount paMoun[])
                                         cuerpo += " </td><td> Archivo </td><td> ";
                                     }
                                     cuerpo += carpetaComprobar.b_content[k].b_name;
-                                    cuerpo += "</td></tr>";
+                                    cuerpo += " </td></tr>";
 
 
 

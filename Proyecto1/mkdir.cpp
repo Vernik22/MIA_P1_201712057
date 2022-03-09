@@ -333,7 +333,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                         strcpy(carpetRaiz.b_content[3].b_name,vacio.c_str());
                         carpetRaiz.b_content[0].b_inodo = superBloque.s_first_ino;
                         BCarpeta carpetaComprobar;
-                        fseek(arch, superBloque.s_block_start+(inodoTemp.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
+                        fseek(arch, superBloque.s_block_start+(inodoAnterior.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
                         fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
 
                         carpetRaiz.b_content[1].b_inodo = carpetaComprobar.b_content[0].b_inodo;
@@ -627,6 +627,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                             if(actual=='0')
                             {
                                 fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
+                                fwrite(&llenar, sizeof(llenar),1,arch);
                                 fwrite(&llenar, sizeof(llenar),1,arch);
                                 break;
                             }

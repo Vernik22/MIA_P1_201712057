@@ -1119,6 +1119,9 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
                         mfile->setBoolCont(false);
 
                     }
+                    if(flagR){
+                        mfile->setR(false);
+                    }
 
 
                     if( flagPath ==false )
