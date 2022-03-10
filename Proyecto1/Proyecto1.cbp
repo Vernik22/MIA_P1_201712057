@@ -35,6 +35,10 @@
 		</Compiler>
 		<Unit filename="chmod.cpp" />
 		<Unit filename="chmod.h" />
+		<Unit filename="commv.cpp" />
+		<Unit filename="commv.h" />
+		<Unit filename="comrena.cpp" />
+		<Unit filename="comrena.h" />
 		<Unit filename="estructuras.cpp" />
 		<Unit filename="estructuras.h" />
 		<Unit filename="fdisk.cpp" />

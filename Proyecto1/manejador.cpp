@@ -23,6 +23,7 @@
 #include "mkfile.h"
 #include "mkdir.h"
 #include "commv.h"
+#include "comrena.h"
 
 manejador::manejador()
 {
@@ -1170,7 +1171,76 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
             else if (nombreComando == "rename")
             {
 
-                printf("Pause Presione una tecla para continuar... \n");
+                if(getHayInicioSesion()){
+                     bool parametrosValidos = true;
+
+                    bool flagPath = true;
+
+                    bool flagName = true;
+
+                    comrena  *cRena = new comrena();
+
+                    for (int f = 0; f < 15; f++)
+                    {
+                        Propiedad prop=comandoTemp.propiedades[f];
+                        string nombreProp = prop.Nombre;
+                        std::for_each(nombreProp.begin(), nombreProp.end(), [](char &c)
+                        {
+                            c = ::tolower(c);
+                        });
+
+
+                        if (nombreProp == "-path")
+                        {
+                            if(strstr(prop.valor.c_str(), "\"")!=NULL)
+                            {
+                                vector<string> conc = split(prop.valor, '"');
+                                cRena->setPath(conc[1]);
+                                cout<<conc[1]<<endl;
+                            }
+                            else
+                            {
+                                cRena->setPath(prop.valor);
+                            }
+
+                            flagPath = false;
+
+                        }
+                        else if (nombreProp == "-name" )
+                        {
+
+                            flagName= false;
+
+                            cRena->setName(prop.valor);
+
+                        }
+
+
+                    }
+
+
+                    if( flagPath ==false && flagName ==false )
+                    {
+                        parametrosValidos = false;
+
+                    }
+
+                    if (parametrosValidos)
+                    {
+                        cout<<"--- Parametros Invalidos ---\n"<<endl;
+                    }
+                    else
+                    {
+                        cRena->setDatosUsu(getUsuarioAct());
+                        cRena->ejecutarComandoRename(cRena, DisksMount);
+
+                    }
+
+
+
+                }else{
+                    cout<<"ERROR: No hay una sesion iniciada\n"<<endl;
+                }
 
             }
             else if (nombreComando == "mkdir")

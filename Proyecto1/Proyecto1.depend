@@ -89,7 +89,7 @@
 	"estructuras.h"
 	"mount.h"
 
-1646852543 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
+1646870083 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
 	"manejador.h"
 	<algorithm>
 	<iostream>
@@ -113,6 +113,7 @@
 	"mkfile.h"
 	"mkdir.h"
 	"commv.h"
+	"comrena.h"
 
 1646855003 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
 	"reporte.h"
@@ -207,7 +208,7 @@
 	<stdio.h>
 	<iostream>
 
-1646852696 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.cpp
+1646870747 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.cpp
 	"commv.h"
 	<time.h>
 	<stdio.h>
@@ -218,6 +219,11 @@
 	<iostream>
 
 1646852571 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.h
+	"mount.h"
+	<vector>
+	"estructuras.h"
+
+1646869531 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/comrena.h
 	"mount.h"
 	<vector>
 	"estructuras.h"

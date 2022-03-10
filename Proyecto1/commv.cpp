@@ -532,7 +532,7 @@ void commv::modificarArchivo(string pathDisco, string nombrePart, commv *mDir)
 
 
             }
-            if(!existeDestino)
+            if(!existeCarpeta)
             {
                 cout<<"ERROR: no se encontro la ruta destino "<<endl;
                 break;
