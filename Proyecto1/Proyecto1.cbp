@@ -66,6 +66,8 @@
 		<Unit filename="reporte.h" />
 		<Unit filename="rmdisk.cpp" />
 		<Unit filename="rmdisk.h" />
+		<Unit filename="simlos.cpp" />
+		<Unit filename="simlos.h" />
 		<Unit filename="unmount.cpp" />
 		<Unit filename="unmount.h" />
 		<Extensions />

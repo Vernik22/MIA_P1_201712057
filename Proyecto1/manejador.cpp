@@ -24,6 +24,7 @@
 #include "mkdir.h"
 #include "commv.h"
 #include "comrena.h"
+#include "simlos.h"
 
 manejador::manejador()
 {
@@ -1429,6 +1430,63 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
             {
 
                 printf("Pause Presione una tecla para continuar... \n");
+
+            }
+            else if(nombreComando == "loss"){
+
+                     bool parametrosValidos = true;
+
+                    bool flagId = true;
+
+
+                    simlos *comlos = new simlos();
+
+                    for (int f = 0; f < 15; f++)
+                    {
+                        Propiedad prop=comandoTemp.propiedades[f];
+                        string nombreProp = prop.Nombre;
+                        std::for_each(nombreProp.begin(), nombreProp.end(), [](char &c)
+                        {
+                            c = ::tolower(c);
+                        });
+
+
+                         if (nombreProp == "-id" )
+                        {
+                            flagId= false;
+
+                            comlos->setId(prop.valor);
+                            break;
+
+                        }
+
+
+                    }
+
+
+
+
+                    if( flagId ==false )
+                    {
+                        parametrosValidos = false;
+
+                    }
+
+                    if (parametrosValidos)
+                    {
+                        cout<<"--- Parametros Invalidos ---\n"<<endl;
+                    }
+                    else
+                    {
+
+                        comlos->ejecutarLoss(comlos, DisksMount);
+
+                    }
+
+
+
+
+            }else if(nombreComando == "recovery"){
 
             }
             else if (nombreComando == "pause")

@@ -2,29 +2,24 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="rmdisk.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="commv.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1604" topLine="51" />
+			<Cursor1 position="1790" topLine="76" />
 		</Cursor>
 	</File>
-	<File name="mkgrp.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="estructuras.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="655" topLine="3" />
+			<Cursor1 position="1662" topLine="60" />
 		</Cursor>
 	</File>
-	<File name="mkdisk.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="login.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="283" topLine="6" />
+			<Cursor1 position="8034" topLine="261" />
 		</Cursor>
 	</File>
-	<File name="mkfile.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="mkdisk.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="46573" topLine="1055" />
-		</Cursor>
-	</File>
-	<File name="chmod.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="478" topLine="6" />
+			<Cursor1 position="726" topLine="21" />
 		</Cursor>
 	</File>
 	<File name="mkusr.h" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -32,29 +27,9 @@
 			<Cursor1 position="689" topLine="29" />
 		</Cursor>
 	</File>
-	<File name="mkdisk.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="chmod.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="415" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="rmdisk.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="69" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="mkdir.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="19" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="mkdir.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="173" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="mkgrp.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="132467" topLine="2061" />
+			<Cursor1 position="114" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="fdisk.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
@@ -65,73 +40,14 @@
 			<Collapse line="835" />
 		</Folding>
 	</File>
-	<File name="login.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="rmdisk.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8034" topLine="261" />
+			<Cursor1 position="69" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="mkfs.cpp" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="comrena.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="8415" topLine="264" />
-		</Cursor>
-	</File>
-	<File name="mkusr.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9611" topLine="140" />
-		</Cursor>
-	</File>
-	<File name="manejador.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="683" topLine="10" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4744" topLine="121" />
-		</Cursor>
-	</File>
-	<File name="mount.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="742" topLine="17" />
-		</Cursor>
-	</File>
-	<File name="manejador.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="41106" topLine="207" />
-		</Cursor>
-		<Folding>
-			<Collapse line="157" />
-			<Collapse line="270" />
-			<Collapse line="318" />
-			<Collapse line="518" />
-			<Collapse line="577" />
-			<Collapse line="620" />
-			<Collapse line="713" />
-			<Collapse line="782" />
-			<Collapse line="803" />
-			<Collapse line="859" />
-			<Collapse line="865" />
-			<Collapse line="937" />
-			<Collapse line="943" />
-			<Collapse line="1027" />
-			<Collapse line="1176" />
-			<Collapse line="1262" />
-			<Collapse line="1370" />
-		</Folding>
-	</File>
-	<File name="unmount.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="231" topLine="1" />
-		</Cursor>
-	</File>
-	<File name="unmount.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="202" topLine="16" />
-		</Cursor>
-	</File>
-	<File name="mount.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2248" topLine="80" />
+			<Cursor1 position="12744" topLine="330" />
 		</Cursor>
 	</File>
 	<File name="mkfs.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -139,9 +55,72 @@
 			<Cursor1 position="168" topLine="3" />
 		</Cursor>
 	</File>
+	<File name="mount.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="742" topLine="17" />
+		</Cursor>
+	</File>
+	<File name="unmount.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="231" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="reporte.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="134599" topLine="1338" />
+		</Cursor>
+		<Folding>
+			<Collapse line="2852" />
+		</Folding>
+	</File>
+	<File name="mkfile.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="22695" topLine="517" />
+		</Cursor>
+	</File>
 	<File name="login.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="68" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="mkgrp.h" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="655" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="manejador.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="45974" topLine="228" />
+		</Cursor>
+		<Folding>
+			<Collapse line="159" />
+			<Collapse line="272" />
+			<Collapse line="320" />
+			<Collapse line="520" />
+			<Collapse line="579" />
+			<Collapse line="622" />
+			<Collapse line="715" />
+			<Collapse line="784" />
+			<Collapse line="805" />
+			<Collapse line="861" />
+			<Collapse line="867" />
+			<Collapse line="939" />
+			<Collapse line="945" />
+			<Collapse line="1029" />
+			<Collapse line="1172" />
+			<Collapse line="1247" />
+			<Collapse line="1333" />
+			<Collapse line="1434" />
+		</Folding>
+	</File>
+	<File name="chmod.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="478" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="mkdir.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8714" topLine="302" />
 		</Cursor>
 	</File>
 	<File name="estructuras.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -149,19 +128,29 @@
 			<Cursor1 position="112" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="estructuras.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2917" topLine="105" />
-		</Cursor>
-	</File>
-	<File name="comanMove.cpp" open="1" top="1" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="60" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="reporte.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="864" topLine="37" />
+		</Cursor>
+	</File>
+	<File name="mkusr.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9611" topLine="140" />
+		</Cursor>
+	</File>
+	<File name="mkgrp.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="132467" topLine="2061" />
+		</Cursor>
+	</File>
+	<File name="mkfs.cpp" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8415" topLine="264" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4728" topLine="121" />
 		</Cursor>
 	</File>
 	<File name="fdisk.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -169,18 +158,34 @@
 			<Cursor1 position="840" topLine="3" />
 		</Cursor>
 	</File>
-	<File name="reporte.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+	<File name="mount.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="101077" topLine="2239" />
+			<Cursor1 position="2248" topLine="80" />
 		</Cursor>
-		<Folding>
-			<Collapse line="2309" />
-			<Collapse line="2846" />
-		</Folding>
 	</File>
-	<File name="chmod.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="manejador.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="114" topLine="0" />
+			<Cursor1 position="683" topLine="10" />
+		</Cursor>
+	</File>
+	<File name="unmount.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="202" topLine="16" />
+		</Cursor>
+	</File>
+	<File name="mkdir.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="32" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="rmdisk.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1604" topLine="51" />
+		</Cursor>
+	</File>
+	<File name="mkdisk.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="415" topLine="3" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
