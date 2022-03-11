@@ -1,4 +1,4 @@
-#include "commv.h"
+#include "comcpy.h"
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,42 +7,47 @@
 #include <stdio.h>
 #include <iostream>
 
-commv::commv()
+
+comcpy::comcpy()
 {
     //ctor
 }
 
-commv::~commv()
+comcpy::~comcpy()
 {
     //dtor
 }
 
 
-void commv::ejecutarComandoMove(commv *mDir,mount paMoun[])
+void comcpy::ejecutarComandoCopy(comcpy *mDir,mount paMoun[])
 {
-    cout<<"\n************Ejecutar MOVE************\n"<<endl;
+    cout<<"\n************Ejecutar COPY************\n"<<endl;
 
-    if( existeIdMount(mDir->getDatosUsu().idPartMontada,paMoun) ){
-
-    string pathDisco;
-    string nombrePart;
-    for(int i =0; i<100; i++)
+    if( existeIdMount(mDir->getDatosUsu().idPartMontada,paMoun) )
     {
-        if(getDatosUsu().idPartMontada == paMoun[i].getId())
+
+        string pathDisco;
+        string nombrePart;
+        for(int i =0; i<100; i++)
         {
-            pathDisco = paMoun[i].getPath();
-            nombrePart = paMoun[i].getName();
-            break;
+            if(getDatosUsu().idPartMontada == paMoun[i].getId())
+            {
+                pathDisco = paMoun[i].getPath();
+                nombrePart = paMoun[i].getName();
+                break;
+
+            }
 
         }
+        modificarArchivo(pathDisco, nombrePart,mDir);
 
     }
-    modificarArchivo(pathDisco, nombrePart,mDir);
-    }else{
-    cout<< "ERROR: La particion no esta montada"<<endl;
-   }
+    else
+    {
+        cout<< "ERROR: La particion no esta montada"<<endl;
+    }
 }
-vector<string> commv::split(string str, char pattern)
+vector<string> comcpy::split(string str, char pattern)
 {
     int posInit = 0;
     int posFound = 0;
@@ -60,7 +65,7 @@ vector<string> commv::split(string str, char pattern)
     return results;
 }
 
-string commv::retFecha()
+string comcpy::retFecha()
 {
 
     time_t t = time(NULL);
@@ -76,7 +81,7 @@ string commv::retFecha()
     return fecha;
 }
 
-bool commv::existeIdMount(string idB,mount paMoun[])
+bool comcpy::existeIdMount(string idB,mount paMoun[])
 {
     for(int i =0; i<100; i++)
     {
@@ -90,7 +95,7 @@ bool commv::existeIdMount(string idB,mount paMoun[])
     return false;
 }
 
-void commv::modificarArchivo(string pathDisco, string nombrePart, commv *mDir)
+void comcpy::modificarArchivo(string pathDisco, string nombrePart, comcpy *mDir)
 {
     vector<string> rutaArchivo;
     rutaArchivo = split(mDir->getPath(), '/');
@@ -129,7 +134,6 @@ void commv::modificarArchivo(string pathDisco, string nombrePart, commv *mDir)
         int carpDestino = rutaDestino.size();
 
         //existe la carpeta destino
-
         if(mDir->getDestino() != "/")
         {
             for(int i= 1; i< carpDestino ; i++)
@@ -560,314 +564,356 @@ void commv::modificarArchivo(string pathDisco, string nombrePart, commv *mDir)
         if(existeCarpeta && existeDestino)
         {
             int inodoAMov = 0 ;
-            //if(esArchivo)
-            //{
-                for(int j = 0; j<15; j++)
+
+            for(int j = 0; j<15; j++)
+            {
+                if(j<12)
                 {
-                    if(j<12)
+                    if(inodoTemp2.i_block[j] != -1 )
                     {
-                        if(inodoAnterior.i_block[j] != -1 )
+                        BCarpeta carpetaComprobar;
+                        fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                        fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
+
+                        for(int k = 0; k<4; k++)
                         {
-                            BCarpeta carpetaComprobar;
-                            fseek(arch,superBloque.s_block_start +(inodoAnterior.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                            fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                            for(int k = 0; k<4; k++)
+                            if(carpetaComprobar.b_content[k].b_inodo == -1)
                             {
-                                if(rutaArchivo[carp - 1] == carpetaComprobar.b_content[k].b_name)
+                                strcpy(carpetaComprobar.b_content[k].b_name,rutaArchivo[carp -1].c_str());
+                                carpetaComprobar.b_content[k].b_inodo = superBloque.s_first_ino;
+
+                                fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
+                                fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
+                                int inodoCop = superBloque.s_first_ino;
+
+                                superBloque.s_first_ino = superBloque.s_first_ino + 1;
+                                superBloque.s_free_inodes_count = superBloque.s_free_inodes_count -1 ;
+
+                                char llenar = '1';
+                                char actual;
+
+                                for(int h = 0 ; h < superBloque.s_inodes_count; h++)
                                 {
-                                    inodoAMov =  carpetaComprobar.b_content[k].b_inodo;
-                                    string vacio = " ";
-                                    strcpy(carpetaComprobar.b_content[k].b_name,vacio.c_str());
-                                    carpetaComprobar.b_content[k].b_inodo = -1;
+                                    fseek(arch, superBloque.s_bm_inode_start+h*sizeof(llenar),SEEK_SET);
+                                    fread(&actual, sizeof(llenar),1,arch);
 
-                                    fseek(arch,superBloque.s_block_start +(inodoAnterior.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                                    fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                    j = 20;
-                                    break;
-
-
-                                }
-                            }
-
-
-                        }
-
-                    }
-                    else if(j==12)
-                    {
-                        if(inodoAnterior.i_block[j] != -1 )
-                        {
-                            //cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
-                            BApun apuntadores;
-                            fseek(arch,superBloque.s_block_start +(inodoAnterior.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                            fread(&apuntadores,sizeof(BApun),1,arch);
-
-
-                            for(int k=0; k<4; k++)
-                            {
-                                if(apuntadores.b_apuntadores [k].b_inodo != -1)
-                                {
-                                    BCarpeta carpetaComprobar;
-                                    fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                    fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                    for(int l = 0; l<4; l++)
+                                    if(actual=='0')
                                     {
-                                        if(rutaArchivo[carp -1 ] == carpetaComprobar.b_content[l].b_name)
-                                        {
-                                            inodoAMov =  carpetaComprobar.b_content[l].b_inodo;
-                                            string vacio = " ";
-                                            strcpy(carpetaComprobar.b_content[l].b_name,vacio.c_str());
-                                            carpetaComprobar.b_content[l].b_inodo = -1;
-
-                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                            fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                            j = 20;
-                                            break;
-
-
-                                        }
+                                        fseek(arch, superBloque.s_bm_inode_start+h*sizeof(llenar),SEEK_SET);
+                                        fwrite(&llenar, sizeof(llenar),1,arch);
+                                        break;
                                     }
 
                                 }
-                            }
 
+                                //copiando inodo
+                                Inodo inodoArchivoNuevo;
+                                inodoArchivoNuevo = inodoTemp;
 
-
-
-                        }
-
-                    }
-                    else if(j==13)
-                    {
-                        if(inodoAnterior.i_block[j] != -1 )
-                        {
-                            // cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
-                            BApun apuntadores;
-                            fseek(arch,superBloque.s_block_start +(inodoAnterior.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                            fread(&apuntadores,sizeof(BApun),1,arch);
-
-
-                            for(int k=0; k<4; k++)
-                            {
-                                if(apuntadores.b_apuntadores [k].b_inodo != -1)
+                                if(inodoArchivoNuevo.i_type == '1')
                                 {
-                                    BApun apun1;
-                                    fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                    fread(&apun1,sizeof(BApun),1,arch);
-                                    for(int l=0; l<4; l++)
+                                    for(int f = 0; f<15; f++)
                                     {
-                                        if(apun1.b_apuntadores [l].b_inodo != -1)
+                                        if(f<12)
                                         {
-                                            BCarpeta carpetaComprobar;
-                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                            fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                            for(int n = 0; n<4; n++)
+                                            if(inodoTemp.i_block[f] != -1 )
                                             {
-                                                if(rutaArchivo[carp - 1] == carpetaComprobar.b_content[n].b_name)
+
+                                                //es archivo
+                                                inodoArchivoNuevo.i_block[f] = superBloque.s_first_blo;
+                                                superBloque.s_first_blo = superBloque.s_first_blo +1;
+                                                superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
+
+                                                BArchivo nuevoBloqArchivo;
+                                                fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[f]*sizeof(BArchivo)),SEEK_SET);
+                                                fread(&nuevoBloqArchivo,sizeof(BArchivo),1,arch);
+                                                fseek(arch,superBloque.s_block_start +(inodoArchivoNuevo.i_block[f]*sizeof(BArchivo)),SEEK_SET);
+                                                fwrite(&nuevoBloqArchivo,sizeof(BArchivo),1,arch);
+
+                                                llenar = '1';
+                                                actual;
+                                                for(int h = 0 ; h < superBloque.s_blocks_count; h++)
                                                 {
-                                                    inodoAMov =  carpetaComprobar.b_content[n].b_inodo;
-                                                    string vacio = " ";
-                                                    strcpy(carpetaComprobar.b_content[n].b_name,vacio.c_str());
-                                                    carpetaComprobar.b_content[n].b_inodo = -1;
-                                                    fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                                    fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-                                                    j = 20;
-                                                    break;
+                                                    fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
+                                                    fread(&actual, sizeof(llenar),1,arch);
 
-
-                                                }
-                                            }
-                                        }
-                                    }
-
-
-                                }
-
-                            }
-
-
-
-
-                        }
-
-                    }
-                    else if(j==14)
-                    {
-                        if(inodoAnterior.i_block[j] != -1 )
-                        {
-                            //cuerpo += "struct"+std::to_string(contador)+" [shape=record,label=\"<f0> Bloque Apuntador"+ std::to_string(contador)+"| ";
-                            BApun apuntadores;
-                            fseek(arch,superBloque.s_block_start +(inodoAnterior.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                            fread(&apuntadores,sizeof(BApun),1,arch);
-
-
-                            for(int k=0; k<4; k++)
-                            {
-                                if(apuntadores.b_apuntadores [k].b_inodo != -1)
-                                {
-                                    BApun apun1;
-                                    fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores[k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                    fread(&apun1,sizeof(BApun),1,arch);
-                                    for(int l=0; l<4; l++)
-                                    {
-                                        if(apun1.b_apuntadores [l].b_inodo != -1)
-                                        {
-                                            BApun apun2;
-                                            fseek(arch,superBloque.s_block_start +(apun1.b_apuntadores[l].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                            fread(&apun2,sizeof(BApun),1,arch);
-
-                                            for(int n=0; n<4; n++)
-                                            {
-                                                if(apun2.b_apuntadores [n].b_inodo != -1)
-                                                {
-                                                    BCarpeta carpetaComprobar;
-                                                    fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                                    fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                                    for(int m = 0; m<4; m++)
+                                                    if(actual=='0')
                                                     {
-                                                        if(rutaArchivo[carp-1] == carpetaComprobar.b_content[m].b_name)
-                                                        {
-                                                            inodoAMov = carpetaComprobar.b_content[m].b_inodo;
-                                                            string vacio = " ";
-                                                            strcpy(carpetaComprobar.b_content[m].b_name,vacio.c_str());
-                                                            carpetaComprobar.b_content[m].b_inodo = -1;
-                                                            fseek(arch,superBloque.s_block_start +(apuntadores.b_apuntadores [k].b_inodo*sizeof(BCarpeta)),SEEK_SET);
-                                                            fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                                            j = 20;
-                                                            break;
-
-
-
-
-                                                        }
+                                                        fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
+                                                        fwrite(&llenar, sizeof(llenar),1,arch);
+                                                        break;
                                                     }
 
                                                 }
-                                            }
 
+
+
+
+                                            }
                                         }
+
+
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    for(int f = 0; f<15; f++)
+                                    {
+                                        inodoArchivoNuevo.i_block[f] = -1;
+
+                                    }
+
+                                    inodoArchivoNuevo.i_block[0] = superBloque.s_first_blo;
+                                    BCarpeta nuevoBloqCarp;
+                                    string vacio = " ";
+                                    string pu = ".";
+                                    string dpu = "..";
+                                    BCarpeta carpetaComprobar1;
+                                    fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
+                                    fread(&carpetaComprobar1,sizeof(BCarpeta),1,arch);
+
+                                    nuevoBloqCarp.b_content[0].b_inodo= inodoCop ;
+                                    nuevoBloqCarp.b_content[0].b_inodo= carpetaComprobar1.b_content[0].b_inodo;
+                                    nuevoBloqCarp.b_content[0].b_inodo= -1;
+                                    nuevoBloqCarp.b_content[0].b_inodo= -1;
+                                    strcpy(carpetaComprobar.b_content[3].b_name,vacio.c_str());
+                                    strcpy(carpetaComprobar.b_content[2].b_name,vacio.c_str());
+                                    strcpy(carpetaComprobar.b_content[0].b_name,pu.c_str());
+                                    strcpy(carpetaComprobar.b_content[1].b_name,dpu.c_str());
+
+                                    fseek(arch,superBloque.s_block_start +(inodoArchivoNuevo.i_block[0]*sizeof(BArchivo)),SEEK_SET);
+                                    fwrite(&nuevoBloqCarp,sizeof(BArchivo),1,arch);
+                                    superBloque.s_first_blo = superBloque.s_first_blo +1;
+                                    superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
+                                    llenar = '1';
+                                    actual;
+                                    for(int h = 0 ; h < superBloque.s_blocks_count; h++)
+                                    {
+                                        fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
+                                        fread(&actual, sizeof(llenar),1,arch);
+
+                                        if(actual=='0')
+                                        {
+                                            fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
+                                            fwrite(&llenar, sizeof(llenar),1,arch);
+                                            break;
+                                        }
+
                                     }
 
 
+
                                 }
+                                fseek(arch,superBloque.s_inode_start +(inodoCop*sizeof(Inodo)),SEEK_SET);
+                                fwrite(&inodoArchivoNuevo,sizeof(Inodo),1,arch);
+                                fseek(arch,iniPart,SEEK_SET);
+                                fwrite(&superBloque,sizeof(SupB),1,arch);
+
+
+                                j = 20;
+                                break;
+
 
                             }
+                        }
 
+
+                    }
+                    else
+                    {
+
+                        //crear nuevo bloque carpeta
+                        BCarpeta carpetaComprobar;
+                        for(int k = 1; k<4; k++)
+                        {
+                            carpetaComprobar.b_content[k].b_inodo = -1;
+                            string vacio = " ";
+                            strcpy(carpetaComprobar.b_content[k].b_name,vacio.c_str());
+                        }
+                        strcpy(carpetaComprobar.b_content[0].b_name,rutaArchivo[carp -1].c_str());
+                        carpetaComprobar.b_content[0].b_inodo = superBloque.s_first_ino;
+
+                        fseek(arch,superBloque.s_block_start +(superBloque.s_first_blo*sizeof(BCarpeta)),SEEK_SET);
+                        fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
+                        int inodoCop = superBloque.s_first_ino;
+
+                        inodoTemp2.i_block[j] = superBloque.s_first_blo;
+
+                        char llenar = '1';
+                        char actual;
+                        for(int j = 0 ; j < superBloque.s_blocks_count; j++)
+                        {
+                            fseek(arch, superBloque.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                            fread(&actual, sizeof(llenar),1,arch);
+
+                            if(actual=='0')
+                            {
+                                fseek(arch, superBloque.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                fwrite(&llenar, sizeof(llenar),1,arch);
+                                break;
+                            }
 
                         }
 
-                    }
-                }
-
-
-                for(int j = 0; j<15; j++)
-                {
-                    if(j<12)
-                    {
-                        if(inodoTemp2.i_block[j] != -1 )
+                        for(int j = 0 ; j < superBloque.s_inodes_count; j++)
                         {
-                            BCarpeta carpetaComprobar;
-                            fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                            fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
+                            fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
+                            fread(&actual, sizeof(llenar),1,arch);
 
-                            for(int k = 0; k<4; k++)
+                            if(actual=='0')
                             {
-                                if(carpetaComprobar.b_content[k].b_inodo == -1)
-                                {
-                                    strcpy(carpetaComprobar.b_content[k].b_name,rutaArchivo[carp -1].c_str());
-                                    carpetaComprobar.b_content[k].b_inodo = inodoAMov;
-
-                                    fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[j]*sizeof(BCarpeta)),SEEK_SET);
-                                    fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                    j = 20;
-                                    break;
-
-
-                                }
+                                fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
+                                fwrite(&llenar, sizeof(llenar),1,arch);
+                                break;
                             }
 
+                        }
+                        superBloque.s_first_blo = superBloque.s_first_blo +1;
+                        superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
+                        superBloque.s_first_ino = superBloque.s_first_ino + 1;
+                        superBloque.s_free_inodes_count = superBloque.s_free_inodes_count -1 ;
+                        //copiando inodo
+                        Inodo inodoArchivoNuevo;
+                        inodoArchivoNuevo = inodoTemp;
 
-                        } else{
+                        if(inodoArchivoNuevo.i_type == '1')
+                        {
+                            for(int f = 0; f<15; f++)
+                            {
+                                if(f<12)
+                                {
+                                    if(inodoTemp.i_block[f] != -1 )
+                                    {
 
-                                        //crear nuevo bloque carpeta
-                                        BCarpeta carpetaComprobar;
-                                        for(int k = 1; k<4; k++)
+                                        //es archivo
+                                        inodoArchivoNuevo.i_block[f] = superBloque.s_first_blo;
+                                        superBloque.s_first_blo = superBloque.s_first_blo +1;
+                                        superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
+
+                                        BArchivo nuevoBloqArchivo;
+                                        fseek(arch,superBloque.s_block_start +(inodoTemp.i_block[f]*sizeof(BArchivo)),SEEK_SET);
+                                        fread(&nuevoBloqArchivo,sizeof(BArchivo),1,arch);
+                                        fseek(arch,superBloque.s_block_start +(inodoArchivoNuevo.i_block[f]*sizeof(BArchivo)),SEEK_SET);
+                                        fwrite(&nuevoBloqArchivo,sizeof(BArchivo),1,arch);
+
+                                        llenar = '1';
+                                        actual;
+                                        for(int h = 0 ; h < superBloque.s_blocks_count; h++)
                                         {
-                                            carpetaComprobar.b_content[k].b_inodo = -1;
-                                            string vacio = " ";
-                                            strcpy(carpetaComprobar.b_content[k].b_name,vacio.c_str());
-                                        }
-                                        strcpy(carpetaComprobar.b_content[0].b_name,rutaArchivo[carp -1].c_str());
-                                        carpetaComprobar.b_content[0].b_inodo = inodoAMov;
-
-                                        fseek(arch,superBloque.s_block_start +(superBloque.s_first_blo*sizeof(BCarpeta)),SEEK_SET);
-                                        fwrite(&carpetaComprobar,sizeof(BCarpeta),1,arch);
-
-                                        inodoTemp2.i_block[j] = superBloque.s_first_blo;
-
-                                        char llenar = '1';
-                                        char actual;
-                                        for(int j = 0 ; j < superBloque.s_blocks_count; j++)
-                                        {
-                                            fseek(arch, superBloque.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                            fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
                                             fread(&actual, sizeof(llenar),1,arch);
 
                                             if(actual=='0')
                                             {
-                                                fseek(arch, superBloque.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
+                                                fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
                                                 fwrite(&llenar, sizeof(llenar),1,arch);
                                                 break;
                                             }
 
                                         }
-                                        superBloque.s_first_blo = superBloque.s_first_blo +1;
-                                        superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
 
-                                        fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
-                                        fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
 
-                                        string fecha = retFecha();
-                                        _mTime fcreacion;
-                                        strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
-                                        inodoTemp2.i_mtime = fcreacion;
-                                        fseek(arch,superBloque.s_inode_start + (carpetaComprobar.b_content[0].b_inodo*sizeof(Inodo)),SEEK_SET);
-                                        fwrite(&inodoTemp2,sizeof(Inodo),1,arch);
-                                        break;
+
+
+                                    }
+                                }
+
+
+
+                            }
+
                         }
+                        else
+                        {
+                            for(int f = 0; f<15; f++)
+                            {
+                                inodoArchivoNuevo.i_block[f] = -1;
 
+                            }
+
+                            inodoArchivoNuevo.i_block[0] = superBloque.s_first_blo;
+                            BCarpeta nuevoBloqCarp;
+                            string vacio = " ";
+                            string pu = ".";
+                            string dpu = "..";
+                            BCarpeta carpetaComprobar1;
+                            fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
+                            fread(&carpetaComprobar1,sizeof(BCarpeta),1,arch);
+
+                            nuevoBloqCarp.b_content[0].b_inodo= inodoCop ;
+                            nuevoBloqCarp.b_content[0].b_inodo= carpetaComprobar1.b_content[0].b_inodo;
+                            nuevoBloqCarp.b_content[0].b_inodo= -1;
+                            nuevoBloqCarp.b_content[0].b_inodo= -1;
+                            strcpy(carpetaComprobar.b_content[3].b_name,vacio.c_str());
+                            strcpy(carpetaComprobar.b_content[2].b_name,vacio.c_str());
+                            strcpy(carpetaComprobar.b_content[0].b_name,pu.c_str());
+                            strcpy(carpetaComprobar.b_content[1].b_name,dpu.c_str());
+
+                            fseek(arch,superBloque.s_block_start +(inodoArchivoNuevo.i_block[0]*sizeof(BArchivo)),SEEK_SET);
+                            fwrite(&nuevoBloqCarp,sizeof(BArchivo),1,arch);
+                            superBloque.s_first_blo = superBloque.s_first_blo +1;
+                            superBloque.s_free_blocks_count = superBloque.s_free_blocks_count - 1;
+                            llenar = '1';
+                            actual;
+                            for(int h = 0 ; h < superBloque.s_blocks_count; h++)
+                            {
+                                fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
+                                fread(&actual, sizeof(llenar),1,arch);
+
+                                if(actual=='0')
+                                {
+                                    fseek(arch, superBloque.s_bm_block_start+h*sizeof(llenar),SEEK_SET);
+                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                    break;
+                                }
+
+                            }
+
+
+
+                        }
+                        fseek(arch,superBloque.s_inode_start +(inodoCop*sizeof(Inodo)),SEEK_SET);
+                        fwrite(&inodoArchivoNuevo,sizeof(Inodo),1,arch);
+
+                        fseek(arch,superBloque.s_block_start +(inodoTemp2.i_block[0]*sizeof(BCarpeta)),SEEK_SET);
+                        fread(&carpetaComprobar,sizeof(BCarpeta),1,arch);
+
+                        string fecha = retFecha();
+                        _mTime fcreacion;
+                        strcpy(fcreacion.mbr_fecha_creacion,fecha.c_str());
+                        inodoTemp2.i_mtime = fcreacion;
+                        fseek(arch,superBloque.s_inode_start + (carpetaComprobar.b_content[0].b_inodo*sizeof(Inodo)),SEEK_SET);
+                        fwrite(&inodoTemp2,sizeof(Inodo),1,arch);
+
+                        fseek(arch,iniPart,SEEK_SET);
+                        fwrite(&superBloque,sizeof(SupB),1,arch);
+
+
+                        break;
                     }
+
                 }
+            }
 
 
-                cout<<"Se movio con exito: "<<rutaArchivo[carp -1] <<" hacia: "<< mDir->getDestino()<<endl;
-
-            //}
-            //else
-            //{
-
-            //}
-
+            cout<<"Se copio con exito: "<<rutaArchivo[carp -1] <<" en: "<< mDir->getDestino()<<endl;
         }
         else
         {
-
             cout<<"ERROR: no se pudo realizar la accion de mover"<<endl;
         }
 
 
     }
+
     fclose(arch);
+
+
 }
 
-void commv::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart)
+void comcpy::returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart)
 {
     Particion parts[4];
     parts[0] = mbrTemp.mbr_partition_1;

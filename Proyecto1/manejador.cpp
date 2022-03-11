@@ -25,6 +25,7 @@
 #include "commv.h"
 #include "comrena.h"
 #include "simlos.h"
+#include "comcpy.h"
 
 manejador::manejador()
 {
@@ -1326,8 +1327,84 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
             }
             else if (nombreComando == "copy")
             {
+                if(getHayInicioSesion()){
+                     bool parametrosValidos = true;
 
-                printf("Pause Presione una tecla para continuar... \n");
+                    bool flagPath = true;
+
+                    bool flagDestino = true;
+
+                    comcpy  *cMove = new comcpy();
+
+                    for (int f = 0; f < 15; f++)
+                    {
+                        Propiedad prop=comandoTemp.propiedades[f];
+                        string nombreProp = prop.Nombre;
+                        std::for_each(nombreProp.begin(), nombreProp.end(), [](char &c)
+                        {
+                            c = ::tolower(c);
+                        });
+
+
+                        if (nombreProp == "-path")
+                        {
+                            if(strstr(prop.valor.c_str(), "\"")!=NULL)
+                            {
+                                vector<string> conc = split(prop.valor, '"');
+                                cMove->setPath(conc[1]);
+                                cout<<conc[1]<<endl;
+                            }
+                            else
+                            {
+                                cMove->setPath(prop.valor);
+                            }
+
+                            flagPath = false;
+
+                        }
+                        else if (nombreProp == "-destino" )
+                        {
+                            if(strstr(prop.valor.c_str(), "\"")!=NULL)
+                            {
+                                vector<string> conc = split(prop.valor, '"');
+                                cMove->setDestino(conc[1]);
+                                cout<<conc[1]<<endl;
+                            }
+                            else
+                            {
+                                cMove->setDestino(prop.valor);
+                            }
+
+                            flagDestino = false;
+
+                        }
+
+
+                    }
+
+
+
+                    if( flagPath ==false && flagDestino ==false )
+                    {
+                        parametrosValidos = false;
+
+                    }
+
+                    if (parametrosValidos)
+                    {
+                        cout<<"--- Parametros Invalidos ---\n"<<endl;
+                    }
+                    else
+                    {
+                        cMove->setDatosUsu(getUsuarioAct());
+                        cMove->ejecutarComandoCopy(cMove, DisksMount);
+
+                    }
+
+
+                }else{
+                    cout<<"ERROR: No hay una sesion iniciada\n"<<endl;
+                }
 
             }
             else if (nombreComando == "move")

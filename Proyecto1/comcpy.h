@@ -1,22 +1,23 @@
-#ifndef COMMV_H
-#define COMMV_H
+#ifndef COMCPY_H
+#define COMCPY_H
 #include "mount.h"
 #include <vector>
 #include "estructuras.h"
 
 
-class commv
+class comcpy
 {
     public:
-        commv();
-        virtual ~commv();
-        void ejecutarComandoMove(commv *cmMv,mount []);
+        comcpy();
+        virtual ~comcpy();
+        void ejecutarComandoCopy(comcpy *cmCp,mount []);
         vector<string> split(string str, char pattern);
         void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart);
-        void modificarArchivo(string pathDisco, string nombrePart,commv *cmMv);
+        void modificarArchivo(string pathDisco, string nombrePart,comcpy *cmCp);
         bool existeIdMount(string idB,mount []);
 
         string retFecha();
+
 
 
         void setPath(string s){
@@ -45,4 +46,4 @@ class commv
         User datosUsuario;
 };
 
-#endif // COMMV_H
+#endif // COMCPY_H

@@ -22,12 +22,13 @@ void simlos::ejecutarLoss(simlos *mDir,mount paMoun[])
 {
     cout<<"\n************Ejecutar Comando LOSS************\n"<<endl;
 
+   if( existeIdMount(mDir->getId(),paMoun) ){
 
-    string pathDisco;
+   string pathDisco;
     string nombrePart;
     for(int i =0; i<100; i++)
     {
-        if(getDatosUsu().idPartMontada == paMoun[i].getId())
+        if(mDir->getId()== paMoun[i].getId())
         {
             pathDisco = paMoun[i].getPath();
             nombrePart = paMoun[i].getName();
@@ -38,7 +39,27 @@ void simlos::ejecutarLoss(simlos *mDir,mount paMoun[])
     }
     modificarArchivo(pathDisco, nombrePart,mDir);
 
+   }else{
+    cout<< "ERROR: La particion no esta montada"<<endl;
+   }
 
+
+
+
+}
+
+bool simlos::existeIdMount(string idB,mount paMoun[])
+{
+    for(int i =0; i<100; i++)
+    {
+        if(idB == paMoun[i].getId())
+        {
+            return true;
+
+        }
+
+    }
+    return false;
 }
 vector<string> simlos::split(string str, char pattern)
 {

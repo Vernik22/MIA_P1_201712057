@@ -89,7 +89,7 @@
 	"estructuras.h"
 	"mount.h"
 
-1646870083 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
+1646947457 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
 	"manejador.h"
 	<algorithm>
 	<iostream>
@@ -114,6 +114,8 @@
 	"mkdir.h"
 	"commv.h"
 	"comrena.h"
+	"simlos.h"
+	"comcpy.h"
 
 1646855003 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
 	"reporte.h"
@@ -208,7 +210,7 @@
 	<stdio.h>
 	<iostream>
 
-1646870747 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.cpp
+1646948268 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.cpp
 	"commv.h"
 	<time.h>
 	<stdio.h>
@@ -218,7 +220,7 @@
 	<stdio.h>
 	<iostream>
 
-1646852571 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.h
+1646948189 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/commv.h
 	"mount.h"
 	<vector>
 	"estructuras.h"
@@ -227,4 +229,34 @@
 	"mount.h"
 	<vector>
 	"estructuras.h"
+
+1646873705 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/comrena.cpp
+	"comrena.h"
+	<time.h>
+	<stdio.h>
+	<string.h>
+	<cstdlib>
+	<fstream>
+	<stdio.h>
+	<iostream>
+
+1646946247 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/simlos.h
+	"mount.h"
+	<vector>
+	"estructuras.h"
+
+1646948381 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/comcpy.h
+	"mount.h"
+	<vector>
+	"estructuras.h"
+
+1646946192 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/simlos.cpp
+	"simlos.h"
+	<time.h>
+	<stdio.h>
+	<string.h>
+	<cstdlib>
+	<fstream>
+	<stdio.h>
+	<iostream>
 

@@ -14,6 +14,7 @@ class simlos
         vector<string> split(string str, char pattern);
         void returnDatosPart(MBR mbrTemp, string pathD,string nombrePart,int &tamPart, int &iniPart);
         void modificarArchivo(string pathDisco, string nombrePart,simlos *clos);
+        bool existeIdMount(string idB,mount []);
 
         string retFecha();
 

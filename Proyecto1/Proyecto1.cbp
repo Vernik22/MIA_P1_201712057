@@ -35,6 +35,8 @@
 		</Compiler>
 		<Unit filename="chmod.cpp" />
 		<Unit filename="chmod.h" />
+		<Unit filename="comcpy.cpp" />
+		<Unit filename="comcpy.h" />
 		<Unit filename="commv.cpp" />
 		<Unit filename="commv.h" />
 		<Unit filename="comrena.cpp" />
