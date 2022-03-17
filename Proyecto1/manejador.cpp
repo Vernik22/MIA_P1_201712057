@@ -508,6 +508,7 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
                     }
                     else if(flagDel == true && flagAdd ==false)
                     {
+                        cout<<"--- Agregando espacio a particion ---\n"<<endl;
 
                     }
                     else
@@ -640,9 +641,15 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
 
                     if (nombreProp == "-id")
                     {
+                        string idPart = prop.valor;
+                    std::for_each(idPart.begin(), idPart.end(), [](char &c)
+                    {
+                        c = ::toupper(c);
+                    });
+
                         flagId = false;
 
-                        fileSis->setId(prop.valor);
+                        fileSis->setId(idPart);
 
                     }
                     else if (nombreProp == "-type")
@@ -733,9 +740,15 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
 
                     if (nombreProp == "-id")
                     {
+                        string idPart = prop.valor;
+                    std::for_each(idPart.begin(), idPart.end(), [](char &c)
+                    {
+                        c = ::toupper(c);
+                    });
+
                         flagId = false;
 
-                        log->setIdMount(prop.valor);
+                        log->setIdMount(idPart);
 
                     }
                     else if (nombreProp == "-usuario")
@@ -1530,9 +1543,14 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
 
                          if (nombreProp == "-id" )
                         {
+                            string idPart = prop.valor;
+                    std::for_each(idPart.begin(), idPart.end(), [](char &c)
+                    {
+                        c = ::toupper(c);
+                    });
                             flagId= false;
 
-                            comlos->setId(prop.valor);
+                            comlos->setId(idPart);
                             break;
 
                         }
@@ -1686,7 +1704,12 @@ void manejador::listaComandosValidos(vector<Comando> &listaComandos, mount Disks
 
                     }
                     else if(nombreProp == "-id"){
-                            rep->setId(prop.valor);
+                            string idPart = prop.valor;
+                    std::for_each(idPart.begin(), idPart.end(), [](char &c)
+                    {
+                        c = ::toupper(c);
+                    });
+                            rep->setId(idPart);
                         flagId = false;
 
 

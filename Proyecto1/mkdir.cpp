@@ -424,6 +424,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                                         {
                                             fseek(arch, superBloque.s_bm_block_start+j*sizeof(llenar),SEEK_SET);
                                             fwrite(&llenar, sizeof(llenar),1,arch);
+
                                             break;
                                         }
 
@@ -458,6 +459,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                                         {
                                             fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
                                             fwrite(&llenar, sizeof(llenar),1,arch);
+                                            //fwrite(&llenar, sizeof(llenar),1,arch);
                                             break;
                                         }
 
@@ -637,7 +639,7 @@ void mkdir::modificarArchivo(string pathDisco, string nombrePart, mkdir *mDir)
                             if(actual=='0')
                             {
                                 fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
-                                //fwrite(&llenar, sizeof(llenar),1,arch);
+                                fwrite(&llenar, sizeof(llenar),1,arch);
                                 //fwrite(&llenar, sizeof(llenar),1,arch);
                                 break;
                             }

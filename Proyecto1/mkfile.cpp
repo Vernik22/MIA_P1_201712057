@@ -499,7 +499,7 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                 {
                                     fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
                                     fwrite(&llenar, sizeof(llenar),1,arch);
-                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                    //fwrite(&llenar, sizeof(llenar),1,arch);
                                     break;
                                 }
 
@@ -629,7 +629,7 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                 {
                                     fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
                                     fwrite(&llenar, sizeof(llenar),1,arch);
-                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                    //fwrite(&llenar, sizeof(llenar),1,arch);
                                     break;
                                 }
 
@@ -805,7 +805,7 @@ void mkfile::modificarArchivo(string pathDisco, string nombrePart, mkfile *mfile
                                 {
                                     fseek(arch, superBloque.s_bm_inode_start+j*sizeof(llenar),SEEK_SET);
                                     fwrite(&llenar, sizeof(llenar),1,arch);
-                                    fwrite(&llenar, sizeof(llenar),1,arch);
+                                    //fwrite(&llenar, sizeof(llenar),1,arch);
                                     break;
                                 }
 

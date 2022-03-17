@@ -5,18 +5,11 @@
 1646275429 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/estructuras.h
 	<string>
 
-1646691447 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
+1647531560 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/main.cpp
 	<iostream>
 	<vector>
 	"manejador.h"
 	"mount.h"
-	"mkdisk.h"
-	"mkfs.h"
-	"fdisk.h"
-	"login.h"
-	"mkgrp.h"
-	"estructuras.h"
-	"reporte.h"
 
 1644964649 /home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdisk.h
 	<vector>
@@ -89,7 +82,7 @@
 	"estructuras.h"
 	"mount.h"
 
-1646947457 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
+1647529175 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/manejador.cpp
 	"manejador.h"
 	<algorithm>
 	<iostream>
@@ -117,7 +110,7 @@
 	"simlos.h"
 	"comcpy.h"
 
-1646855003 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
+1647531297 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/reporte.cpp
 	"reporte.h"
 	<iostream>
 	<fstream>
@@ -200,7 +193,7 @@
 	<vector>
 	"estructuras.h"
 
-1646865349 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdir.cpp
+1647530963 source:/home/vernik/Escritorio/Archivos1/MIA_P1_201712057/Proyecto1/mkdir.cpp
 	"mkdir.h"
 	<time.h>
 	<stdio.h>

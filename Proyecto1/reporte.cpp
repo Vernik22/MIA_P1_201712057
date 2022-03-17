@@ -39,8 +39,11 @@ void reporte::ejecutarRepBmInodo(reporte *rep,mount paMoun[])
             fseek(arch,iniPart,SEEK_SET);
             fread(&superBloque,sizeof(SupB),1,arch);
             //fclose(arch);
+            vector<string> resultados;
+            resultados = split(rep->getPath(), '.');
+            string nuevoNombre = resultados[0]+".txt";
 
-            string filename(rep->getPath());
+            string filename(nuevoNombre);
             fstream file_out;
             file_out.open(filename,std::ios_base::out);
             if(!file_out.is_open())
@@ -122,7 +125,11 @@ void reporte::ejecutarRepBmBloque(reporte *rep,mount paMoun[])
             fread(&superBloque,sizeof(SupB),1,arch);
             //fclose(arch);
 
-            string filename(rep->getPath());
+            vector<string> resultados;
+            resultados = split(rep->getPath(), '.');
+            string nuevoNombre = resultados[0]+".txt";
+
+            string filename(nuevoNombre);
             fstream file_out;
             file_out.open(filename,std::ios_base::out);
             if(!file_out.is_open())
